@@ -25,6 +25,7 @@ import '../../widgets/product/shipping_section.dart';
 import '../../widgets/product/product_variants_section.dart';
 import '../../widgets/product/customer_protection_card.dart';
 import '../../widgets/modals/customer_protection_modal.dart';
+import '../../widgets/modals/product_variants_modal.dart';
 import '../../widgets/modals/progressive_discount_modal.dart';
 
 class ProductDetailsView extends StatefulWidget {
@@ -94,75 +95,18 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
   // Getter para verificar se tem desconto ativo
   bool get _hasActiveDiscount => !_loadingDiscount && _discountRule != null;
 
-  void _showVariantsModal() {
-    showModalBottomSheet(
+  Future<void> _showVariantsModal() async {
+    final selectedVariant = await ProductVariantsModal.show(
       context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Selecione uma opção',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: widget.product.priceTags.map((priceTag) {
-                final isSelected = _selectedPriceTag.id == priceTag.id;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedPriceTag = priceTag;
-                    });
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        width: isSelected ? 2.0 : 1.0,
-                        color: isSelected ? AppColors.primary : Colors.grey,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                      color: isSelected ? AppColors.primary.withOpacity(0.1) : null,
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          priceTag.name,
-                          style: TextStyle(
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          priceTag.price.toFormattedPrice(),
-                          style: TextStyle(
-                            color: isSelected ? AppColors.primary : Colors.black87,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
-          ],
-        ),
-      ),
+      variants: widget.product.priceTags,
+      selectedVariant: _selectedPriceTag,
     );
+
+    if (selectedVariant != null) {
+      setState(() {
+        _selectedPriceTag = selectedVariant;
+      });
+    }
   }
 
   @override
@@ -326,10 +270,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
           if (widget.product.priceTags.length > 1)
             ProductVariantsSection(
               variants: widget.product.priceTags,
-              onTap: () {
-                // TODO: Mostrar modal de variações
-                _showVariantsModal();
-              },
+              onTap: _showVariantsModal,
             ),
 
           // Card de proteção do cliente
