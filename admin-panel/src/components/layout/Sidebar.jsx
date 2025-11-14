@@ -6,6 +6,7 @@ export default function Sidebar({ isOpen }) {
   const menuItems = [
     { path: '/dashboard', icon: '📊', label: 'Dashboard' },
     { path: '/banners', icon: '🎨', label: 'Banners' },
+    { path: '/progressive-discounts', icon: '🎁', label: 'Descontos Progressivos' },
     { path: '/products', icon: '📦', label: 'Produtos', badge: 'Em breve' },
     { path: '/orders', icon: '🛒', label: 'Pedidos', badge: 'Em breve' },
     { path: '/customers', icon: '👥', label: 'Clientes', badge: 'Em breve' },

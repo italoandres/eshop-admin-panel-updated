@@ -8,10 +8,24 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../../../domain/entities/cart/cart_item.dart';
 import '../../../../../domain/entities/product/price_tag.dart';
 import '../../../../../domain/entities/product/product.dart';
+import '../../../../../domain/entities/product/progressive_discount_rule.dart';
+import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/strings.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/services/services_locator.dart';
+import '../../../core/utils/price_formatter.dart';
+import '../../../domain/usecases/discount_rule/get_discount_rule_usecase.dart';
 import '../../blocs/cart/cart_bloc.dart';
 import '../../widgets/input_form_button.dart';
+import '../../widgets/product/discount_banner_card.dart';
+import '../../widgets/product/price_section.dart';
+import '../../widgets/product/promotional_banner.dart';
+import '../../widgets/product/rating_component.dart';
+import '../../widgets/product/shipping_section.dart';
+import '../../widgets/product/product_variants_section.dart';
+import '../../widgets/product/customer_protection_card.dart';
+import '../../widgets/modals/customer_protection_modal.dart';
+import '../../widgets/modals/progressive_discount_modal.dart';
 
 class ProductDetailsView extends StatefulWidget {
   final Product product;
@@ -24,11 +38,131 @@ class ProductDetailsView extends StatefulWidget {
 class _ProductDetailsViewState extends State<ProductDetailsView> {
   int _currentIndex = 0;
   late PriceTag _selectedPriceTag;
+  ProgressiveDiscountRule? _discountRule;
+  bool _loadingDiscount = true;
 
   @override
   void initState() {
     _selectedPriceTag = widget.product.priceTags.first;
+    _loadDiscountRule();
     super.initState();
+  }
+
+  Future<void> _loadDiscountRule() async {
+    try {
+      final useCase = sl<GetDiscountRuleUseCase>();
+      final result = await useCase(widget.product.id);
+      
+      result.fold(
+        (failure) => _setLoadingComplete(),
+        (rule) => _setLoadingComplete(
+          rule: rule?.isCurrentlyActive() == true ? rule : null,
+        ),
+      );
+    } catch (e) {
+      _setLoadingComplete();
+    }
+  }
+
+  void _setLoadingComplete({ProgressiveDiscountRule? rule}) {
+    setState(() {
+      _discountRule = rule;
+      _loadingDiscount = false;
+    });
+  }
+
+  // Calcula o preço com desconto do primeiro nível
+  num _calculateDiscountedPrice() {
+    if (_discountRule == null || _discountRule!.tiers.isEmpty) {
+      return widget.product.currentPrice;
+    }
+    
+    final firstTier = _discountRule!.tiers.first;
+    return firstTier.calculateFinalPrice(widget.product.currentPrice);
+  }
+
+  // Calcula a porcentagem de desconto
+  int _calculateDiscountPercentage() {
+    if (_discountRule == null || _discountRule!.tiers.isEmpty) {
+      return widget.product.discountPercentage ?? 0;
+    }
+    
+    final firstTier = _discountRule!.tiers.first;
+    return firstTier.discountPercent.toInt();
+  }
+
+  // Getter para verificar se tem desconto ativo
+  bool get _hasActiveDiscount => !_loadingDiscount && _discountRule != null;
+
+  void _showVariantsModal() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Selecione uma opção',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: widget.product.priceTags.map((priceTag) {
+                final isSelected = _selectedPriceTag.id == priceTag.id;
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedPriceTag = priceTag;
+                    });
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: isSelected ? 2.0 : 1.0,
+                        color: isSelected ? AppColors.primary : Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                      color: isSelected ? AppColors.primary.withOpacity(0.1) : null,
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          priceTag.name,
+                          style: TextStyle(
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          priceTag.price.toFormattedPrice(),
+                          style: TextStyle(
+                            color: isSelected ? AppColors.primary : Colors.black87,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -45,10 +179,9 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
       ),
       body: ListView(
         children: [
+          // Carrossel de imagens
           Padding(
-            padding: const EdgeInsets.only(
-              top: kPaddingMedium
-            ),
+            padding: const EdgeInsets.only(top: kPaddingMedium),
             child: SizedBox(
               height: MediaQuery.sizeOf(context).width,
               child: CarouselSlider(
@@ -100,6 +233,8 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
               ),
             ),
           ),
+
+          // Indicadores do carrossel
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Align(
@@ -118,62 +253,117 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
               ),
             ),
           ),
+
+          const SizedBox(height: 8),
+
+          // Seção de preço
+          PriceSection(
+            currentPrice: _hasActiveDiscount 
+                ? _calculateDiscountedPrice() 
+                : widget.product.currentPrice,
+            originalPrice: widget.product.currentPrice,
+            discountPercentage: _hasActiveDiscount
+                ? _calculateDiscountPercentage()
+                : widget.product.discountPercentage,
+            installment: widget.product.installmentInfo,
+          ),
+
+          // Banner promocional (se houver)
+          if (widget.product.activePromotion != null)
+            PromotionalBanner(
+              promotion: widget.product.activePromotion!,
+              onTap: () {
+                // TODO: Navegar para detalhes da promoção
+                debugPrint('Abrir promoção: ${widget.product.activePromotion!.title}');
+              },
+            ),
+
+          // Banner de desconto progressivo (se houver)
+          if (_hasActiveDiscount)
+            DiscountBannerCard(
+              discountRule: _discountRule!,
+              productPrice: widget.product.currentPrice,
+              onTap: () {
+                ProgressiveDiscountModal.show(
+                  context,
+                  _discountRule!,
+                  1,
+                  widget.product.currentPrice,
+                );
+              },
+            ),
+
+          // Título do produto
           Padding(
-            padding:
-                const EdgeInsets.only(left: 20, right: 14, top: 20, bottom: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
               widget.product.name,
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 20,
-              right: 20,
+
+          // Rating e vendas
+          if (widget.product.rating > 0 || widget.product.soldCount > 0)
+            RatingComponent(
+              rating: widget.product.rating,
+              reviewCount: widget.product.reviewCount,
+              soldCount: widget.product.soldCount,
             ),
-            child: Wrap(
-              children: widget.product.priceTags
-                  .map((priceTag) => GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedPriceTag = priceTag;
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: _selectedPriceTag.id == priceTag.id
-                                  ? 2.0
-                                  : 1.0,
-                              color: Colors.grey,
-                            ),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          padding: const EdgeInsets.all(8),
-                          margin: const EdgeInsets.only(right: 4),
-                          child: Column(
-                            children: [
-                              Text(priceTag.name),
-                              Text(priceTag.price.toString()),
-                            ],
-                          ),
-                        ),
-                      ))
-                  .toList(),
+
+          // Frete (se houver)
+          if (widget.product.shippingInfo != null)
+            ShippingSection(
+              shippingInfo: widget.product.shippingInfo!,
+              onTap: () {
+                // TODO: Mostrar modal de opções de frete
+                debugPrint('Abrir opções de frete');
+              },
+            ),
+
+          // Variações do produto
+          if (widget.product.priceTags.length > 1)
+            ProductVariantsSection(
+              variants: widget.product.priceTags,
+              onTap: () {
+                // TODO: Mostrar modal de variações
+                _showVariantsModal();
+              },
+            ),
+
+          // Card de proteção do cliente
+          CustomerProtectionCard(
+            onTap: () {
+              CustomerProtectionModal.show(context);
+            },
+          ),
+
+          const SizedBox(height: 16),
+
+          // Descrição do produto
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Descrição',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.product.description,
+                  style: const TextStyle(fontSize: 14, height: 1.5),
+                ),
+              ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(
-                left: 20,
-                right: 10,
-                top: 16,
-                bottom: MediaQuery.of(context).padding.bottom),
-            child: Text(
-              widget.product.description,
-              style: const TextStyle(fontSize: 14),
-            ),
-          )
+
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
         ],
       ),
       bottomNavigationBar: Container(

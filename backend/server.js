@@ -3,6 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bannerRoutes = require('./routes/bannerRoutes');
+const discountRuleRoutes = require('./routes/discountRules');
+const productRoutes = require('./routes/productRoutes');
 
 const app = express();
 
@@ -23,6 +25,8 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api', bannerRoutes);
+app.use('/api/discount-rules', discountRuleRoutes);
+app.use('/api/products', productRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

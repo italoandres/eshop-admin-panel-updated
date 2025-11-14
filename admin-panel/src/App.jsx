@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Banners from './pages/Banners';
@@ -10,6 +11,7 @@ import Notifications from './pages/Notifications';
 import Reviews from './pages/Reviews';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import ProgressiveDiscounts from './pages/ProgressiveDiscounts';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,7 +23,16 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  const isAuthenticated = localStorage.getItem('adminToken');
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
+
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsAuthenticated(!!localStorage.getItem('adminToken'));
+    };
+    
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -36,6 +47,7 @@ function App() {
                   <Routes>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/banners" element={<Banners />} />
+                    <Route path="/progressive-discounts" element={<ProgressiveDiscounts />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/orders" element={<Orders />} />
                     <Route path="/customers" element={<Customers />} />

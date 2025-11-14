@@ -9,7 +9,8 @@ export default function Login() {
     e.preventDefault();
     if (token) {
       localStorage.setItem('adminToken', token);
-      navigate('/dashboard');
+      // Força reload para atualizar o estado de autenticação
+      window.location.href = '/dashboard';
     }
   };
 

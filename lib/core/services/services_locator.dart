@@ -19,10 +19,12 @@ import '../../data/data_sources/remote/banner_remote_data_source.dart';
 import '../../data/data_sources/remote/cart_remote_data_source.dart';
 import '../../data/data_sources/remote/category_remote_data_source.dart';
 import '../../data/data_sources/remote/delivery_info_remote_data_source.dart';
+import '../../data/data_sources/remote/discount_rule_remote_data_source.dart';
 import '../../data/data_sources/remote/order_remote_data_source.dart';
 import '../../data/data_sources/remote/product_remote_data_source.dart';
 import '../../data/data_sources/remote/user_remote_data_source.dart';
 import '../../data/repositories/banner_repository_impl.dart';
+import '../../data/repositories/discount_rule_repository_impl.dart';
 import '../../data/repositories/cart_repository_impl.dart';
 import '../../data/repositories/category_repository_impl.dart';
 import '../../data/repositories/delivery_info_impl.dart';
@@ -33,10 +35,12 @@ import '../../domain/repositories/banner_repository.dart';
 import '../../domain/repositories/cart_repository.dart';
 import '../../domain/repositories/category_repository.dart';
 import '../../domain/repositories/delivery_info_repository.dart';
+import '../../domain/repositories/discount_rule_repository.dart';
 import '../../domain/repositories/order_repository.dart';
 import '../../domain/repositories/product_repository.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../../domain/usecases/banner/get_banners_usecase.dart';
+import '../../domain/usecases/discount_rule/get_discount_rule_usecase.dart';
 import '../../domain/usecases/cart/add_cart_item_usecase.dart';
 import '../../domain/usecases/cart/delete_cart_usecase.dart';
 import '../../domain/usecases/cart/get_local_cart_items_usecase.dart';
@@ -86,6 +90,20 @@ Future<void> init() async {
   // Data sources
   sl.registerLazySingleton<BannerRemoteDataSource>(
     () => BannerRemoteDataSourceImpl(client: sl()),
+  );
+
+  //Features - Discount Rule
+  // Use cases
+  sl.registerLazySingleton(() => GetDiscountRuleUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<DiscountRuleRepository>(
+    () => DiscountRuleRepositoryImpl(
+      remoteDataSource: sl(),
+    ),
+  );
+  // Data sources
+  sl.registerLazySingleton<DiscountRuleRemoteDataSource>(
+    () => DiscountRuleRemoteDataSourceImpl(client: sl()),
   );
 
   //Features - Product

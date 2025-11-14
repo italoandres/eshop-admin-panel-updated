@@ -13,7 +13,7 @@ const devConfig = AppConfig(
   storeId: 'store_001',
   
   // API
-  apiBaseUrl: 'https://e-commerce-mock-api-d8zv.onrender.com',
+  apiBaseUrl: 'http://192.168.0.103:4000', // Backend local com produtos REAIS!
   bannerApiUrl: 'http://192.168.0.103:4000', // ← ALTERE ESTE IP!
   apiKey: '',
   
