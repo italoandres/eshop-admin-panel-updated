@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
@@ -90,6 +92,45 @@ class _ProductCardState extends State<ProductCard> {
     return discountedPrice;
   }
 
+  Widget _buildProductImage() {
+    if (widget.product == null || widget.product!.images.isEmpty) {
+      return const Center(child: Icon(Icons.image_not_supported));
+    }
+
+    final imageUrl = widget.product!.images.first;
+    
+    // Verifica se é base64
+    if (imageUrl.startsWith('data:image')) {
+      try {
+        // Remove o prefixo "data:image/png;base64," ou similar
+        final base64String = imageUrl.split(',').last;
+        final bytes = const Base64Decoder().convert(base64String);
+        return Image.memory(
+          bytes,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(child: Icon(Icons.broken_image));
+          },
+        );
+      } catch (e) {
+        return const Center(child: Icon(Icons.broken_image));
+      }
+    }
+    
+    // Se não é base64, usa CachedNetworkImage
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      fit: BoxFit.contain,
+      placeholder: (context, url) => Shimmer.fromColors(
+        baseColor: Colors.grey.shade100,
+        highlightColor: Colors.white,
+        child: Container(),
+      ),
+      errorWidget: (context, url, error) =>
+          const Center(child: Icon(Icons.broken_image)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return widget.product == null
@@ -148,16 +189,7 @@ class _ProductCardState extends State<ProductCard> {
                         tag: widget.product!.id,
                         child: Padding(
                           padding: const EdgeInsets.all(32.0),
-                          child: CachedNetworkImage(
-                            imageUrl: widget.product!.images.first,
-                            placeholder: (context, url) => Shimmer.fromColors(
-                              baseColor: Colors.grey.shade100,
-                              highlightColor: Colors.white,
-                              child: Container(),
-                            ),
-                            errorWidget: (context, url, error) =>
-                                const Center(child: Icon(Icons.error)),
-                          ),
+                          child: _buildProductImage(),
                         ),
                       ),
                 

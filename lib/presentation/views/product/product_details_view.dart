@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:eshop/core/constant/app_sizes.dart';
@@ -41,12 +43,30 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
   late PriceTag _selectedPriceTag;
   ProgressiveDiscountRule? _discountRule;
   bool _loadingDiscount = true;
+  final Map<String, MemoryImage> _imageCache = {};
 
   @override
   void initState() {
     _selectedPriceTag = widget.product.priceTags.first;
     _loadDiscountRule();
+    _preloadImages();
     super.initState();
+  }
+
+  // Pré-carrega todas as imagens base64
+  Future<void> _preloadImages() async {
+    for (final imageUrl in widget.product.images) {
+      if (imageUrl.startsWith('data:image')) {
+        try {
+          final base64String = imageUrl.split(',').last;
+          final bytes = const Base64Decoder().convert(base64String);
+          _imageCache[imageUrl] = MemoryImage(bytes);
+        } catch (e) {
+          // Ignora erros de decodificação
+        }
+      }
+    }
+    if (mounted) setState(() {});
   }
 
   Future<void> _loadDiscountRule() async {
@@ -94,6 +114,66 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
   // Getter para verificar se tem desconto ativo
   bool get _hasActiveDiscount => !_loadingDiscount && _discountRule != null;
+
+  Widget _buildProductImage(String imageUrl) {
+    // Verifica se é base64
+    if (imageUrl.startsWith('data:image')) {
+      // Usa a imagem do cache se disponível
+      final cachedImage = _imageCache[imageUrl];
+      if (cachedImage != null) {
+        return Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: cachedImage,
+              fit: BoxFit.contain,
+              colorFilter: ColorFilter.mode(
+                Colors.grey.shade50.withOpacity(0.25),
+                BlendMode.softLight,
+              ),
+            ),
+          ),
+        );
+      }
+      
+      // Se não está no cache, mostra placeholder
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+        ),
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    
+    // Se não é base64, usa CachedNetworkImage
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      imageBuilder: (context, imageProvider) => Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.contain,
+            colorFilter: ColorFilter.mode(
+              Colors.grey.shade50.withOpacity(0.25),
+              BlendMode.softLight,
+            ),
+          ),
+        ),
+      ),
+      placeholder: (context, url) => Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+        ),
+      ),
+      errorWidget: (context, url, error) => const Center(
+        child: Icon(
+          Icons.error_outline,
+          color: Colors.grey,
+        ),
+      ),
+    );
+  }
 
   Future<void> _showVariantsModal() async {
     final selectedVariant = await ProductVariantsModal.show(
@@ -145,31 +225,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                     builder: (BuildContext context) {
                       return Hero(
                         tag: widget.product.id,
-                        child: CachedNetworkImage(
-                          imageUrl: image,
-                          imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.contain,
-                                colorFilter: ColorFilter.mode(
-                                    Colors.grey.shade50.withOpacity(0.25),
-                                    BlendMode.softLight),
-                              ),
-                            ),
-                          ),
-                          placeholder: (context, url) => Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => const Center(
-                            child: Icon(
-                              Icons.error_outline,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
+                        child: _buildProductImage(image),
                       );
                     },
                   );

@@ -26,27 +26,36 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   }
 
   void _onLoadProducts(GetProducts event, Emitter<ProductState> emit) async {
+    print('[ProductBloc] _onLoadProducts called with params: ${event.params}');
     try {
       emit(ProductLoading(
         products: const [],
         metaData: state.metaData,
         params: event.params,
       ));
+      print('[ProductBloc] Calling GetProductUseCase');
       final result = await _getProductUseCase(event.params);
       result.fold(
-        (failure) => emit(ProductError(
-          products: state.products,
-          metaData: state.metaData,
-          failure: failure,
-          params: event.params,
-        )),
-        (productResponse) => emit(ProductLoaded(
-          metaData: productResponse.paginationMetaData,
-          products: productResponse.products,
-          params: event.params,
-        )),
+        (failure) {
+          print('[ProductBloc] Error: $failure');
+          emit(ProductError(
+            products: state.products,
+            metaData: state.metaData,
+            failure: failure,
+            params: event.params,
+          ));
+        },
+        (productResponse) {
+          print('[ProductBloc] Success: ${productResponse.products.length} products loaded');
+          emit(ProductLoaded(
+            metaData: productResponse.paginationMetaData,
+            products: productResponse.products,
+            params: event.params,
+          ));
+        },
       );
     } catch (e) {
+      print('[ProductBloc] Exception: $e');
       emit(ProductError(
         products: state.products,
         metaData: state.metaData,

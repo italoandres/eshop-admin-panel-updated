@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Edit2, Trash2, Power, Search, Package } from 'lucide-react';
 import axios from 'axios';
 
 export default function Products() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -75,7 +77,7 @@ export default function Products() {
           <p className="text-gray-600">Gerencie o catálogo de produtos</p>
         </div>
         <button
-          onClick={() => window.location.href = '/products/new'}
+          onClick={() => navigate('/products/new')}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
         >
           <Plus size={20} />
@@ -132,7 +134,7 @@ export default function Products() {
             Comece criando seu primeiro produto
           </p>
           <button
-            onClick={() => window.location.href = '/products/new'}
+            onClick={() => navigate('/products/new')}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
             Criar Produto
@@ -228,7 +230,7 @@ export default function Products() {
                         <Power size={18} />
                       </button>
                       <button
-                        onClick={() => window.location.href = `/products/edit/${product._id}`}
+                        onClick={() => navigate(`/products/edit/${product._id}`)}
                         className="text-blue-600 hover:bg-blue-50 p-2 rounded-lg"
                         title="Editar"
                       >

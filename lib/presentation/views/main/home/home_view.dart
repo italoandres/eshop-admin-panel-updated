@@ -46,6 +46,12 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     scrollController.addListener(_scrollListener);
     super.initState();
+    // Buscar produtos ao iniciar a tela
+    print('[HomeView] initState called');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print('[HomeView] Dispatching GetProducts event');
+      context.read<ProductBloc>().add(const GetProducts(FilterProductParams()));
+    });
   }
 
   @override

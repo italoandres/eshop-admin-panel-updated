@@ -5,6 +5,7 @@ import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Banners from './pages/Banners';
 import Products from './pages/Products';
+import ProductForm from './pages/ProductForm';
 import Orders from './pages/Orders';
 import Customers from './pages/Customers';
 import Notifications from './pages/Notifications';
@@ -49,6 +50,8 @@ function App() {
                     <Route path="/banners" element={<Banners />} />
                     <Route path="/progressive-discounts" element={<ProgressiveDiscounts />} />
                     <Route path="/products" element={<Products />} />
+                    <Route path="/products/new" element={<ProductForm />} />
+                    <Route path="/products/edit/:id" element={<ProductForm />} />
                     <Route path="/orders" element={<Orders />} />
                     <Route path="/customers" element={<Customers />} />
                     <Route path="/notifications" element={<Notifications />} />
