@@ -22,6 +22,8 @@ class FlavorConfig {
   
   static String get appName => config.appName;
   static String get storeId => config.storeId;
+  static String get storeName => config.storeName;
+  static String get logoUrl => config.logoUrl;
   static String get apiBaseUrl => config.apiBaseUrl;
   static String get bannerApiUrl => config.bannerApiUrl;
 }

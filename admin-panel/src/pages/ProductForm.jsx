@@ -13,6 +13,12 @@ const ProductForm = () => {
     shippingInfo: {
       isFree: false,
       shippingCost: 0
+    },
+    weight: '',
+    dimensions: {
+      length: '',
+      width: '',
+      height: ''
     }
   });
 
@@ -22,6 +28,19 @@ const ProductForm = () => {
   const [variants, setVariants] = useState([]);
   const [colorInput, setColorInput] = useState('');
   const [selectedVariant, setSelectedVariant] = useState(null);
+  
+  // Categorias
+  const [categories, setCategories] = useState([]);
+  const [categoryInput, setCategoryInput] = useState('');
+  const [categoryImageInput, setCategoryImageInput] = useState('');
+  
+  // Seções destacadas
+  const [featuredSections, setFeaturedSections] = useState({
+    highlights: false,
+    newArrivals: false,
+    offers: false,
+    main: false
+  });
   const [loading, setLoading] = useState(false);
 
   // Carregar produto ao editar
@@ -37,10 +56,23 @@ const ProductForm = () => {
             shippingInfo: data.shippingInfo || {
               isFree: false,
               shippingCost: 0
+            },
+            weight: data.weight || '',
+            dimensions: data.dimensions || {
+              length: '',
+              width: '',
+              height: ''
             }
           });
           setAvailableSizes(data.availableSizes || []);
           setVariants(data.variants || []);
+          setCategories(data.categories || []);
+          setFeaturedSections(data.featuredSections || {
+            highlights: false,
+            newArrivals: false,
+            offers: false,
+            main: false
+          });
         })
         .catch(error => {
           console.error('Erro ao carregar produto:', error);
@@ -80,7 +112,9 @@ const ProductForm = () => {
       const productData = {
         ...formData,
         availableSizes,
-        variants
+        variants,
+        categories,
+        featuredSections
       };
 
       const url = isEdit 
@@ -127,6 +161,23 @@ const ProductForm = () => {
       ...v,
       sizes: v.sizes.filter(vs => vs.size !== size)
     })));
+  };
+
+  // Gerenciar categorias
+  const addCategory = () => {
+    if (categoryInput.trim() && categoryImageInput.trim()) {
+      const newCategory = {
+        name: categoryInput.trim(),
+        image: categoryImageInput.trim()
+      };
+      setCategories([...categories, newCategory]);
+      setCategoryInput('');
+      setCategoryImageInput('');
+    }
+  };
+
+  const removeCategory = (index) => {
+    setCategories(categories.filter((_, i) => i !== index));
   };
 
   // Gerenciar cores
@@ -348,6 +399,286 @@ const ProductForm = () => {
                   />
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Categorias */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Package className="w-6 h-6 text-blue-600" />
+              <h2 className="text-xl font-semibold">Categorias</h2>
+            </div>
+            <p className="text-sm text-gray-600 mb-6">
+              Você vai ajudar seus clientes a encontrarem seus produtos mais rápido.
+            </p>
+            
+            <div className="space-y-4">
+              {/* Input para adicionar categoria */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nome da Categoria
+                  </label>
+                  <input
+                    type="text"
+                    value={categoryInput}
+                    onChange={(e) => setCategoryInput(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Ex: Eletrônicos, Roupas, Calçados..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL da Imagem
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={categoryImageInput}
+                      onChange={(e) => setCategoryImageInput(e.target.value)}
+                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="https://..."
+                    />
+                    <button
+                      type="button"
+                      onClick={addCategory}
+                      className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+                    >
+                      <Plus className="w-5 h-5" />
+                      Adicionar
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lista de categorias */}
+              {categories.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">Categorias Adicionadas:</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {categories.map((category, index) => (
+                      <div
+                        key={index}
+                        className="group relative bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-blue-500 transition"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => removeCategory(index)}
+                          className="absolute top-2 right-2 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={category.image}
+                            alt={category.name}
+                            className="w-12 h-12 rounded-lg object-cover"
+                            onError={(e) => {
+                              e.target.src = 'https://via.placeholder.com/48';
+                            }}
+                          />
+                          <div>
+                            <p className="font-medium text-gray-900">{category.name}</p>
+                            <p className="text-xs text-gray-500 truncate max-w-[150px]">{category.image}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Destacar Produto */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Star className="w-6 h-6 text-blue-600" />
+              <h2 className="text-xl font-semibold">Destacar Produto</h2>
+            </div>
+            <p className="text-sm text-gray-600 mb-6">
+              Escolha em quais seções da sua loja você quer destacar este produto para dar-lhe mais visibilidade.
+            </p>
+            
+            <div className="space-y-4">
+              <p className="text-sm font-medium text-gray-700 mb-4">
+                Selecione pelo menos uma seção. Considere que cada uma tem um limite máximo de 40 produtos.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Destaques */}
+                <label className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={featuredSections.highlights}
+                      onChange={(e) => setFeaturedSections({
+                        ...featuredSections,
+                        highlights: e.target.checked
+                      })}
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-900">Destaques</p>
+                      <p className="text-xs text-gray-500">0/40</p>
+                    </div>
+                  </div>
+                  {featuredSections.highlights && (
+                    <Check className="w-5 h-5 text-blue-600" />
+                  )}
+                </label>
+
+                {/* Lançamentos */}
+                <label className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={featuredSections.newArrivals}
+                      onChange={(e) => setFeaturedSections({
+                        ...featuredSections,
+                        newArrivals: e.target.checked
+                      })}
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-900">Lançamentos</p>
+                      <p className="text-xs text-gray-500">0/40</p>
+                    </div>
+                  </div>
+                  {featuredSections.newArrivals && (
+                    <Check className="w-5 h-5 text-blue-600" />
+                  )}
+                </label>
+
+                {/* Ofertas */}
+                <label className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={featuredSections.offers}
+                      onChange={(e) => setFeaturedSections({
+                        ...featuredSections,
+                        offers: e.target.checked
+                      })}
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-900">Ofertas</p>
+                      <p className="text-xs text-gray-500">0/40</p>
+                    </div>
+                  </div>
+                  {featuredSections.offers && (
+                    <Check className="w-5 h-5 text-blue-600" />
+                  )}
+                </label>
+
+                {/* Principal */}
+                <label className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={featuredSections.main}
+                      onChange={(e) => setFeaturedSections({
+                        ...featuredSections,
+                        main: e.target.checked
+                      })}
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-900">Principal</p>
+                      <p className="text-xs text-gray-500">0/40</p>
+                    </div>
+                  </div>
+                  {featuredSections.main && (
+                    <Check className="w-5 h-5 text-blue-600" />
+                  )}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Peso e Dimensões */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Package className="w-6 h-6 text-blue-600" />
+              <h2 className="text-xl font-semibold">Peso e Dimensões</h2>
+            </div>
+            <p className="text-sm text-gray-600 mb-6">
+              Preencha os dados para calcular o custo de envio dos produtos e mostrar os meios de envio na sua loja.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Peso */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Peso (kg)
+                </label>
+                <input
+                  type="number"
+                  step="0.001"
+                  value={formData.weight}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    weight: e.target.value
+                  })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="0.000"
+                />
+              </div>
+
+              {/* Comprimento */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Comprimento (cm)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={formData.dimensions.length}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    dimensions: { ...formData.dimensions, length: e.target.value }
+                  })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="0.0"
+                />
+              </div>
+
+              {/* Largura */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Largura (cm)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={formData.dimensions.width}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    dimensions: { ...formData.dimensions, width: e.target.value }
+                  })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="0.0"
+                />
+              </div>
+
+              {/* Altura */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Altura (cm)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={formData.dimensions.height}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    dimensions: { ...formData.dimensions, height: e.target.value }
+                  })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="0.0"
+                />
+              </div>
             </div>
           </div>
 

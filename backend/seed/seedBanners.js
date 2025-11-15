@@ -4,7 +4,7 @@ const Banner = require('../models/Banner');
 
 const seedBanners = [
   {
-    storeId: 'store_001',
+    storeId: 'eshop_001',
     title: 'Black Friday - Ofertas Imperdíveis',
     imageUrl: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&h=400&fit=crop',
     targetUrl: 'https://www.example.com/ofertas',
@@ -14,7 +14,7 @@ const seedBanners = [
     endAt: null,
   },
   {
-    storeId: 'store_001',
+    storeId: 'eshop_001',
     title: 'Tecnologia com Desconto',
     imageUrl: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=1200&h=400&fit=crop',
     targetUrl: 'https://www.example.com/tecnologia',
@@ -24,7 +24,7 @@ const seedBanners = [
     endAt: null,
   },
   {
-    storeId: 'store_001',
+    storeId: 'eshop_001',
     title: 'Frete Grátis em Compras Acima de R$ 100',
     imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=400&fit=crop',
     targetUrl: 'https://www.example.com/frete-gratis',
@@ -45,7 +45,7 @@ async function seed() {
     console.log('✅ Conectado!');
 
     console.log('🗑️  Limpando banners existentes...');
-    await Banner.deleteMany({ storeId: 'store_001' });
+    await Banner.deleteMany({ storeId: 'eshop_001' });
 
     console.log('📝 Inserindo banners de teste...');
     const banners = await Banner.insertMany(seedBanners);

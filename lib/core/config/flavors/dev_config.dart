@@ -10,7 +10,7 @@ const devConfig = AppConfig(
   // Identidade
   appName: 'EShop Dev',
   packageName: 'com.sameeraperera.eshop.dev',
-  storeId: 'store_001',
+  storeId: 'eshop_001',
   
   // API
   apiBaseUrl: 'http://192.168.0.103:4000', // Backend local com produtos REAIS!

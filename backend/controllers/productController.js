@@ -7,7 +7,8 @@ exports.getAllProducts = async (req, res) => {
       keyword = '',
       pageSize = 20,
       page = 1,
-      categories = '[]'
+      categories = '[]',
+      featuredSection = '' // novo parâmetro
     } = req.query;
 
     const query = {};
@@ -24,6 +25,20 @@ exports.getAllProducts = async (req, res) => {
     const categoryIds = JSON.parse(categories);
     if (categoryIds.length > 0) {
       query['categories._id'] = { $in: categoryIds };
+    }
+    
+    // Filtro por seção destacada
+    if (featuredSection) {
+      const sectionMap = {
+        'highlights': 'featuredSections.highlights',
+        'newArrivals': 'featuredSections.newArrivals',
+        'offers': 'featuredSections.offers',
+        'main': 'featuredSections.main'
+      };
+      
+      if (sectionMap[featuredSection]) {
+        query[sectionMap[featuredSection]] = true;
+      }
     }
 
     // ✅ VALIDAÇÃO: Garantir valores positivos

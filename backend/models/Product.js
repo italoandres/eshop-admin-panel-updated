@@ -67,6 +67,22 @@ const productSchema = new mongoose.Schema({
   shippingInfo: shippingInfoSchema,
   activePromotion: promotionSchema,
   
+  // Peso e dimensões para cálculo de frete
+  weight: { type: Number }, // em kg
+  dimensions: {
+    length: { type: Number }, // em cm
+    width: { type: Number }, // em cm
+    height: { type: Number } // em cm
+  },
+  
+  // Seções onde o produto deve ser destacado
+  featuredSections: {
+    highlights: { type: Boolean, default: false }, // Destaques
+    newArrivals: { type: Boolean, default: false }, // Lançamentos
+    offers: { type: Boolean, default: false }, // Ofertas
+    main: { type: Boolean, default: false } // Principal
+  },
+  
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

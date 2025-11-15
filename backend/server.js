@@ -5,6 +5,7 @@ const cors = require('cors');
 const bannerRoutes = require('./routes/bannerRoutes');
 const discountRuleRoutes = require('./routes/discountRules');
 const productRoutes = require('./routes/productRoutes');
+const storeSettingsRoutes = require('./routes/storeSettings');
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 app.use('/api', bannerRoutes);
 app.use('/api/discount-rules', discountRuleRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/store-settings', storeSettingsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

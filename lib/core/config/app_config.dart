@@ -3,6 +3,8 @@ class AppConfig {
   final String appName;
   final String packageName;
   final String storeId;
+  final String storeName;
+  final String logoUrl;
   
   // API
   final String apiBaseUrl;
@@ -47,6 +49,8 @@ class AppConfig {
     required this.appName,
     required this.packageName,
     required this.storeId,
+    this.storeName = 'Minha Loja',
+    this.logoUrl = '',
     required this.apiBaseUrl,
     required this.bannerApiUrl,
     required this.apiKey,

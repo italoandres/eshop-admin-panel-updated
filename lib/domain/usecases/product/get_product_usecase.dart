@@ -25,6 +25,7 @@ class FilterProductParams {
   final double maxPrice;
   final int? limit;
   final int? pageSize;
+  final String? featuredSection; // novo campo
 
   const FilterProductParams({
     this.keyword = '',
@@ -33,6 +34,7 @@ class FilterProductParams {
     this.maxPrice = 10000,
     this.limit = 0,
     this.pageSize = 10,
+    this.featuredSection, // novo campo
   });
 
   FilterProductParams copyWith({
@@ -43,6 +45,7 @@ class FilterProductParams {
     double? maxPrice,
     int? limit,
     int? pageSize,
+    String? featuredSection,
   }) =>
       FilterProductParams(
         keyword: keyword ?? this.keyword,
@@ -51,5 +54,6 @@ class FilterProductParams {
         maxPrice: maxPrice ?? this.maxPrice,
         limit: skip ?? this.limit,
         pageSize: pageSize ?? this.pageSize,
+        featuredSection: featuredSection ?? this.featuredSection,
       );
 }

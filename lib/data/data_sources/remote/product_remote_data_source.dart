@@ -16,8 +16,16 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   ProductRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<ProductResponseModel> getProducts(params) => _getProductFromUrl(
-      '${FlavorConfig.apiBaseUrl}/api/products?keyword=${params.keyword}&pageSize=${params.pageSize}&page=${params.limit}&categories=${jsonEncode(params.categories.map((e) => e.id).toList())}');
+  Future<ProductResponseModel> getProducts(params) {
+    String url = '${FlavorConfig.apiBaseUrl}/api/products?keyword=${params.keyword}&pageSize=${params.pageSize}&page=${params.limit}&categories=${jsonEncode(params.categories.map((e) => e.id).toList())}';
+    
+    // Adiciona filtro de seção destacada se fornecido
+    if (params.featuredSection != null && params.featuredSection!.isNotEmpty) {
+      url += '&featuredSection=${params.featuredSection}';
+    }
+    
+    return _getProductFromUrl(url);
+  }
 
   Future<ProductResponseModel> _getProductFromUrl(String url) async {
     print('[ProductRemoteDataSource] Fetching from: $url');
