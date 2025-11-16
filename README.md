@@ -1,132 +1,237 @@
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-<!-- PROJECT LOGO -->
-<p align="center">
-  <h3 align="center">Flutter TDD Clean Architecture E-Commerce App - EShop</h3>
-</p>
+# E-Commerce Flutter White-Label
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+Aplicativo Flutter moderno, escalável e 100% white-label para e-commerce, consumindo API de painel admin existente.
 
+## 🎯 Objetivo
 
-Welcome to the Flutter-TDD-Clean-Architecture-E-Commerce-App GitHub repository! This project is a showcase of modern mobile app development practices, leveraging the power of Flutter, Test-Driven Development (TDD), Clean Architecture, and the BLoC (Business Logic Component) package. Built using the latest version of Flutter 3, this E-Commerce application exemplifies best practices for building scalable, maintainable, and efficient Flutter apps.
+Criar um aplicativo para o cliente final (consumidor da loja) que consome dados do painel admin React existente.
 
-## Key Features:
+Cada loja terá seu próprio app com:
+- Tema e cores personalizadas
+- Logo própria
+- Produtos e banners exclusivos
+- URLs de API específicas
 
-* **Test-Driven Development (TDD)**: This project emphasizes the importance of writing tests before writing the actual code. It ensures that the application's logic is thoroughly tested, enhancing reliability and maintainability.
-* **Clean Architecture**: The app follows a clean and modular architecture that separates concerns into different layers: Presentation, Domain, and Data. This architecture promotes code reusability and makes it easier to adapt to changes in the future.
-* **BLoC State Management**: The app utilizes the BLoC pattern for state management. BLoC helps manage the flow of data and business logic in a clean and reactive manner, improving overall app performance.
-* **E-Commerce Functionality**: The app showcases a variety of E-Commerce features, such as product browsing, searching, cart and purchasing. Users can explore products, add them to their cart, and complete transactions seamlessly.
-<!-- Features -->
+## 🏗️ Arquitetura
+
+O projeto segue **Clean Architecture + Feature Modular + Riverpod 3**:
+
+```
+lib/
+├── core/
+│   ├── config/        # Configurações white-label
+│   ├── theme/         # Temas dinâmicos
+│   ├── errors/        # Tratamento de erros
+│   ├── network/       # Cliente HTTP (Dio)
+│   └── router/        # Rotas (GoRouter)
+│
+├── features/
+│   ├── auth/
+│   │   ├── data/      # DTOs, repositórios
+│   │   ├── domain/    # Modelos, casos de uso
+│   │   └── presentation/ # Páginas, notifiers
+│   │
+│   ├── banners/
+│   ├── products/
+│   ├── cart/
+│   └── ...
+│
+├── shared/
+│   └── widgets/       # Widgets reutilizáveis
+│
+├── app.dart
+└── main.dart
+```
+
+### Camadas por Feature
+
+Cada feature possui 3 camadas:
+
+- **data**: DTOs, serviços de API, repositórios
+- **domain**: Entidades, modelos puros, casos de uso
+- **presentation**: Páginas, viewmodels, providers do Riverpod
+
+## 🛠️ Tecnologias
+
+- **State Management**: Riverpod 3
+- **HTTP Client**: Dio 5 com interceptors, retry e logs
+- **Models**: Freezed + JsonSerializable
+- **Navegação**: GoRouter com deep links
+- **Persistência**: SharedPreferences + FlutterSecureStorage
+- **UI**: Google Fonts, CachedNetworkImage, CarouselSlider
+
+## 🚀 Começando
+
+### 1. Instalar dependências
+
+```bash
+flutter pub get
+```
+
+### 2. Gerar código (Freezed, JsonSerializable)
+
+```bash
+flutter pub run build_runner build --delete-conflicting-outputs
+```
+
+### 3. Executar o app
+
+```bash
+flutter run
+```
+
+## 🎨 White-Label
+
+### Configuração da Loja
+
+A configuração white-label está em `lib/core/config/store_config.dart`:
+
+```dart
+class StoreConfig {
+  final String storeId;
+  final String apiBaseUrl;
+  final String storeName;
+  final String logoUrl;
+  final Color primaryColor;
+  final Color secondaryColor;
+  final String currency;
+}
+```
+
+### Como personalizar para uma nova loja:
+
+1. Modificar `StoreConfig.defaultConfig` em `store_config.dart`
+2. Ou carregar de JSON/API através do `storeConfigProvider`
+
+O app inteiro se adapta automaticamente:
+- Cores do tema
+- Nome da loja
+- Logo
+- Endpoints da API
+
+## 📡 Integração com o Painel React
+
+O app Flutter **consome** os dados que o painel React gerencia:
+
+- **Banners**: GET `/banners`
+- **Produtos**: GET `/products`
+- **Categorias**: GET `/categories`
+- **Pedidos**: POST `/orders`
+- **Auth**: POST `/auth/login`, `/auth/register`
+
+### Exemplo de resposta da API (Banners):
+
+```json
+{
+  "data": [
+    {
+      "id": "123",
+      "title": "Promoção",
+      "imageUrl": "https://...",
+      "order": 1,
+      "active": true,
+      "targetUrl": "https://..."
+    }
+  ]
+}
+```
+
+## 📱 Funcionalidades Implementadas
+
+### ✅ Primeira Entrega
+
+- [x] Setup inicial completo
+- [x] Estrutura de pastas modular
+- [x] Riverpod configurado
+- [x] GoRouter funcional
+- [x] StoreConfig carregando dinamicamente
+- [x] Tema dinâmico baseado no StoreConfig
+- [x] Feature de Banners completa (DTO, Model, Repository, Provider)
+- [x] Carrossel de banners na Home
+- [x] Tela de Login funcional
+- [x] Autenticação com JWT
+- [x] Tratamento de erros centralizado
+
+### 🚧 Próximos Passos
+
+- [ ] Feature de Produtos completa
+- [ ] Feature de Carrinho
+- [ ] Feature de Pedidos
+- [ ] Tela de Detalhes do Produto
+- [ ] Tela de Categorias
+- [ ] Tela de Perfil
+- [ ] Sistema de pagamento
+- [ ] Push notifications
+
+## 🔐 Autenticação
+
+O sistema de autenticação usa JWT tokens:
+
+- **Access Token**: Armazenado em `FlutterSecureStorage`
+- **Refresh Token**: Renovação automática via interceptor do Dio
+- **Logout**: Limpa tokens do storage
+
+### Fluxo de autenticação:
+
+1. Usuário faz login → Recebe tokens
+2. Tokens são salvos no SecureStorage
+3. Todas as requests incluem o token no header
+4. Se token expirar (401), tenta refresh automático
+5. Se refresh falhar, redireciona para login
+
+## 📦 Dependências Principais
+
+```yaml
+dependencies:
+  flutter_riverpod: ^2.5.1      # State management
+  dio: ^5.4.0                   # HTTP client
+  go_router: ^14.0.2            # Navegação
+  freezed_annotation: ^2.4.1    # Imutabilidade
+  json_annotation: ^4.8.1       # Serialização
+  shared_preferences: ^2.2.2    # Cache local
+  flutter_secure_storage: ^9.0.0 # Tokens seguros
+  google_fonts: ^6.1.0          # Tipografia
+  cached_network_image: ^3.3.1  # Cache de imagens
+  carousel_slider: ^4.2.1       # Carrossel
+```
+
+## 🧪 Testes
+
+Para executar testes:
+
+```bash
+flutter test
+```
+
+## 📝 Convenções de Código
+
+- Use `const` sempre que possível
+- Nomeie providers com sufixo `Provider`
+- DTOs sempre na camada `data`
+- Models sempre na camada `domain`
+- Widgets reutilizáveis em `shared/widgets`
+- Use Freezed para imutabilidade
+- Sempre trate erros com `AppError`
+
+## 🐛 Debug
+
+### Ativar logs do Dio:
+
+Os logs já estão configurados. Para desativar em produção:
+
+```dart
+// Em dio_client.dart, comentar:
+// _dio.interceptors.add(LogInterceptor(...));
+```
+
+### Ver estado do Riverpod:
+
+Use o Riverpod DevTools no Flutter Inspector.
+
+## 📄 Licença
+
+Proprietário - Todos os direitos reservados.
+
 ---
-| Feature       | UseCases                                                                                                                                                                                                   |
-|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Product       | Get Product UseCase                                                                                                                                                                                        |
-| Category      | Get Cached Category UseCase<br/>Get Remote Category UseCase<br/>Filter Category UseCase                                                                                                                    |
-| Cart          | Get Cached Cart UseCase<br/>Get Remote Cart UseCase<br/>Add Cart Item UseCase<br/>Sync Cart UseCase                                                                                                        |
-| User          | Get Cached User UseCase<br/>SignIn UseCase<br/>SignUp UseCase<br/>SignOut UseCase                                                                                                                          |
-| Delivery Info | Get Cached Delivery Info UseCase<br/>Get Remote Delivery Info UseCase<br/>Add Delivery Info UseCase<br/>Edit Delivery Info UseCase<br/>Select Delivery Info UseCase<br/>Get Selected Delivery Info UseCase |
-| Order         | Get Orders UseCase<br/>Add Order UseCase                                                                                                                                                                   |
 
----
-
-## Demo Sample
-
-<div style="text-align: center">
-    <table>
-        <tr>
-            <td style="text-align: center">
-                <img src="https://res.cloudinary.com/dhyttttax/image/upload/v1695741758/RepoAssets/home-loading_r39lc6.gif" width="200"/>
-            </td>            
-            <td style="text-align: center">
-                <img src="https://res.cloudinary.com/dhyttttax/image/upload/v1695743869/RepoAssets/home-navigation-min_q1cou5.gif" width="200"/>
-            </td>
-            <td style="text-align: center">
-                <img src="https://res.cloudinary.com/dhyttttax/image/upload/v1695744798/RepoAssets/product-details-order_j0lvw5.gif" width="200" />
-            </td>
-        </tr>
-        <tr>
-            <td style="text-align: center">
-                <img src="https://res.cloudinary.com/dhyttttax/image/upload/v1695745493/RepoAssets/user-delivery-infomarion_zr1eyv.gif" width="200"/>
-            </td>
-            <td style="text-align: center">
-                <img src="https://res.cloudinary.com/dhyttttax/image/upload/v1695746530/RepoAssets/user-auth-screens_k3h6fw.gif" width="200"/>
-            </td>
-            <td style="text-align: center">
-                <img src="https://res.cloudinary.com/dhyttttax/image/upload/v1695747060/RepoAssets/user-sign-in-loading_qjqmt0.gif" width="200"/>
-            </td>
-        </tr>
-    </table>
-</div>
-
-## Backend Options
-### Node json-server(Mock API)
-* Source Code - https://github.com/Sameera-Perera/E-Commerce-Mock-API
-* Live - https://e-commerce-mock-api-webservice.onrender.com
-
-### Java Spring Boot
-* Source Code - coming soon
-* Live - coming soon
-
-## Contributing:
-
-We welcome contributions from the Flutter community to make this project even better. Whether you are interested in adding new features, fixing bugs, or improving documentation, your contributions are highly appreciated. Please refer to the contribution guidelines in the repository for more details on how to get involved.
-
-<!-- GETTING STARTED -->
-## Getting Started
-
-To get started with this project, follow the instructions in the README to set up your development environment and run the app locally. You can also explore the project's architecture, tests, and documentation to gain insights into building robust Flutter apps.
-
-We hope this Flutter-TDD-Clean-Architecture-E-Commerce-App serves as a valuable resource for both Flutter enthusiasts and developers looking to learn about TDD, clean architecture, and BLoC in the context of mobile app development. Happy coding!
-
-### Installation
-
-1. Clone the repo
-   ```sh
-   git clone https://github.com/Sameera-Perera/Flutter-TDD-Clean-Architecture-E-Commerce-App.git
-   ```
-2. Install packages
-   ```sh
-   flutter pub get
-   ```
-3. Run app
-   ```sh
-   flutter run lib/main.dart
-   ```
-4. Run test
-   ```sh
-   flutter test
-   ```
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
-
-<!-- LICENSE -->
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Contributors ✨
-
-Thanks to these wonderful people:
-<!-- ALL-CONTRIBUTORS-LIST:START -->
-<table>
-  <tr><td align="center"><a href="https://github.com/AaronDsilva97"><img src="https://avatars.githubusercontent.com/u/74453685?v=4" width="100px;" alt="AaronDsilva97"/><br /><sub><b>AaronDsilva97</b></sub></a></td></tr>
-</table>
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/Sameera-Perera/Flutter-TDD-Clean-Architecture-E-Commerce-App.svg?style=for-the-badge
-[contributors-url]: https://github.com/Sameera-Perera/Flutter-TDD-Clean-Architecture-E-Commerce-App/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/Sameera-Perera/Flutter-TDD-Clean-Architecture-E-Commerce-App.svg?style=for-the-badge
-[forks-url]: https://github.com/Sameera-Perera/Flutter-TDD-Clean-Architecture-E-Commerce-App/network/members
-[stars-shield]: https://img.shields.io/github/stars/Sameera-Perera/Flutter-TDD-Clean-Architecture-E-Commerce-App.svg?style=for-the-badge
-[stars-url]: https://github.com/Sameera-Perera/Flutter-TDD-Clean-Architecture-E-Commerce-App/stargazers
-[issues-shield]: https://img.shields.io/github/issues/Sameera-Perera/Flutter-TDD-Clean-Architecture-E-Commerce-App.svg?style=for-the-badge
-[issues-url]: https://github.com/Sameera-Perera/Flutter-TDD-Clean-Architecture-E-Commerce-App/issues
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: http://www.linkedin.com/in/sameera-perera-1148081b8
-[product-screenshot]: readme_assets/splash.jpg
+**Desenvolvido com ❤️ usando Flutter**

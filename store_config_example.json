@@ -1,0 +1,12 @@
+{
+  "storeId": "loja-exemplo-001",
+  "apiBaseUrl": "https://api.minhaloja.com.br",
+  "storeName": "Minha Loja Exemplo",
+  "logoUrl": "https://minhaloja.com.br/logo.png",
+  "primaryColor": "#6200EE",
+  "secondaryColor": "#03DAC6",
+  "currency": "R$",
+  "showBanners": true,
+  "showReviews": true,
+  "showRecommendations": true
+}
