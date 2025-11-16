@@ -25,6 +25,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> _checkAuthStatus() async {
     final isLoggedIn = await _repository.isLoggedIn();
+
+    // Verifica se o notifier ainda está montado antes de atualizar o estado
+    if (!mounted) return;
+
     if (isLoggedIn) {
       // TODO: Buscar dados do usuário
       state = const AuthState.unauthenticated();

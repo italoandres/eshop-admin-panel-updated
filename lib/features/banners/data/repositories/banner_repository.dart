@@ -31,6 +31,12 @@ class BannerRepository {
 
       return banners;
     } on DioException catch (e) {
+      // Se for erro de conexão, retorna banners mock para desenvolvimento
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.unknown) {
+        return _getMockBanners();
+      }
+
       if (e.response?.statusCode == 404) {
         throw const AppError.notFound(message: 'Banners não encontrados');
       } else if (e.response?.statusCode == 401) {
@@ -49,6 +55,36 @@ class BannerRepository {
     } catch (e) {
       throw AppError.unknown(message: e.toString());
     }
+  }
+
+  // Banners mock para desenvolvimento/teste
+  List<BannerModel> _getMockBanners() {
+    return [
+      BannerModel(
+        id: 'mock-banner-1',
+        title: 'Ofertas de Verão',
+        imageUrl: 'https://picsum.photos/800/300?random=1',
+        targetUrl: null,
+        order: 1,
+        active: true,
+      ),
+      BannerModel(
+        id: 'mock-banner-2',
+        title: 'Novos Produtos',
+        imageUrl: 'https://picsum.photos/800/300?random=2',
+        targetUrl: null,
+        order: 2,
+        active: true,
+      ),
+      BannerModel(
+        id: 'mock-banner-3',
+        title: 'Promoção Especial',
+        imageUrl: 'https://picsum.photos/800/300?random=3',
+        targetUrl: null,
+        order: 3,
+        active: true,
+      ),
+    ];
   }
 
   Future<BannerModel> fetchBannerById(String id) async {
