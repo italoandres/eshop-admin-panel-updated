@@ -1,17 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../banners/presentation/widgets/banner_carousel.dart';
 import '../../../banners/presentation/providers/banner_provider.dart';
 import '../../../auth/presentation/notifiers/auth_notifier.dart';
+import '../../../../core/config/store_config_provider.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  // TODO: Buscar stories da API
+  final bool hasStories = true; // TODO: Vir da API
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    if (hasStories) {
+      _animationController.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _onStoriesPressed() {
+    debugPrint('Stories clicked');
+    // TODO: Navegar para tela de visualização de stories
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final storeConfig = ref.watch(storeConfigProvider).value;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        toolbarHeight: 100,
+        title: null, // Remove o título centralizado
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined),
@@ -27,78 +75,95 @@ class HomePage extends ConsumerWidget {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          // Recarrega os banners
-          ref.invalidate(fetchBannersProvider);
-        },
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          children: [
-            // Carrossel de banners
-            const BannerCarousel(),
-            const SizedBox(height: 24),
-
-            // Seção de categorias
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Categorias',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            SizedBox(
-              height: 100,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return _CategoryCard(
-                    title: 'Categoria ${index + 1}',
-                    icon: Icons.category,
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Seção de produtos recomendados
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Produtos Recomendados',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: 6,
-              itemBuilder: (context, index) {
-                return _ProductCard(
-                  title: 'Produto ${index + 1}',
-                  price: 'R\$ ${(index + 1) * 10},00',
-                );
+      body: Stack(
+        children: [
+          // Conteúdo scrollável
+          Positioned.fill(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                // Recarrega os banners
+                ref.invalidate(fetchBannersProvider);
               },
+              child: ListView(
+                padding: const EdgeInsets.only(top: 31, bottom: 16), // 31px = 15% de 100px + margem
+                children: [
+                  // Carrossel de banners
+                  const BannerCarousel(),
+                  const SizedBox(height: 24),
+
+                  // Seção de categorias
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'Categorias',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  SizedBox(
+                    height: 100,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        return _CategoryCard(
+                          title: 'Categoria ${index + 1}',
+                          icon: Icons.category,
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Seção de produtos recomendados
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'Produtos Recomendados',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.75,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                    ),
+                    itemCount: 6,
+                    itemBuilder: (context, index) {
+                      return _ProductCard(
+                        title: 'Produto ${index + 1}',
+                        price: 'R\$ ${(index + 1) * 10},00',
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+
+          // Círculo de stories (fixo, sobrepondo)
+          Positioned(
+            top: 15, // 100px (AppBar) - 85px (85% do círculo) = 15px
+            left: 0,
+            right: 0,
+            child: Center(
+              child: _buildStoriesCircle(storeConfig?.logoUrl),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
@@ -126,6 +191,97 @@ class HomePage extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStoriesCircle(String? logoUrl) {
+    const double circleSize = 100.0;
+    const double borderWidth = 4.0;
+
+    Widget circle = Container(
+      width: circleSize,
+      height: circleSize,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+        border: hasStories
+            ? null
+            : Border.all(color: Colors.grey.shade300, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipOval(
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: logoUrl != null
+              ? CachedNetworkImage(
+                  imageUrl: logoUrl,
+                  fit: BoxFit.contain,
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.store,
+                    size: 40,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                )
+              : Icon(
+                  Icons.store,
+                  size: 40,
+                  color: Theme.of(context).primaryColor,
+                ),
+        ),
+      ),
+    );
+
+    // Se tem stories, adiciona borda gradiente animada
+    if (hasStories) {
+      circle = AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: Container(
+              width: circleSize + borderWidth * 2,
+              height: circleSize + borderWidth * 2,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF00BCD4), // Ciano
+                    Color(0xFF9C27B0), // Roxo
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF00BCD4).withOpacity(0.3),
+                    blurRadius: 12,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(borderWidth),
+                child: child,
+              ),
+            ),
+          );
+        },
+        child: circle,
+      );
+    }
+
+    return GestureDetector(
+      onTap: _onStoriesPressed,
+      child: circle,
     );
   }
 }
