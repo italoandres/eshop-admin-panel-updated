@@ -5,6 +5,7 @@ import '../../../banners/presentation/widgets/banner_carousel.dart';
 import '../../../banners/presentation/providers/banner_provider.dart';
 import '../../../auth/presentation/notifiers/auth_notifier.dart';
 import '../../../../core/config/store_config_provider.dart';
+import '../widgets/quick_access_icons.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -90,33 +91,8 @@ class _HomePageState extends ConsumerState<HomePage>
                 const BannerCarousel(),
                 const SizedBox(height: 24),
 
-                // Seção de categorias
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    'Categorias',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                SizedBox(
-                  height: 100,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return _CategoryCard(
-                        title: 'Categoria ${index + 1}',
-                        icon: Icons.category,
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 24),
+                // Ícones de acesso rápido
+                const QuickAccessIcons(),
 
                 // Seção de produtos recomendados
                 Padding(
@@ -292,50 +268,6 @@ class _HomePageState extends ConsumerState<HomePage>
           border: Border.all(color: Colors.grey.shade300, width: 2),
         ),
         child: innerCircle,
-      ),
-    );
-  }
-}
-
-class _CategoryCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
-
-  const _CategoryCard({
-    required this.title,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      margin: const EdgeInsets.only(right: 12),
-      child: Card(
-        child: InkWell(
-          onTap: () {
-            // TODO: Navegar para categoria
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 32,
-                color: Theme.of(context).primaryColor,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                title,
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
