@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/network/dio_provider.dart';
-import '../data/repositories/banner_repository.dart';
-import '../domain/models/banner_model.dart';
+import '../../../../core/network/dio_provider.dart';
+import '../../data/repositories/banner_repository.dart';
+import '../../domain/models/banner_model.dart';
 
 // Provider do repositório
 final bannerRepositoryProvider = Provider<BannerRepository>((ref) {

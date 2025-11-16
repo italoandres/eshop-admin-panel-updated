@@ -11,7 +11,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/login',
     redirect: (context, state) {
-      final isAuthenticated = authState is _Authenticated;
+      final isAuthenticated = authState.maybeWhen(
+        authenticated: (_) => true,
+        orElse: () => false,
+      );
       final isLoggingIn = state.matchedLocation == '/login';
 
       // Se não está autenticado e não está na tela de login, redireciona
