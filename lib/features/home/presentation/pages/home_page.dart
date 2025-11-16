@@ -16,7 +16,7 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
+  late Animation<double> _opacityAnimation;
 
   // TODO: Buscar stories da API
   final bool hasStories = true; // TODO: Vir da API
@@ -29,7 +29,7 @@ class _HomePageState extends ConsumerState<HomePage>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+    _opacityAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOut,
@@ -85,7 +85,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 ref.invalidate(fetchBannersProvider);
               },
               child: ListView(
-                padding: const EdgeInsets.only(top: 31, bottom: 16), // 31px = 15% de 100px + margem
+                padding: const EdgeInsets.only(top: 10, bottom: 16), // 10px = 10% do círculo sobrepondo
                 children: [
                   // Carrossel de banners
                   const BannerCarousel(),
@@ -156,7 +156,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
           // Círculo de stories (fixo, sobrepondo)
           Positioned(
-            top: 15, // 100px (AppBar) - 85px (85% do círculo) = 15px
+            top: 10, // 100px (AppBar) - 90px (90% do círculo) = 10px
             left: 0,
             right: 0,
             child: Center(
@@ -198,15 +198,13 @@ class _HomePageState extends ConsumerState<HomePage>
     const double circleSize = 100.0;
     const double borderWidth = 4.0;
 
-    Widget circle = Container(
+    // Círculo interno (SEMPRE VISÍVEL, SEM ANIMAÇÃO)
+    Widget innerCircle = Container(
       width: circleSize,
       height: circleSize,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.white,
-        border: hasStories
-            ? null
-            : Border.all(color: Colors.grey.shade300, width: 2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -240,48 +238,63 @@ class _HomePageState extends ConsumerState<HomePage>
       ),
     );
 
-    // Se tem stories, adiciona borda gradiente animada
+    // Se TEM stories: adiciona BORDA ANIMADA (opacity, não scale)
     if (hasStories) {
-      circle = AnimatedBuilder(
-        animation: _scaleAnimation,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Container(
-              width: circleSize + borderWidth * 2,
-              height: circleSize + borderWidth * 2,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF00BCD4), // Ciano
-                    Color(0xFF9C27B0), // Roxo
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF00BCD4).withOpacity(0.3),
-                    blurRadius: 12,
-                    spreadRadius: 2,
+      return GestureDetector(
+        onTap: _onStoriesPressed,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Borda gradiente ANIMADA (pulsa opacity)
+            AnimatedBuilder(
+              animation: _opacityAnimation,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: _opacityAnimation.value,
+                  child: Container(
+                    width: circleSize + borderWidth * 2,
+                    height: circleSize + borderWidth * 2,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF00BCD4), // Ciano
+                          Color(0xFF9C27B0), // Roxo
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF00BCD4).withOpacity(0.5),
+                          blurRadius: 16,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(borderWidth),
-                child: child,
-              ),
+                );
+              },
             ),
-          );
-        },
-        child: circle,
+            // Círculo interno FIXO (não anima)
+            innerCircle,
+          ],
+        ),
       );
     }
 
+    // Se NÃO tem stories: apenas borda cinza
     return GestureDetector(
       onTap: _onStoriesPressed,
-      child: circle,
+      child: Container(
+        width: circleSize,
+        height: circleSize,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.grey.shade300, width: 2),
+        ),
+        child: innerCircle,
+      ),
     );
   }
 }
