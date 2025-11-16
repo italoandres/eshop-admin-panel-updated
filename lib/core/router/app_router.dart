@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../features/auth/presentation/notifiers/auth_notifier.dart';
-import '../features/auth/presentation/pages/login_page.dart';
-import '../features/home/presentation/pages/home_page.dart';
+import '../../features/auth/presentation/notifiers/auth_notifier.dart';
+import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/home/presentation/pages/home_page.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authNotifierProvider);
@@ -11,7 +11,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/login',
     redirect: (context, state) {
-      final isAuthenticated = authState is _Authenticated;
+      final isAuthenticated = authState.maybeWhen(
+        authenticated: (_) => true,
+        orElse: () => false,
+      );
       final isLoggingIn = state.matchedLocation == '/login';
 
       // Se não está autenticado e não está na tela de login, redireciona

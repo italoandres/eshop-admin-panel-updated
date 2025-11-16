@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../banners/presentation/widgets/banner_carousel.dart';
+import '../../../banners/presentation/providers/banner_provider.dart';
 import '../../../auth/presentation/notifiers/auth_notifier.dart';
 
 class HomePage extends ConsumerWidget {
