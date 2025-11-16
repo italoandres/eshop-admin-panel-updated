@@ -12,6 +12,23 @@ class AuthRepository {
   AuthRepository(this._dioClient);
 
   Future<UserModel> login(String email, String password) async {
+    // Modo de teste/desenvolvimento - aceita credenciais de teste
+    if (email == 'teste@teste.com' && password == '123456') {
+      final mockUser = UserModel(
+        id: 'mock-user-123',
+        name: 'Usuário de Teste',
+        email: email,
+        phone: '(11) 99999-9999',
+        createdAt: DateTime.now(),
+      );
+
+      // Salva um token mock
+      await _secureStorage.write(key: 'auth_token', value: 'mock-token-12345');
+      await _secureStorage.write(key: 'refresh_token', value: 'mock-refresh-token');
+
+      return mockUser;
+    }
+
     try {
       final response = await _dioClient.post<Map<String, dynamic>>(
         '/auth/login',
