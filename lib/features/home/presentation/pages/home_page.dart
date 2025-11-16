@@ -55,141 +55,140 @@ class _HomePageState extends ConsumerState<HomePage>
   @override
   Widget build(BuildContext context) {
     final storeConfig = ref.watch(storeConfigProvider).value;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 100,
-        title: null,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart_outlined),
-            onPressed: () {
-              // TODO: Navegar para carrinho
-            },
+    return Stack(
+      children: [
+        // Scaffold com AppBar e conteúdo
+        Scaffold(
+          appBar: AppBar(
+            toolbarHeight: 100,
+            title: null,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart_outlined),
+                onPressed: () {
+                  // TODO: Navegar para carrinho
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {
+                  ref.read(authNotifierProvider.notifier).logout();
+                },
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              ref.read(authNotifierProvider.notifier).logout();
+          body: RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(fetchBannersProvider);
             },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          // Conteúdo scrollável
-          Positioned.fill(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                ref.invalidate(fetchBannersProvider);
-              },
-              child: ListView(
-                padding: const EdgeInsets.only(top: 10, bottom: 16),
-                children: [
-                  // Carrossel de banners
-                  const BannerCarousel(),
-                  const SizedBox(height: 24),
+            child: ListView(
+              padding: const EdgeInsets.only(top: 10, bottom: 16),
+              children: [
+                // Carrossel de banners
+                const BannerCarousel(),
+                const SizedBox(height: 24),
 
-                  // Seção de categorias
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'Categorias',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
+                // Seção de categorias
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'Categorias',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
-                  const SizedBox(height: 12),
+                ),
+                const SizedBox(height: 12),
 
-                  SizedBox(
-                    height: 100,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return _CategoryCard(
-                          title: 'Categoria ${index + 1}',
-                          icon: Icons.category,
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Seção de produtos recomendados
-                  Padding(
+                SizedBox(
+                  height: 100,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'Produtos Recomendados',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.75,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                    ),
-                    itemCount: 6,
+                    itemCount: 5,
                     itemBuilder: (context, index) {
-                      return _ProductCard(
-                        title: 'Produto ${index + 1}',
-                        price: 'R\$ ${(index + 1) * 10},00',
+                      return _CategoryCard(
+                        title: 'Categoria ${index + 1}',
+                        icon: Icons.category,
                       );
                     },
                   ),
-                ],
-              ),
-            ),
-          ),
+                ),
+                const SizedBox(height: 24),
 
-          // Círculo de stories - 90% DENTRO da AppBar roxa
-          Positioned(
-            top: -90, // NEGATIVO = 90px para cima = 90% dentro da AppBar
-            left: 0,
-            right: 0,
-            child: Center(
-              child: _buildStoriesCircle(storeConfig?.logoUrl),
+                // Seção de produtos recomendados
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'Produtos Recomendados',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.75,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                  ),
+                  itemCount: 6,
+                  itemBuilder: (context, index) {
+                    return _ProductCard(
+                      title: 'Produto ${index + 1}',
+                      price: 'R\$ ${(index + 1) * 10},00',
+                    );
+                  },
+                ),
+              ],
             ),
           ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: 0,
+            type: BottomNavigationBarType.fixed,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.category_outlined),
+                activeIcon: Icon(Icons.category),
+                label: 'Categorias',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.shopping_cart_outlined),
+                activeIcon: Icon(Icons.shopping_cart),
+                label: 'Carrinho',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_outline),
+                activeIcon: Icon(Icons.person),
+                label: 'Perfil',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category_outlined),
-            activeIcon: Icon(Icons.category),
-            label: 'Categorias',
+        ),
+
+        // Círculo de stories POR CIMA de tudo - 90% dentro da AppBar roxa
+        Positioned(
+          top: statusBarHeight + 10, // StatusBar + 10px do topo da AppBar
+          left: 0,
+          right: 0,
+          child: Center(
+            child: _buildStoriesCircle(storeConfig?.logoUrl),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            activeIcon: Icon(Icons.shopping_cart),
-            label: 'Carrinho',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
