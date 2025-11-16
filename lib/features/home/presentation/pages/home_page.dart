@@ -59,7 +59,7 @@ class _HomePageState extends ConsumerState<HomePage>
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 100,
-        title: null, // Remove o título centralizado
+        title: null,
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined),
@@ -81,11 +81,10 @@ class _HomePageState extends ConsumerState<HomePage>
           Positioned.fill(
             child: RefreshIndicator(
               onRefresh: () async {
-                // Recarrega os banners
                 ref.invalidate(fetchBannersProvider);
               },
               child: ListView(
-                padding: const EdgeInsets.only(top: 10, bottom: 16), // 10px = 10% do círculo sobrepondo
+                padding: const EdgeInsets.only(top: 10, bottom: 16),
                 children: [
                   // Carrossel de banners
                   const BannerCarousel(),
@@ -154,9 +153,9 @@ class _HomePageState extends ConsumerState<HomePage>
             ),
           ),
 
-          // Círculo de stories (fixo, sobrepondo)
+          // Círculo de stories - 90% DENTRO da AppBar roxa
           Positioned(
-            top: 10, // 100px (AppBar) - 90px (90% do círculo) = 10px
+            top: -90, // NEGATIVO = 90px para cima = 90% dentro da AppBar
             left: 0,
             right: 0,
             child: Center(
