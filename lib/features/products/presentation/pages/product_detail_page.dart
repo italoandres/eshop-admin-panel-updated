@@ -87,7 +87,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       left: 0,
       right: 0,
       child: Container(
-        color: Theme.of(context).primaryColor,
+        color: const Color(0xFF6200EE),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
