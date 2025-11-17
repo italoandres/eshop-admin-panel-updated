@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../pages/customer_protection_page.dart';
 
 class ProductCustomerProtectionSection extends StatelessWidget {
   const ProductCustomerProtectionSection({Key? key}) : super(key: key);
@@ -13,11 +14,11 @@ class ProductCustomerProtectionSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: GestureDetector(
         onTap: () {
-          // TODO: Navegar para CustomerProtectionPage
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Navegando para Proteção do Cliente...'),
-            ),
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => const CustomerProtectionPage(),
           );
         },
         child: Container(
