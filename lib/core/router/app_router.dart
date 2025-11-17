@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/notifiers/auth_notifier.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/products/presentation/pages/products_list_page.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authNotifierProvider);
@@ -61,6 +62,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             child: Text('Carrinho - TODO'),
           ),
         ),
+      ),
+      GoRoute(
+        path: '/products/:category',
+        builder: (context, state) {
+          final category = state.pathParameters['category']!;
+          return ProductsListPage(categoryName: category);
+        },
       ),
       GoRoute(
         path: '/profile',
