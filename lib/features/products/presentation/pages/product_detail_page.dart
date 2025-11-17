@@ -19,6 +19,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   int _selectedColorIndex = 1;
   String _selectedSize = 'M';
   bool hasCouponBanner = true;
+  bool _isDescriptionExpanded = false;
+
+  // Dados mock
+  final mockRating = 4.66;
+  final mockRatingCount = 671;
+  final mockRecommendationPercent = 0.95;
+  final mockReviews = const [
+    {'user': 'Edson', 'date': '17 de nov de 2025', 'comment': 'Ótimo produto. Recomendo!', 'rating': 5},
+    {'user': 'Kelly', 'date': '12 de nov de 2025', 'comment': 'Top demais!', 'rating': 5},
+    {'user': 'Carlos', 'date': '10 de nov de 2025', 'comment': 'Superou minhas expectativas!', 'rating': 5},
+    {'user': 'Ana', 'date': '8 de nov de 2025', 'comment': 'Produto de qualidade. Vale a pena.', 'rating': 4},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +72,37 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 // Alerta de estoque baixo
                 _buildStockAlert(),
 
-                const SizedBox(height: 100), // Espaço para o botão fixo
+                const SizedBox(height: 24),
+
+                // Seção: Prazo de entrega
+                _buildDeliverySection(),
+
+                Divider(height: 32, thickness: 1, color: Colors.grey[800]),
+
+                // Seção: Descrição do Produto (accordion)
+                _buildDescriptionSection(),
+
+                Divider(height: 32, thickness: 1, color: Colors.grey[800]),
+
+                // Seção: Avaliação do produto
+                _buildRatingOverview(),
+
+                const SizedBox(height: 16),
+
+                // Seção: Recomendações
+                _buildRecommendationSection(),
+
+                const SizedBox(height: 16),
+
+                // Botão: Mostrar todas avaliações
+                _buildShowAllReviewsButton(),
+
+                const SizedBox(height: 24),
+
+                // Seção: Comentários mais recentes
+                _buildRecentReviews(),
+
+                const SizedBox(height: 120), // Espaço para o botão fixo
               ],
             ),
           ),
@@ -681,6 +723,361 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           ),
         ),
       ),
+    );
+  }
+
+  // (A) Seção: Prazo de entrega
+  Widget _buildDeliverySection() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Prazo de entrega',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[400],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Chega dia 25 de novembro para o CEP 01310-100, se você finalizar o pedido com a opção de entrega Normal.',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  // TODO: Alterar CEP
+                },
+                child: Text(
+                  'Alterar CEP',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: const Color(0xFF6200EE),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 24),
+              GestureDetector(
+                onTap: () {
+                  // TODO: Ver outras formas de entrega
+                },
+                child: Text(
+                  'Ver outras formas de entrega',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: const Color(0xFF6200EE),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // (B) Seção: Descrição do Produto (accordion)
+  Widget _buildDescriptionSection() {
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            setState(() {
+              _isDescriptionExpanded = !_isDescriptionExpanded;
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Descrição do Produto',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Icon(
+                  _isDescriptionExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (_isDescriptionExpanded)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Text(
+              'Camisa Umbro TWR Striker masculina confeccionada em material de alta qualidade e tecnologia. '
+              'Perfeita para a prática esportiva, oferece conforto e estilo. '
+              'Detalhes modernos e acabamento impecável. '
+              'Ideal para quem busca performance e design.',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[300],
+                height: 1.6,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  // (C) Seção: Avaliação do produto
+  Widget _buildRatingOverview() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Avaliação do produto',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Avaliações dos clientes',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[400],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                mockRating.toStringAsFixed(2),
+                style: const TextStyle(
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: List.generate(5, (index) {
+                      return Icon(
+                        index < mockRating.floor()
+                            ? Icons.star
+                            : (index < mockRating ? Icons.star_half : Icons.star_border),
+                        color: Colors.amber,
+                        size: 24,
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Baseado em $mockRatingCount avaliações.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[400],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // (D) Seção: Recomendações
+  Widget _buildRecommendationSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                '${(mockRecommendationPercent * 100).toInt()}%',
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 800),
+              curve: Curves.easeOut,
+              tween: Tween<double>(
+                begin: 0,
+                end: mockRecommendationPercent,
+              ),
+              builder: (context, value, _) => LinearProgressIndicator(
+                value: value,
+                minHeight: 8,
+                backgroundColor: Colors.grey[800],
+                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF6200EE)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Dos clientes recomendam esse produto.',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[400],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // (E) Botão: Mostrar todas avaliações
+  Widget _buildShowAllReviewsButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: GestureDetector(
+        onTap: () {
+          // TODO: Navegar para todas avaliações
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Navegando para todas avaliações...')),
+          );
+        },
+        child: Row(
+          children: [
+            Text(
+              'Mostrar todas avaliações',
+              style: TextStyle(
+                fontSize: 14,
+                color: const Color(0xFF6200EE),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(
+              Icons.arrow_forward,
+              color: Color(0xFF6200EE),
+              size: 16,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // (F) Seção: Comentários mais recentes (scroll horizontal)
+  Widget _buildRecentReviews() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Comentários mais recentes',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 180,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: mockReviews.length,
+            itemBuilder: (context, index) {
+              final review = mockReviews[index];
+              return Container(
+                width: 280,
+                margin: const EdgeInsets.only(right: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[850],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[800]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Estrelas
+                    Row(
+                      children: List.generate(5, (starIndex) {
+                        return Icon(
+                          starIndex < review['rating']
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: Colors.amber,
+                          size: 18,
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 12),
+                    // Nome do cliente
+                    Text(
+                      review['user'] as String,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // Data
+                    Text(
+                      review['date'] as String,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Comentário
+                    Expanded(
+                      child: Text(
+                        review['comment'] as String,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[300],
+                          height: 1.5,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
