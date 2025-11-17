@@ -130,43 +130,49 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       top: 0,
       left: 0,
       right: 0,
-      child: Container(
-        color: const Color(0xFF6200EE),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: statusBarHeight),
-            // Row com X e Carrinho
-            SizedBox(
-              height: 56,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Botão Fechar (X)
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Container lilás com 100px de altura
+          Container(
+            height: statusBarHeight + 100,
+            color: const Color(0xFF6200EE),
+            child: Column(
+              children: [
+                SizedBox(height: statusBarHeight),
+                // Row com X e Carrinho (60px)
+                SizedBox(
+                  height: 60,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Botão Fechar (X)
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        // Botão Carrinho
+                        IconButton(
+                          icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                          onPressed: () {
+                            // TODO: Navegar para carrinho
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Navegando para o carrinho...')),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    // Botão Carrinho
-                    IconButton(
-                      icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                      onPressed: () {
-                        // TODO: Navegar para carrinho
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Navegando para o carrinho...')),
-                        );
-                      },
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                // Barra de promoção progressiva (40px com fundo preto)
+                _buildProgressBar(),
+              ],
             ),
-            // Barra de promoção progressiva
-            _buildProgressBar(),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -174,9 +180,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   // Barra de promoção progressiva
   Widget _buildProgressBar() {
     return Container(
-      height: 44,
+      height: 40,
       color: Colors.black,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
         children: [
           // Etapa 1
