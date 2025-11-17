@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/product_customer_protection.dart';
+import '../widgets/product_progressive_discount_banner.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final String productId;
@@ -32,6 +33,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     {'user': 'Carlos', 'date': '10 de nov de 2025', 'comment': 'Superou minhas expectativas!', 'rating': 5},
     {'user': 'Ana', 'date': '8 de nov de 2025', 'comment': 'Produto de qualidade. Vale a pena.', 'rating': 4},
   ];
+
+  // Dados de preço e desconto
+  final double mockOriginalPrice = 50.00;
+  final double? mockProgressiveDiscountPercent = 48.0; // 48% de desconto
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +82,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                 // Seção: Prazo de entrega
                 _buildDeliverySection(),
+
+                // Tarja de desconto progressivo (se houver)
+                if (mockProgressiveDiscountPercent != null && mockProgressiveDiscountPercent! > 0)
+                  ProductProgressiveDiscountBanner(
+                    discountPercent: mockProgressiveDiscountPercent!,
+                  ),
 
                 Divider(height: 32, thickness: 1, color: Colors.grey[800]),
 
@@ -489,11 +500,53 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   // Preço
   Widget _buildPriceSection() {
+    // Cálculo do preço com desconto
+    final discountPercent = mockProgressiveDiscountPercent ?? 0;
+    final discountedPrice = mockOriginalPrice * (1 - (discountPercent / 100));
+    final installmentPrice = discountedPrice / 3;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Linha com badge de desconto e preço original riscado
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Badge de desconto (se houver)
+              if (mockProgressiveDiscountPercent != null && mockProgressiveDiscountPercent! > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE53935),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '-${mockProgressiveDiscountPercent!.toStringAsFixed(0)}%',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              const SizedBox(width: 8),
+              // Preço original riscado
+              if (mockProgressiveDiscountPercent != null && mockProgressiveDiscountPercent! > 0)
+                Text(
+                  'R\$ ${mockOriginalPrice.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[500],
+                    decoration: TextDecoration.lineThrough,
+                    decorationColor: Colors.grey[500],
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Preço final com desconto
           Text(
             'A partir de',
             style: TextStyle(
@@ -506,8 +559,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                'R\$ 37,99',
-                style: TextStyle(
+                'R\$ ${discountedPrice.toStringAsFixed(2)}',
+                style: const TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -524,8 +577,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ],
           ),
           const SizedBox(height: 8),
+          // Parcelamento (calculado com base no preço com desconto)
           Text(
-            'ou 3x de R\$ 14,66 sem juros',
+            'ou 3x de R\$ ${installmentPrice.toStringAsFixed(2)} sem juros',
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[500],
