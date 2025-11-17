@@ -128,14 +128,14 @@ class _QuickAccessItem extends StatelessWidget {
             Icon(
               icon,
               size: 22.0,
-              color: Colors.black87,
+              color: Colors.white,
             ),
             SizedBox(height: screenHeight * 0.008),
             Text(
               label,
               style: const TextStyle(
                 fontSize: 12.0,
-                color: Colors.black87,
+                color: Colors.white,
                 fontWeight: FontWeight.w500,
               ),
             ),
