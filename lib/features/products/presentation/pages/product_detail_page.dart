@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/product_customer_protection.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final String productId;
@@ -76,6 +77,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                 // Seção: Prazo de entrega
                 _buildDeliverySection(),
+
+                Divider(height: 32, thickness: 1, color: Colors.grey[800]),
+
+                // Seção: Proteção do Cliente
+                const ProductCustomerProtectionSection(),
 
                 Divider(height: 32, thickness: 1, color: Colors.grey[800]),
 
