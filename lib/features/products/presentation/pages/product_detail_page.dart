@@ -23,7 +23,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF121212),
       body: Stack(
         children: [
           // Conteúdo scrollável
@@ -49,7 +49,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 // Preço
                 _buildPriceSection(),
 
-                const Divider(height: 32, thickness: 1),
+                Divider(height: 32, thickness: 1, color: Colors.grey[800]),
 
                 // Seletor de cor
                 _buildColorSelector(),
@@ -60,7 +60,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 // Alerta de estoque baixo
                 _buildStockAlert(),
 
-                const Divider(height: 32, thickness: 1),
+                Divider(height: 32, thickness: 1, color: Colors.grey[800]),
 
                 // Vendido por / Enviado por
                 _buildSellerInfo(),
@@ -342,6 +342,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
           const SizedBox(width: 8),
@@ -358,7 +359,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Text(
             'Baseado em 671 avaliações',
             style: TextStyle(
-              color: Colors.grey[600],
+              color: Colors.grey[400],
               fontSize: 14,
             ),
           ),
@@ -380,6 +381,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
           ),
@@ -419,7 +421,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
+                color: Colors.grey[850],
+                border: Border.all(color: Colors.grey[700]!),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -445,7 +448,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             'A partir de',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: Colors.grey[400],
             ),
           ),
           const SizedBox(height: 4),
@@ -465,7 +468,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 'no Pix',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[600],
+                  color: Colors.grey[400],
                 ),
               ),
             ],
@@ -487,6 +490,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 12),
@@ -513,17 +517,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       border: Border.all(
                         color: isSelected
                             ? Theme.of(context).primaryColor
-                            : Colors.grey[300]!,
+                            : Colors.grey[700]!,
                         width: isSelected ? 3 : 1,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.grey[850],
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Icon(Icons.image, color: Colors.grey[400]),
+                      child: Icon(Icons.image, color: Colors.grey[600]),
                     ),
                   ),
                 );
@@ -547,6 +551,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 12),
@@ -572,11 +577,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     border: Border.all(
                       color: isSelected
                           ? Theme.of(context).primaryColor
-                          : (isAvailable ? Colors.grey[300]! : Colors.grey[200]!),
+                          : (isAvailable ? Colors.grey[700]! : Colors.grey[800]!),
                       width: isSelected ? 2 : 1,
                     ),
                     borderRadius: BorderRadius.circular(8),
-                    color: isAvailable ? Colors.white : Colors.grey[100],
+                    color: isAvailable ? Colors.grey[850] : Colors.grey[900],
                   ),
                   child: Center(
                     child: Text(
@@ -588,8 +593,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         color: isAvailable
                             ? (isSelected
                                 ? Theme.of(context).primaryColor
-                                : Colors.black)
-                            : Colors.grey[400],
+                                : Colors.white)
+                            : Colors.grey[600],
                       ),
                     ),
                   ),
@@ -642,13 +647,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             children: [
               Text(
                 'Vendido por ',
-                style: TextStyle(color: Colors.grey[600]),
+                style: TextStyle(color: Colors.grey[400]),
               ),
               const Text(
                 'Netshoes',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -658,7 +663,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             children: [
               Text(
                 'Enviado por ',
-                style: TextStyle(color: Colors.grey[600]),
+                style: TextStyle(color: Colors.grey[400]),
               ),
               const Text(
                 'FULL',
@@ -677,7 +682,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               const SizedBox(width: 8),
               Icon(
                 Icons.info_outline,
-                color: Colors.grey[600],
+                color: Colors.grey[400],
                 size: 18,
               ),
             ],
@@ -692,10 +697,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF1E1E1E),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
