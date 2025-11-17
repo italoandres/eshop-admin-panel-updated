@@ -43,8 +43,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Espaço para o header fixo (aumentado para acomodar header + barra de progresso)
-                SizedBox(height: MediaQuery.of(context).padding.top + 116),
+                // Espaço para o header fixo
+                SizedBox(height: MediaQuery.of(context).padding.top + 100),
 
                 // Banner de cupom (opcional)
                 if (hasCouponBanner) _buildCouponBanner(),
@@ -130,6 +130,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       right: 0,
       child: Container(
         color: const Color(0xFF6200EE),
+        height: MediaQuery.of(context).padding.top + 100,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -163,7 +164,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               ),
             ),
             // Barra de promoção progressiva
-            _buildProgressBar(),
+            Expanded(
+              child: _buildProgressBar(),
+            ),
           ],
         ),
       ),
@@ -173,8 +176,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   // Barra de promoção progressiva
   Widget _buildProgressBar() {
     return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: Colors.black,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
         children: [
           // Etapa 1
