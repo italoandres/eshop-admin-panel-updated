@@ -1030,7 +1030,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     Row(
                       children: List.generate(5, (starIndex) {
                         return Icon(
-                          starIndex < review['rating']
+                          starIndex < (review['rating'] as int)
                               ? Icons.star
                               : Icons.star_border,
                           color: Colors.amber,
