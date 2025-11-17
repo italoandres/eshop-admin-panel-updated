@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProductsListPage extends StatelessWidget {
   final String categoryName;
@@ -86,6 +87,7 @@ class ProductsListPage extends StatelessWidget {
               itemCount: 20,
               itemBuilder: (context, index) {
                 return _ProductCard(
+                  productId: 'prod-${index + 1}',
                   title: 'Produto ${index + 1}',
                   price: 'R\$ ${(index + 1) * 10},00',
                 );
@@ -99,10 +101,12 @@ class ProductsListPage extends StatelessWidget {
 }
 
 class _ProductCard extends StatelessWidget {
+  final String productId;
   final String title;
   final String price;
 
   const _ProductCard({
+    required this.productId,
     required this.title,
     required this.price,
   });
@@ -113,13 +117,7 @@ class _ProductCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          // TODO: Navegar para detalhes do produto
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Detalhes de $title'),
-              duration: const Duration(seconds: 1),
-            ),
-          );
+          context.push('/product/$productId');
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
