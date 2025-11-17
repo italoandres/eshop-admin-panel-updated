@@ -43,14 +43,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Espaço para o header fixo
-                SizedBox(height: MediaQuery.of(context).padding.top + 50),
+                // Espaço para o header fixo (barra lilás 40px + barra progressiva 40px = 80px)
+                SizedBox(height: MediaQuery.of(context).padding.top + 80),
 
-                // Banner de cupom (opcional)
+                // Banner de cupom (opcional) - scrollável
                 if (hasCouponBanner) _buildCouponBanner(),
-
-                // Barra de desconto progressivo
-                _buildProgressBar(),
 
                 // Carousel de fotos
                 _buildPhotoCarousel(),
@@ -125,7 +122,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  // Header fixo (topo - fundo lilás)
+  // Header fixo (topo - barra lilás 40px + barra de desconto progressivo)
   Widget _buildFixedHeader() {
     final statusBarHeight = MediaQuery.of(context).padding.top;
 
@@ -133,40 +130,48 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       top: 0,
       left: 0,
       right: 0,
-      child: Container(
-        height: statusBarHeight + 50,
-        color: const Color(0xFF6200EE),
-        child: Column(
-          children: [
-            SizedBox(height: statusBarHeight),
-            // Área lilás com botões (50px visíveis)
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Botão Fechar (X)
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Container LILÁS - 40px de altura
+          Container(
+            height: statusBarHeight + 40,
+            color: const Color(0xFF6200EE),
+            child: Column(
+              children: [
+                SizedBox(height: statusBarHeight),
+                // Área lilás com botões (40px visíveis)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Botão Fechar (X)
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        // Botão Carrinho
+                        IconButton(
+                          icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                          onPressed: () {
+                            // TODO: Navegar para carrinho
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Navegando para o carrinho...')),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    // Botão Carrinho
-                    IconButton(
-                      icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                      onPressed: () {
-                        // TODO: Navegar para carrinho
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Navegando para o carrinho...')),
-                        );
-                      },
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+          // Barra de desconto progressivo PRETA - colada abaixo da barra lilás (fixa)
+          _buildProgressBar(),
+        ],
       ),
     );
   }
