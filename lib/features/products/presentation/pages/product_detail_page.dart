@@ -44,10 +44,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Espaço para o header fixo
-                SizedBox(height: MediaQuery.of(context).padding.top + 100),
+                SizedBox(height: MediaQuery.of(context).padding.top + 50),
 
                 // Banner de cupom (opcional)
                 if (hasCouponBanner) _buildCouponBanner(),
+
+                // Barra de desconto progressivo
+                _buildProgressBar(),
 
                 // Carousel de fotos
                 _buildPhotoCarousel(),
@@ -122,7 +125,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  // Header fixo (topo - fundo lilás com barra de progresso)
+  // Header fixo (topo - fundo lilás)
   Widget _buildFixedHeader() {
     final statusBarHeight = MediaQuery.of(context).padding.top;
 
@@ -130,48 +133,40 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       top: 0,
       left: 0,
       right: 0,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Container LILÁS - 100px de altura
-          Container(
-            height: statusBarHeight + 100,
-            color: const Color(0xFF6200EE),
-            child: Column(
-              children: [
-                SizedBox(height: statusBarHeight),
-                // Área lilás com botões (100px visíveis)
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Botão Fechar (X)
-                        IconButton(
-                          icon: const Icon(Icons.close, color: Colors.white),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        // Botão Carrinho
-                        IconButton(
-                          icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                          onPressed: () {
-                            // TODO: Navegar para carrinho
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Navegando para o carrinho...')),
-                            );
-                          },
-                        ),
-                      ],
+      child: Container(
+        height: statusBarHeight + 50,
+        color: const Color(0xFF6200EE),
+        child: Column(
+          children: [
+            SizedBox(height: statusBarHeight),
+            // Área lilás com botões (50px visíveis)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Botão Fechar (X)
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                  ),
+                    // Botão Carrinho
+                    IconButton(
+                      icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                      onPressed: () {
+                        // TODO: Navegar para carrinho
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Navegando para o carrinho...')),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-          // Barra de promoção progressiva PRETA (fora do lilás)
-          _buildProgressBar(),
-        ],
+          ],
+        ),
       ),
     );
   }
