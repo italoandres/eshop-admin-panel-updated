@@ -138,6 +138,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         width: 160,
                         margin: const EdgeInsets.only(right: 12),
                         child: _ProductCard(
+                          productId: 'prod-${index + 1}',
                           title: 'Produto ${index + 1}',
                           price: 'R\$ ${(index + 1) * 10},00',
                         ),
@@ -159,6 +160,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         width: 160,
                         margin: const EdgeInsets.only(right: 12),
                         child: _ProductCard(
+                          productId: 'prod-${index + 11}',
                           title: 'Produto ${index + 11}',
                           price: 'R\$ ${(index + 11) * 10},00',
                         ),
@@ -210,6 +212,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         width: 160,
                         margin: const EdgeInsets.only(right: 12),
                         child: _ProductCard(
+                          productId: 'best-${index + 1}',
                           title: 'Best ${index + 1}',
                           price: 'R\$ ${(index + 1) * 15},00',
                         ),
@@ -231,6 +234,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         width: 160,
                         margin: const EdgeInsets.only(right: 12),
                         child: _ProductCard(
+                          productId: 'best-${index + 11}',
                           title: 'Best ${index + 11}',
                           price: 'R\$ ${(index + 11) * 15},00',
                         ),
@@ -388,10 +392,12 @@ class _HomePageState extends ConsumerState<HomePage>
 }
 
 class _ProductCard extends StatelessWidget {
+  final String productId;
   final String title;
   final String price;
 
   const _ProductCard({
+    required this.productId,
     required this.title,
     required this.price,
   });
@@ -401,7 +407,7 @@ class _ProductCard extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          // TODO: Navegar para detalhes do produto
+          context.push('/product/$productId');
         },
         borderRadius: BorderRadius.circular(16),
         child: Column(

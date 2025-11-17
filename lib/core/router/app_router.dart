@@ -5,6 +5,7 @@ import '../../features/auth/presentation/notifiers/auth_notifier.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/products/presentation/pages/products_list_page.dart';
+import '../../features/products/presentation/pages/product_detail_page.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authNotifierProvider);
@@ -82,11 +83,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/product/:id',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
-          return Scaffold(
-            body: Center(
-              child: Text('Detalhes do Produto $id - TODO'),
-            ),
-          );
+          return ProductDetailPage(productId: id);
         },
       ),
     ],
