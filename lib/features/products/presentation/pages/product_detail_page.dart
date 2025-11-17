@@ -133,16 +133,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Container lilás com 100px de altura
+          // Container LILÁS - 100px de altura
           Container(
             height: statusBarHeight + 100,
             color: const Color(0xFF6200EE),
             child: Column(
               children: [
                 SizedBox(height: statusBarHeight),
-                // Row com X e Carrinho (60px)
-                SizedBox(
-                  height: 60,
+                // Área lilás com botões (100px visíveis)
+                Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Row(
@@ -167,11 +166,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     ),
                   ),
                 ),
-                // Barra de promoção progressiva (40px com fundo preto)
-                _buildProgressBar(),
               ],
             ),
           ),
+          // Barra de promoção progressiva PRETA (fora do lilás)
+          _buildProgressBar(),
         ],
       ),
     );
