@@ -31,11 +31,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Espaço para o header fixo
-                SizedBox(height: MediaQuery.of(context).padding.top + 56),
-
-                // Barra de promoção progressiva
-                _buildProgressBar(),
+                // Espaço para o header fixo (aumentado para acomodar header + barra de progresso)
+                SizedBox(height: MediaQuery.of(context).padding.top + 116),
 
                 // Banner de cupom (opcional)
                 if (hasCouponBanner) _buildCouponBanner(),
@@ -88,38 +85,48 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  // Header fixo (topo - fundo escuro)
+  // Header fixo (topo - fundo lilás com barra de progresso)
   Widget _buildFixedHeader() {
     return Positioned(
       top: 0,
       left: 0,
       right: 0,
       child: Container(
-        color: Colors.black87,
-        padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 8,
-          bottom: 8,
-          left: 8,
-          right: 8,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        color: Theme.of(context).primaryColor,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Botão Fechar (X)
-            IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
+            // Row com X e Carrinho
+            Padding(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 8,
+                bottom: 8,
+                left: 8,
+                right: 8,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Botão Fechar (X)
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  // Botão Carrinho
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                    onPressed: () {
+                      // TODO: Navegar para carrinho
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Navegando para o carrinho...')),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-            // Botão Carrinho
-            IconButton(
-              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-              onPressed: () {
-                // TODO: Navegar para carrinho
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Navegando para o carrinho...')),
-                );
-              },
-            ),
+            // Barra de promoção progressiva
+            _buildProgressBar(),
           ],
         ),
       ),
@@ -130,13 +137,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _buildProgressBar() {
     return Container(
       height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[300]!),
-        ),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
           // Etapa 1
@@ -149,7 +150,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Expanded(
             child: Container(
               height: 2,
-              color: Colors.grey[300],
+              color: Colors.white.withOpacity(0.3),
             ),
           ),
           // Etapa 2
@@ -162,7 +163,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Expanded(
             child: Container(
               height: 2,
-              color: Colors.grey[300],
+              color: Colors.white.withOpacity(0.3),
             ),
           ),
           // Etapa 3
@@ -175,7 +176,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Expanded(
             child: Container(
               height: 2,
-              color: Colors.grey[300],
+              color: Colors.white.withOpacity(0.3),
             ),
           ),
           // Prêmio final
@@ -206,16 +207,24 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isCompleted || isActive
-                ? Theme.of(context).primaryColor
-                : Colors.grey[300],
+                ? Colors.white
+                : Colors.white.withOpacity(0.3),
           ),
           child: icon != null
-              ? Icon(icon, size: 16, color: Colors.white)
+              ? Icon(
+                  icon,
+                  size: 16,
+                  color: isCompleted || isActive
+                      ? Theme.of(context).primaryColor
+                      : Colors.white.withOpacity(0.7),
+                )
               : Center(
                   child: Text(
                     label,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: isCompleted || isActive
+                          ? Theme.of(context).primaryColor
+                          : Colors.white.withOpacity(0.7),
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
