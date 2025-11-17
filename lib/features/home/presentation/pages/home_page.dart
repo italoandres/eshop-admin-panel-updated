@@ -93,36 +93,149 @@ class _HomePageState extends ConsumerState<HomePage>
 
                 // Ícones de acesso rápido
                 const QuickAccessIcons(),
+                const SizedBox(height: 32),
 
-                // Seção de produtos recomendados
+                // SEÇÃO 1: Produtos Recomendados
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    'Produtos Recomendados',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Produtos Recomendados',
+                        style: TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // TODO: Ver todos os produtos recomendados
+                        },
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Ver mais'),
+                            Icon(Icons.chevron_right, size: 20),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 12),
 
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
+                // LINHA 1 - Produtos Recomendados
+                SizedBox(
+                  height: 220,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: 160,
+                        margin: const EdgeInsets.only(right: 12),
+                        child: _ProductCard(
+                          title: 'Produto ${index + 1}',
+                          price: 'R\$ ${(index + 1) * 10},00',
+                        ),
+                      );
+                    },
                   ),
-                  itemCount: 6,
-                  itemBuilder: (context, index) {
-                    return _ProductCard(
-                      title: 'Produto ${index + 1}',
-                      price: 'R\$ ${(index + 1) * 10},00',
-                    );
-                  },
+                ),
+                const SizedBox(height: 8),
+
+                // LINHA 2 - Produtos Recomendados
+                SizedBox(
+                  height: 220,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: 160,
+                        margin: const EdgeInsets.only(right: 12),
+                        child: _ProductCard(
+                          title: 'Produto ${index + 11}',
+                          price: 'R\$ ${(index + 11) * 10},00',
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                // SEÇÃO 2: Mais Vendidos
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Mais Vendidos',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // TODO: Ver todos os mais vendidos
+                        },
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Ver mais'),
+                            Icon(Icons.chevron_right, size: 20),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // LINHA 1 - Mais Vendidos
+                SizedBox(
+                  height: 220,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: 160,
+                        margin: const EdgeInsets.only(right: 12),
+                        child: _ProductCard(
+                          title: 'Best ${index + 1}',
+                          price: 'R\$ ${(index + 1) * 15},00',
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // LINHA 2 - Mais Vendidos
+                SizedBox(
+                  height: 220,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: 160,
+                        margin: const EdgeInsets.only(right: 12),
+                        child: _ProductCard(
+                          title: 'Best ${index + 11}',
+                          price: 'R\$ ${(index + 11) * 15},00',
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
@@ -293,21 +406,20 @@ class _ProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
+            Container(
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.image,
-                    size: 50,
-                    color: Colors.grey,
-                  ),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.image,
+                  size: 50,
+                  color: Colors.grey,
                 ),
               ),
             ),
