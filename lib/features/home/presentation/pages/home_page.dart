@@ -110,7 +110,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       ),
                       TextButton(
                         onPressed: () {
-                          // TODO: Ver todos os produtos recomendados
+                          context.push('/products/Produtos Recomendados');
                         },
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
@@ -182,7 +182,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       ),
                       TextButton(
                         onPressed: () {
-                          // TODO: Ver todos os mais vendidos
+                          context.push('/products/Mais Vendidos');
                         },
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
