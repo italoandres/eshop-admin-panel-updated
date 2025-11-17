@@ -60,11 +60,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 // Alerta de estoque baixo
                 _buildStockAlert(),
 
-                Divider(height: 32, thickness: 1, color: Colors.grey[800]),
-
-                // Vendido por / Enviado por
-                _buildSellerInfo(),
-
                 const SizedBox(height: 100), // Espaço para o botão fixo
               ],
             ),
@@ -460,7 +455,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(width: 8),
@@ -472,6 +467,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'ou 3x de R\$ 14,66 sem juros',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[500],
+            ),
           ),
         ],
       ),
@@ -636,62 +639,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  // Vendido por / Enviado por
-  Widget _buildSellerInfo() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Vendido por ',
-                style: TextStyle(color: Colors.grey[400]),
-              ),
-              const Text(
-                'Netshoes',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Text(
-                'Enviado por ',
-                style: TextStyle(color: Colors.grey[400]),
-              ),
-              const Text(
-                'FULL',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF9C27B0), // Roxo
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(width: 4),
-              const Icon(
-                Icons.local_shipping,
-                color: Color(0xFF9C27B0),
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.info_outline,
-                color: Colors.grey[400],
-                size: 18,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   // Botão adicionar ao carrinho
   Widget _buildAddToCartButton() {
     return Container(
@@ -718,7 +665,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: const Color(0xFF4CAF50),
           minimumSize: const Size(double.infinity, 56),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
