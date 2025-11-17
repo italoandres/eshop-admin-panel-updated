@@ -244,9 +244,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
           ),
           const SizedBox(width: 8),
-          const Text(
-            'na primeira compra! cupom',
-            style: TextStyle(fontSize: 14),
+          const Flexible(
+            child: Text(
+              'na primeira compra! cupom',
+              style: TextStyle(fontSize: 14),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           const SizedBox(width: 8),
           Container(
@@ -260,6 +263,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontSize: 12,
               ),
             ),
           ),
