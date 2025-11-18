@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/product_card.dart';
 
 class ProductsListPage extends StatelessWidget {
   final String categoryName;
@@ -86,7 +86,7 @@ class ProductsListPage extends StatelessWidget {
               ),
               itemCount: 20,
               itemBuilder: (context, index) {
-                return _ProductCard(
+                return ProductCard(
                   productId: 'prod-${index + 1}',
                   title: 'Produto ${index + 1}',
                   price: 'R\$ ${(index + 1) * 10},00',
@@ -95,76 +95,6 @@ class ProductsListPage extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _ProductCard extends StatelessWidget {
-  final String productId;
-  final String title;
-  final String price;
-
-  const _ProductCard({
-    required this.productId,
-    required this.title,
-    required this.price,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          context.push('/product/$productId');
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Imagem do produto
-            AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                color: Colors.grey[200],
-                child: const Center(
-                  child: Icon(
-                    Icons.image,
-                    size: 50,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
-            ),
-            // Informações do produto
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    price,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

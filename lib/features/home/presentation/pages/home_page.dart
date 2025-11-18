@@ -6,6 +6,7 @@ import '../../../banners/presentation/widgets/banner_carousel.dart';
 import '../../../banners/presentation/providers/banner_provider.dart';
 import '../../../auth/presentation/notifiers/auth_notifier.dart';
 import '../../../../core/config/store_config_provider.dart';
+import '../../../../core/widgets/product_card.dart';
 import '../widgets/quick_access_icons.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -137,10 +138,11 @@ class _HomePageState extends ConsumerState<HomePage>
                       return Container(
                         width: 160,
                         margin: const EdgeInsets.only(right: 12),
-                        child: _ProductCard(
+                        child: ProductCard(
                           productId: 'prod-${index + 1}',
                           title: 'Produto ${index + 1}',
                           price: 'R\$ ${(index + 1) * 10},00',
+                          useFixedHeight: true,
                         ),
                       );
                     },
@@ -159,10 +161,11 @@ class _HomePageState extends ConsumerState<HomePage>
                       return Container(
                         width: 160,
                         margin: const EdgeInsets.only(right: 12),
-                        child: _ProductCard(
+                        child: ProductCard(
                           productId: 'prod-${index + 11}',
                           title: 'Produto ${index + 11}',
                           price: 'R\$ ${(index + 11) * 10},00',
+                          useFixedHeight: true,
                         ),
                       );
                     },
@@ -211,10 +214,11 @@ class _HomePageState extends ConsumerState<HomePage>
                       return Container(
                         width: 160,
                         margin: const EdgeInsets.only(right: 12),
-                        child: _ProductCard(
+                        child: ProductCard(
                           productId: 'best-${index + 1}',
                           title: 'Best ${index + 1}',
                           price: 'R\$ ${(index + 1) * 15},00',
+                          useFixedHeight: true,
                         ),
                       );
                     },
@@ -233,10 +237,11 @@ class _HomePageState extends ConsumerState<HomePage>
                       return Container(
                         width: 160,
                         margin: const EdgeInsets.only(right: 12),
-                        child: _ProductCard(
+                        child: ProductCard(
                           productId: 'best-${index + 11}',
                           title: 'Best ${index + 11}',
                           price: 'R\$ ${(index + 11) * 15},00',
+                          useFixedHeight: true,
                         ),
                       );
                     },
@@ -386,77 +391,6 @@ class _HomePageState extends ConsumerState<HomePage>
           border: Border.all(color: Colors.grey.shade300, width: 2),
         ),
         child: innerCircle,
-      ),
-    );
-  }
-}
-
-class _ProductCard extends StatelessWidget {
-  final String productId;
-  final String title;
-  final String price;
-
-  const _ProductCard({
-    required this.productId,
-    required this.title,
-    required this.price,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: () {
-          context.push('/product/$productId');
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 120,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.image,
-                  size: 50,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    price,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
