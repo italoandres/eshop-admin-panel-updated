@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/product_customer_protection.dart';
 import '../widgets/product_progressive_discount_banner.dart';
+import '../../../shipping/presentation/widgets/shipping_options_modal.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final String productId;
@@ -823,9 +824,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             runSpacing: 8,
             children: [
               GestureDetector(
-                onTap: () {
-                  // TODO: Alterar CEP
-                },
+                onTap: () => _showShippingOptionsModal(),
                 child: Text(
                   'Alterar CEP',
                   style: TextStyle(
@@ -836,9 +835,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ),
               ),
               GestureDetector(
-                onTap: () {
-                  // TODO: Ver outras formas de entrega
-                },
+                onTap: () => _showShippingOptionsModal(),
                 child: Text(
                   'Ver outras formas de entrega',
                   style: TextStyle(
@@ -1146,6 +1143,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           ),
         ),
       ],
+    );
+  }
+
+  // Método para abrir modal de opções de frete
+  void _showShippingOptionsModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const ShippingOptionsModal(),
     );
   }
 }
