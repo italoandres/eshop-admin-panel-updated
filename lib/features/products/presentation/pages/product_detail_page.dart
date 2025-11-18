@@ -67,6 +67,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 // Preço
                 _buildPriceSection(),
 
+                // Tarja de desconto progressivo (se houver)
+                if (mockProgressiveDiscountPercent != null && mockProgressiveDiscountPercent! > 0)
+                  ProductProgressiveDiscountBanner(
+                    discountPercent: mockProgressiveDiscountPercent!,
+                  ),
+
                 Divider(height: 32, thickness: 1, color: Colors.grey[800]),
 
                 // Seletor de cor
@@ -82,12 +88,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                 // Seção: Prazo de entrega
                 _buildDeliverySection(),
-
-                // Tarja de desconto progressivo (se houver)
-                if (mockProgressiveDiscountPercent != null && mockProgressiveDiscountPercent! > 0)
-                  ProductProgressiveDiscountBanner(
-                    discountPercent: mockProgressiveDiscountPercent!,
-                  ),
 
                 Divider(height: 32, thickness: 1, color: Colors.grey[800]),
 

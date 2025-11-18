@@ -11,7 +11,7 @@ class ProductProgressiveDiscountBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: GestureDetector(
         onTap: () {
           // TODO: Abrir página explicando o desconto progressivo
@@ -22,7 +22,7 @@ class ProductProgressiveDiscountBanner extends StatelessWidget {
           );
         },
         child: Container(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             color: const Color(0xFFFFE4E8),
             borderRadius: BorderRadius.circular(10),
@@ -33,7 +33,7 @@ class ProductProgressiveDiscountBanner extends StatelessWidget {
               const Icon(
                 Icons.confirmation_number,
                 color: Color(0xFFD81B60),
-                size: 22,
+                size: 20,
               ),
               const SizedBox(width: 12),
               // Texto
@@ -44,6 +44,7 @@ class ProductProgressiveDiscountBanner extends StatelessWidget {
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFFD81B60),
+                    height: 1.0,
                   ),
                 ),
               ),
@@ -52,7 +53,7 @@ class ProductProgressiveDiscountBanner extends StatelessWidget {
               const Icon(
                 Icons.chevron_right,
                 color: Color(0xFFD81B60),
-                size: 22,
+                size: 20,
               ),
             ],
           ),
