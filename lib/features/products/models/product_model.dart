@@ -3,6 +3,9 @@
 /// FASE 1: Adicionado suporte para Guia de Tamanhos
 /// - sizeGuideType: Tipo do guia ('shoe', 'clothes', ou null)
 /// - sizeGuideContent: URL da imagem ou conteúdo HTML customizado
+///
+/// FASE 1: Adicionado suporte para Características em Destaque
+/// - highlights: Lista de características destacadas do produto
 class ProductModel {
   final String id;
   final String name;
@@ -24,6 +27,13 @@ class ProductModel {
   /// - Se null, usa o guia padrão baseado no sizeGuideType
   final String? sizeGuideContent;
 
+  // FASE 1: Características em Destaque
+  /// Lista de características em destaque do produto
+  /// - Máximo 40 caracteres por item
+  /// - Renderizado como chips na página de detalhes
+  /// - Se vazio, seção não aparece
+  final List<String> highlights;
+
   ProductModel({
     required this.id,
     required this.name,
@@ -33,6 +43,7 @@ class ProductModel {
     this.imageUrl,
     this.sizeGuideType,
     this.sizeGuideContent,
+    this.highlights = const [],
   });
 
   ProductModel copyWith({
@@ -44,6 +55,7 @@ class ProductModel {
     String? imageUrl,
     String? sizeGuideType,
     String? sizeGuideContent,
+    List<String>? highlights,
   }) {
     return ProductModel(
       id: id ?? this.id,
@@ -54,6 +66,7 @@ class ProductModel {
       imageUrl: imageUrl ?? this.imageUrl,
       sizeGuideType: sizeGuideType ?? this.sizeGuideType,
       sizeGuideContent: sizeGuideContent ?? this.sizeGuideContent,
+      highlights: highlights ?? this.highlights,
     );
   }
 
@@ -70,6 +83,9 @@ class ProductModel {
   /// Verifica se deve usar guia customizado
   bool get hasCustomSizeGuide => sizeGuideContent != null;
 
+  /// Verifica se o produto tem características em destaque
+  bool get hasHighlights => highlights.isNotEmpty;
+
   /// Converte para JSON (para API/Admin)
   Map<String, dynamic> toJson() {
     return {
@@ -81,6 +97,7 @@ class ProductModel {
       'imageUrl': imageUrl,
       'sizeGuideType': sizeGuideType,
       'sizeGuideContent': sizeGuideContent,
+      'highlights': highlights,
     };
   }
 
@@ -97,6 +114,9 @@ class ProductModel {
       imageUrl: json['imageUrl'] as String?,
       sizeGuideType: json['sizeGuideType'] as String?,
       sizeGuideContent: json['sizeGuideContent'] as String?,
+      highlights: json['highlights'] != null
+          ? List<String>.from(json['highlights'] as List)
+          : const [],
     );
   }
 }

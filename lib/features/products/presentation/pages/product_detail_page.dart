@@ -7,6 +7,7 @@ import '../widgets/product_main_image.dart';
 import '../widgets/product_image_thumbnails.dart';
 import '../widgets/size_guide_button.dart';
 import '../widgets/size_guide_modal.dart';
+import '../widgets/product_highlights_section.dart';
 import '../controllers/product_gallery_controller.dart';
 import '../../models/product_image_model.dart';
 import '../../../shipping/presentation/widgets/shipping_options_modal.dart';
@@ -51,6 +52,15 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   // Dados de preço e desconto
   final double mockOriginalPrice = 50.00;
   final double? mockProgressiveDiscountPercent = 48.0; // 48% de desconto
+
+  // Mock data para características em destaque
+  final List<String> mockHighlights = [
+    'Material respirável',
+    'Tecnologia Dry-Fit',
+    'Acabamento premium',
+    'Resistente a lavagens',
+    'Fit anatômico',
+  ];
 
   // Mock data para bundle
   late final ProductBundle mockBundle;
@@ -334,6 +344,11 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                 _buildDescriptionSection(),
 
                 Divider(height: spaceL, thickness: 1, color: Colors.grey[800]), // FASE 1: 16px section spacing
+
+                // FASE 1: Seção de Características em Destaque
+                ProductHighlightsSection(
+                  highlights: mockHighlights,
+                ),
 
                 // Seção: Avaliação do produto
                 _buildRatingOverview(),
