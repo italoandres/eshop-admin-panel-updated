@@ -8,6 +8,7 @@ import '../widgets/product_image_thumbnails.dart';
 import '../widgets/size_guide_button.dart';
 import '../widgets/size_guide_modal.dart';
 import '../widgets/product_highlights_section.dart';
+import '../widgets/product_size_chip.dart';
 import '../controllers/product_gallery_controller.dart';
 import '../../models/product_image_model.dart';
 import '../../../shipping/presentation/widgets/shipping_options_modal.dart';
@@ -938,51 +939,28 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
             ),
           ),
           const SizedBox(height: spaceM), // FASE 1: 12px
+          // FASE 2: Chips dinâmicos com largura automática
           Wrap(
-            spacing: spaceS, // FASE 1: chip gap 8px
-            runSpacing: spaceS, // FASE 1: chip gap 8px
+            spacing: spaceS, // 8px gap horizontal
+            runSpacing: spaceS, // 8px gap vertical
             children: ['P', 'M', 'G', 'GG', 'EGG'].map((size) {
               final isSelected = size == _selectedSize;
               final isAvailable = size != 'EGG'; // EGG indisponível
 
-              return GestureDetector(
-                onTap: isAvailable
-                    ? () {
-                        setState(() {
-                          _selectedSize = size;
-                        });
-                      }
-                    : null,
-                child: Container(
-                  constraints: const BoxConstraints(minWidth: 48), // AJUSTE FINO: min-width 48px
-                  height: chipHeight, // FASE 1: 40px (chip height)
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0), // AJUSTE FINO: padding horizontal 16px
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: isSelected
-                          ? Theme.of(context).primaryColor
-                          : (isAvailable ? Colors.grey[700]! : Colors.grey[800]!),
-                      width: isSelected ? 2 : 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                    color: isAvailable ? Colors.grey[850] : Colors.grey[900],
-                  ),
-                  child: Center(
-                    child: Text(
-                      size,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isAvailable
-                            ? (isSelected
-                                ? Theme.of(context).primaryColor
-                                : Colors.white)
-                            : Colors.grey[600],
-                      ),
-                    ),
-                  ),
-                ),
+              // FASE 2: Substituído Container por ProductSizeChip
+              // ✅ Largura automática (sem minWidth)
+              // ✅ Padding: 14px horizontal, 10px vertical
+              // ✅ Border radius: 8px
+              // ✅ Lógica mantida idêntica
+              return ProductSizeChip(
+                size: size,
+                isSelected: isSelected,
+                isAvailable: isAvailable,
+                onTap: () {
+                  setState(() {
+                    _selectedSize = size;
+                  });
+                },
               );
             }).toList(),
           ),
