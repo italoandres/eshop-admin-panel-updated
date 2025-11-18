@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/product_customer_protection.dart';
 import '../widgets/product_progressive_discount_banner.dart';
+import '../widgets/product_description_modal.dart';
 import '../../../shipping/presentation/widgets/shipping_options_modal.dart';
 
 class ProductDetailPage extends StatefulWidget {
@@ -22,7 +23,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   int _selectedColorIndex = 1;
   String _selectedSize = 'M';
   bool hasCouponBanner = true;
-  bool _isDescriptionExpanded = false;
 
   // Dados mock
   final mockRating = 4.66;
@@ -852,55 +852,30 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  // (B) Seção: Descrição do Produto (accordion)
+  // (B) Seção: Descrição do Produto (botão que abre modal)
   Widget _buildDescriptionSection() {
-    return Column(
-      children: [
-        InkWell(
-          onTap: () {
-            setState(() {
-              _isDescriptionExpanded = !_isDescriptionExpanded;
-            });
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Descrição do Produto',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Icon(
-                  _isDescriptionExpanded
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: Colors.white,
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (_isDescriptionExpanded)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Text(
-              'Camisa Umbro TWR Striker masculina confeccionada em material de alta qualidade e tecnologia. '
-              'Perfeita para a prática esportiva, oferece conforto e estilo. '
-              'Detalhes modernos e acabamento impecável. '
-              'Ideal para quem busca performance e design.',
+    return InkWell(
+      onTap: () => _showProductDescriptionModal(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Descrição do Produto',
               style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[300],
-                height: 1.6,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
-          ),
-      ],
+            const Icon(
+              Icons.chevron_right,
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1153,6 +1128,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const ShippingOptionsModal(),
+    );
+  }
+
+  // Método para abrir modal de descrição do produto
+  void _showProductDescriptionModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const ProductDescriptionModal(),
     );
   }
 }
