@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/shipping_option.dart';
+import '../../models/shipping_option.dart';
 
 class ShippingOptionsModal extends StatefulWidget {
   const ShippingOptionsModal({Key? key}) : super(key: key);
