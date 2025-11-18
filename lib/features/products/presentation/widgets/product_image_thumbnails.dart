@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/product_image_model.dart';
 import '../controllers/product_gallery_controller.dart';
+import '../../../../core/theme/design_tokens.dart';
 
 /// Widget de galeria de miniaturas das imagens do produto
 /// Exibido abaixo da imagem principal, mostra todas as fotos da variação selecionada
@@ -24,11 +25,11 @@ class ProductImageThumbnails extends ConsumerWidget {
     }
 
     return Container(
-      height: 80,
-      margin: const EdgeInsets.symmetric(vertical: 16),
+      height: thumbnailHeight, // FASE 1: 64px
+      margin: const EdgeInsets.symmetric(vertical: spaceM), // FASE 1: margin vertical 12px
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: spaceL), // FASE 1: 16px
         itemCount: images.length,
         itemBuilder: (context, index) {
           final image = images[index];
@@ -37,9 +38,9 @@ class ProductImageThumbnails extends ConsumerWidget {
           return GestureDetector(
             onTap: () => onThumbnailTap(index),
             child: Container(
-              width: 70,
-              height: 70,
-              margin: const EdgeInsets.only(right: 12),
+              width: thumbnailHeight, // FASE 1: 64px (width matches height for square)
+              height: thumbnailHeight, // FASE 1: 64px
+              margin: const EdgeInsets.only(right: spaceS), // FASE 1: thumbnail gap 8px
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(

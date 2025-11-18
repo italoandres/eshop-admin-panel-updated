@@ -13,6 +13,7 @@ import '../../../bundles/presentation/widgets/product_bundle_section.dart';
 import '../../../bundles/models/bundle_model.dart';
 import '../../../related_products/presentation/widgets/related_products_section.dart';
 import '../../../related_products/models/related_product_model.dart';
+import '../../../../core/theme/design_tokens.dart';
 
 class ProductDetailPage extends ConsumerStatefulWidget {
   final String productId;
@@ -304,7 +305,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                     discountPercent: mockProgressiveDiscountPercent!,
                   ),
 
-                Divider(height: 32, thickness: 1, color: Colors.grey[800]),
+                Divider(height: spaceL, thickness: 1, color: Colors.grey[800]), // FASE 1: 16px section spacing
 
                 // Seletor de cor
                 _buildColorSelector(),
@@ -315,42 +316,42 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                 // Alerta de estoque baixo
                 _buildStockAlert(),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: spaceL), // FASE 1: 16px section spacing
 
                 // Seção: Prazo de entrega
                 _buildDeliverySection(),
 
-                Divider(height: 32, thickness: 1, color: Colors.grey[800]),
+                Divider(height: spaceL, thickness: 1, color: Colors.grey[800]), // FASE 1: 16px section spacing
 
                 // Seção: Proteção do Cliente
                 const ProductCustomerProtectionSection(),
 
-                Divider(height: 32, thickness: 1, color: Colors.grey[800]),
+                Divider(height: spaceL, thickness: 1, color: Colors.grey[800]), // FASE 1: 16px section spacing
 
                 // Seção: Descrição do Produto (accordion)
                 _buildDescriptionSection(),
 
-                Divider(height: 32, thickness: 1, color: Colors.grey[800]),
+                Divider(height: spaceL, thickness: 1, color: Colors.grey[800]), // FASE 1: 16px section spacing
 
                 // Seção: Avaliação do produto
                 _buildRatingOverview(),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: spaceL), // FASE 1: 16px section spacing
 
                 // Seção: Recomendações
                 _buildRecommendationSection(),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: spaceL), // FASE 1: 16px section spacing
 
                 // Botão: Mostrar todas avaliações
                 _buildShowAllReviewsButton(),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: spaceL), // FASE 1: 16px section spacing
 
                 // Seção: Comentários mais recentes
                 _buildRecentReviews(),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: spaceXL), // FASE 1: 20px section spacing
 
                 // Seção: Bundle de produtos
                 ProductBundleSection(
@@ -633,33 +634,33 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     return GestureDetector(
       onTap: () => _showReviewsModal(),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(spaceM), // FASE 1: 12px
         child: Row(
           children: [
             const Text(
               '4.66',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: fontBody, // FASE 1: 14px
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: spaceS), // FASE 1: 8px
             Row(
               children: List.generate(5, (index) {
                 return const Icon(
                   Icons.star,
                   color: Colors.amber,
-                  size: 20,
+                  size: starSize, // FASE 1: 16px
                 );
               }),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: spaceS), // FASE 1: 8px
             Text(
               'Baseado em 671 avaliações',
               style: TextStyle(
                 color: Colors.grey[400],
-                fontSize: 14,
+                fontSize: fontSmall, // FASE 1: 12px
               ),
             ),
           ],
@@ -671,7 +672,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   // Título + WhatsApp + Favorito
   Widget _buildTitleSection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(spaceL, spaceM, spaceL, 0), // FASE 1: horizontal 16px, top 12px
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -679,13 +680,13 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
             child: Text(
               'Camisa Umbro TWR Striker Masculina',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: fontTitleXL, // FASE 1: 24px
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: spaceM), // FASE 1: 12px
           // Botão WhatsApp
           GestureDetector(
             onTap: () {
@@ -745,7 +746,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     final installmentPrice = discountedPrice / 3;
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(spaceL), // FASE 1: 16px
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -756,27 +757,27 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
               // Badge de desconto (se houver)
               if (mockProgressiveDiscountPercent != null && mockProgressiveDiscountPercent! > 0)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // FASE 1: badges 12px/8px
                   decoration: BoxDecoration(
                     color: const Color(0xFFE53935),
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(8), // FASE 1: badge radius 8px
                   ),
                   child: Text(
                     '-${mockProgressiveDiscountPercent!.toStringAsFixed(0)}%',
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: fontBody, // FASE 1: 14px
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                 ),
-              const SizedBox(width: 8),
+              const SizedBox(width: spaceS), // FASE 1: 8px
               // Preço original riscado
               if (mockProgressiveDiscountPercent != null && mockProgressiveDiscountPercent! > 0)
                 Text(
                   'R\$ ${mockOriginalPrice.toStringAsFixed(2)}',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: fontPriceSmall, // FASE 1: 14px
                     color: Colors.grey[500],
                     decoration: TextDecoration.lineThrough,
                     decorationColor: Colors.grey[500],
@@ -784,43 +785,43 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                 ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: spaceS), // FASE 1: 8px (gap entre preço e parcelamento)
           // Preço final com desconto
           Text(
             'A partir de',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: fontSmall, // FASE 1: 12px
               color: Colors.grey[400],
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: spaceXS), // FASE 1: 4px
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 'R\$ ${discountedPrice.toStringAsFixed(2)}',
                 style: const TextStyle(
-                  fontSize: 32,
+                  fontSize: fontPriceLarge, // FASE 1: 30px
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: spaceS), // FASE 1: 8px
               Text(
                 'no Pix',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: fontBody, // FASE 1: 14px
                   color: Colors.grey[400],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: spaceS), // FASE 1: 8px
           // Parcelamento (calculado com base no preço com desconto)
           Text(
             'ou 3x de R\$ ${installmentPrice.toStringAsFixed(2)} sem juros',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: fontPriceSmall, // FASE 1: 14px
               color: Colors.grey[500],
             ),
           ),
@@ -832,21 +833,21 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   // Seletor de cor
   Widget _buildColorSelector() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(spaceL), // FASE 1: 16px
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Cor: $_selectedColor',
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: fontSectionTitle, // FASE 1: 16px
               fontWeight: FontWeight.w600,
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: spaceM), // FASE 1: 12px (margin-top)
           SizedBox(
-            height: 80,
+            height: thumbnailSize, // FASE 1: 56px (mini thumbnail size)
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: 6, // 6 cores disponíveis
@@ -868,8 +869,8 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                         );
                   },
                   child: Container(
-                    width: 70,
-                    margin: const EdgeInsets.only(right: 12),
+                    width: thumbnailSize, // FASE 1: 56px
+                    margin: const EdgeInsets.only(right: spaceS), // FASE 1: gap 8px
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: isSelected
@@ -899,22 +900,22 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   // Seletor de tamanho
   Widget _buildSizeSelector() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(spaceL), // FASE 1: 16px
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             'Tamanho',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: fontSectionTitle, // FASE 1: 16px
               fontWeight: FontWeight.w600,
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: spaceM), // FASE 1: 12px
           Wrap(
-            spacing: 12,
-            runSpacing: 12,
+            spacing: spaceS, // FASE 1: chip gap 8px
+            runSpacing: spaceS, // FASE 1: chip gap 8px
             children: ['P', 'M', 'G', 'GG', 'EGG'].map((size) {
               final isSelected = size == _selectedSize;
               final isAvailable = size != 'EGG'; // EGG indisponível
@@ -928,8 +929,8 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                       }
                     : null,
                 child: Container(
-                  width: 60,
-                  height: 60,
+                  width: chipHeight, // FASE 1: 40px (chip size)
+                  height: chipHeight, // FASE 1: 40px (chip height)
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: isSelected
@@ -996,7 +997,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   // Botão adicionar ao carrinho
   Widget _buildAddToCartButton() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(spaceL), // FASE 1: bottom margin 16px
       decoration: BoxDecoration(
         color: const Color(0xFF1E1E1E),
         boxShadow: [
@@ -1020,16 +1021,16 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF4CAF50),
-          minimumSize: const Size(double.infinity, 56),
+          minimumSize: const Size(double.infinity, primaryButtonHeight), // FASE 1: 50px
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(cardRadius), // FASE 1: 12px
           ),
           elevation: 0,
         ),
         child: const Text(
           'Adicionar ao Carrinho',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: fontSectionTitle, // FASE 1: 16px
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -1041,38 +1042,38 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   // (A) Seção: Prazo de entrega
   Widget _buildDeliverySection() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(spaceL), // FASE 1: section padding 16px
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Prazo de entrega',
             style: TextStyle(
-              fontSize: 12,
+              fontSize: fontSmall, // FASE 1: 12px
               fontWeight: FontWeight.w600,
               color: Colors.grey[400],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: spaceS), // FASE 1: 8px
           Text(
             'Chega dia 25 de novembro para o CEP 01310-100, se você finalizar o pedido com a opção de entrega Normal.',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: fontBody, // FASE 1: 14px
               color: Colors.white,
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: spaceM), // FASE 1: 12px
           Wrap(
-            spacing: 24,
-            runSpacing: 8,
+            spacing: spaceXL, // FASE 1: 20px
+            runSpacing: spaceS, // FASE 1: 8px
             children: [
               GestureDetector(
                 onTap: () => _showShippingOptionsModal(),
                 child: Text(
                   'Alterar CEP',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: fontBody, // FASE 1: 14px
                     color: const Color(0xFF6200EE),
                     fontWeight: FontWeight.w600,
                   ),
@@ -1083,7 +1084,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                 child: Text(
                   'Ver outras formas de entrega',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: fontBody, // FASE 1: 14px
                     color: const Color(0xFF6200EE),
                     fontWeight: FontWeight.w600,
                   ),
@@ -1101,14 +1102,14 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     return InkWell(
       onTap: () => _showProductDescriptionModal(),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: spaceL, vertical: spaceM), // FASE 1: 16px/12px
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
               'Descrição do Produto',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: fontSectionTitle, // FASE 1: 16px
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -1126,27 +1127,27 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   // (C) Seção: Avaliação do produto
   Widget _buildRatingOverview() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: spaceL), // FASE 1: 16px
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             'Avaliação do produto',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: fontSectionTitle, // FASE 1: 16px
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: spaceXS), // FASE 1: 4px
           Text(
             'Avaliações dos clientes',
             style: TextStyle(
-              fontSize: 12,
+              fontSize: fontSmall, // FASE 1: 12px
               color: Colors.grey[400],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: spaceL), // FASE 1: 16px
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
