@@ -723,7 +723,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _buildStockAlert() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF3E0), // Laranja claro
         borderRadius: BorderRadius.circular(8),
