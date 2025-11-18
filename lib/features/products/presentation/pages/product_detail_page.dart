@@ -3,6 +3,7 @@ import '../widgets/product_customer_protection.dart';
 import '../widgets/product_progressive_discount_banner.dart';
 import '../widgets/product_description_modal.dart';
 import '../../../shipping/presentation/widgets/shipping_options_modal.dart';
+import '../../../reviews/presentation/widgets/reviews_modal.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final String productId;
@@ -393,39 +394,42 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  // Avaliação
+  // Avaliação (clicável - abre modal de reviews)
   Widget _buildRating() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          const Text(
-            '4.66',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+    return GestureDetector(
+      onTap: () => _showReviewsModal(),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            const Text(
+              '4.66',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Row(
-            children: List.generate(5, (index) {
-              return const Icon(
-                Icons.star,
-                color: Colors.amber,
-                size: 20,
-              );
-            }),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            'Baseado em 671 avaliações',
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 14,
+            const SizedBox(width: 8),
+            Row(
+              children: List.generate(5, (index) {
+                return const Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                  size: 20,
+                );
+              }),
             ),
-          ),
-        ],
+            const SizedBox(width: 8),
+            Text(
+              'Baseado em 671 avaliações',
+              style: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -996,17 +1000,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  // (E) Botão: Mostrar todas avaliações
+  // (E) Botão: Mostrar todas avaliações (abre modal de reviews)
   Widget _buildShowAllReviewsButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GestureDetector(
-        onTap: () {
-          // TODO: Navegar para todas avaliações
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Navegando para todas avaliações...')),
-          );
-        },
+        onTap: () => _showReviewsModal(),
         child: Row(
           children: [
             Text(
@@ -1138,6 +1137,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const ProductDescriptionModal(),
+    );
+  }
+
+  // Método para abrir modal de avaliações (reviews)
+  void _showReviewsModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const ReviewsModal(),
     );
   }
 }
