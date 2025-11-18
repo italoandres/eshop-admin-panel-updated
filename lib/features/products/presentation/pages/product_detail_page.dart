@@ -4,6 +4,10 @@ import '../widgets/product_progressive_discount_banner.dart';
 import '../widgets/product_description_modal.dart';
 import '../../../shipping/presentation/widgets/shipping_options_modal.dart';
 import '../../../reviews/presentation/widgets/reviews_modal.dart';
+import '../../../bundles/presentation/widgets/product_bundle_section.dart';
+import '../../../bundles/models/bundle_model.dart';
+import '../../../related_products/presentation/widgets/related_products_section.dart';
+import '../../../related_products/models/related_product_model.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final String productId;
@@ -39,6 +43,67 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   // Dados de preço e desconto
   final double mockOriginalPrice = 50.00;
   final double? mockProgressiveDiscountPercent = 48.0; // 48% de desconto
+
+  // Mock data para bundle
+  late final ProductBundle mockBundle;
+
+  // Mock data para produtos relacionados
+  List<RelatedProduct> mockRelatedProducts = [
+    RelatedProduct(
+      id: '1',
+      name: 'Camisa Nike Dri-FIT Park VII',
+      imageUrl: '',
+      price: 89.90,
+      originalPrice: 129.90,
+      isFavorite: false,
+    ),
+    RelatedProduct(
+      id: '2',
+      name: 'Camisa Adidas Squadra 21',
+      imageUrl: '',
+      price: 79.90,
+      isFavorite: true,
+    ),
+    RelatedProduct(
+      id: '3',
+      name: 'Camisa Puma TeamGOAL 23',
+      imageUrl: '',
+      price: 99.90,
+      originalPrice: 149.90,
+      isFavorite: false,
+    ),
+    RelatedProduct(
+      id: '4',
+      name: 'Camisa Penalty Matís IX',
+      imageUrl: '',
+      price: 69.90,
+      isFavorite: false,
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Inicializar bundle com desconto progressivo
+    mockBundle = ProductBundle(
+      mainProduct: BundleProduct(
+        id: 'main',
+        name: 'Camisa Umbro TWR Striker',
+        imageUrl: '',
+        price: 26.00, // Preço com desconto progressivo
+      ),
+      complementaryProduct: BundleProduct(
+        id: 'comp',
+        name: 'Meião Umbro TWR',
+        imageUrl: '',
+        price: 19.90,
+      ),
+      bundleDiscountPercent: 15.0, // 15% de desconto adicional no combo
+      totalPrice: 45.90, // 26.00 + 19.90
+      discountedPrice: 39.02, // 45.90 - 15%
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +185,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                 // Seção: Comentários mais recentes
                 _buildRecentReviews(),
+
+                const SizedBox(height: 32),
+
+                // Seção: Bundle de produtos
+                ProductBundleSection(
+                  bundle: mockBundle,
+                  onAddToCart: _handleBundleAddToCart,
+                ),
+
+                // Seção: Produtos relacionados
+                RelatedProductsSection(
+                  products: mockRelatedProducts,
+                  onProductTap: _handleRelatedProductTap,
+                  onToggleFavorite: _handleToggleFavorite,
+                ),
 
                 const SizedBox(height: 120), // Espaço para o botão fixo
               ],
@@ -1148,5 +1228,41 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       backgroundColor: Colors.transparent,
       builder: (_) => const ReviewsModal(),
     );
+  }
+
+  // Método para adicionar bundle ao carrinho
+  void _handleBundleAddToCart() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Bundle adicionado ao carrinho! Economia de R\$ ${mockBundle.savedAmount.toStringAsFixed(2)}',
+        ),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  // Método para navegar para produto relacionado
+  void _handleRelatedProductTap(String productId) {
+    // TODO: Navigate to product detail for the related product
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Abrindo produto $productId...'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  // Método para alternar favorito em produtos relacionados
+  void _handleToggleFavorite(String productId) {
+    setState(() {
+      final index = mockRelatedProducts.indexWhere((p) => p.id == productId);
+      if (index != -1) {
+        mockRelatedProducts[index] = mockRelatedProducts[index].copyWith(
+          isFavorite: !mockRelatedProducts[index].isFavorite,
+        );
+      }
+    });
   }
 }
