@@ -22,7 +22,7 @@ class ProductCustomerProtectionSection extends StatelessWidget {
           );
         },
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           decoration: BoxDecoration(
             color: lightYellow,
             borderRadius: BorderRadius.circular(16),
@@ -56,7 +56,7 @@ class ProductCustomerProtectionSection extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               // Lista de benefícios em 2 colunas
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
