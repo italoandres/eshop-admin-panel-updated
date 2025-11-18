@@ -5,6 +5,8 @@ import '../widgets/product_progressive_discount_banner.dart';
 import '../widgets/product_description_modal.dart';
 import '../widgets/product_main_image.dart';
 import '../widgets/product_image_thumbnails.dart';
+import '../widgets/size_guide_button.dart';
+import '../widgets/size_guide_modal.dart';
 import '../controllers/product_gallery_controller.dart';
 import '../../models/product_image_model.dart';
 import '../../../shipping/presentation/widgets/shipping_options_modal.dart';
@@ -961,6 +963,11 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
               );
             }).toList(),
           ),
+          // FASE 1: Botão Guia de Tamanhos (logo abaixo da grade)
+          const SizedBox(height: spaceS), // 8px gap
+          SizeGuideButton(
+            onTap: () => _showSizeGuideModal(),
+          ),
         ],
       ),
     );
@@ -1389,6 +1396,16 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const ReviewsModal(),
+    );
+  }
+
+  // Método para abrir modal do Guia de Tamanhos (FASE 1)
+  void _showSizeGuideModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const SizeGuideModal(),
     );
   }
 
