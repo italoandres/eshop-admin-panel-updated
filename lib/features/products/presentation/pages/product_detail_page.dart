@@ -18,8 +18,10 @@ import '../../../bundles/models/bundle_model.dart';
 import '../../../related_products/presentation/widgets/related_products_section.dart';
 import '../../../related_products/models/related_product_model.dart';
 import '../../../../core/theme/design_tokens.dart';
+import 'package:go_router/go_router.dart';
+import '../../../cart/presentation/notifiers/cart_notifier.dart';
 
-class ProductDetailPage extends ConsumerStatefulWidget {
+class ProductDetailPage extends ConsumerStatefulWidget{
   final String productId;
 
   const ProductDetailPage({
@@ -443,14 +445,47 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                           onPressed: () => Navigator.pop(context),
                         ),
                         // Botão Carrinho
-                        IconButton(
-                          icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                          onPressed: () {
-                            // TODO: Navegar para carrinho
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Navegando para o carrinho...')),
-                            );
-                          },
+                        Stack(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                              onPressed: () {
+                                context.push('/cart');
+                              },
+                            ),
+                            // Badge com quantidade
+                            Positioned(
+                              right: 6,
+                              top: 6,
+                              child: Consumer(
+                                builder: (context, ref, child) {
+                                  final itemCount = ref.watch(cartItemCountProvider);
+                                  if (itemCount == 0) return const SizedBox.shrink();
+
+                                  return Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 18,
+                                      minHeight: 18,
+                                    ),
+                                    child: Text(
+                                      '$itemCount',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -1019,12 +1054,30 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
       ),
       child: ElevatedButton(
         onPressed: () {
-          // TODO: Adicionar ao carrinho
+          // Adicionar produto ao carrinho
+          ref.read(cartProvider.notifier).addItem(
+            productId: widget.productId,
+            name: 'Vestido Midi Floral Premium',
+            imageUrl: 'https://picsum.photos/400/400?random=1',
+            price: 189.90,
+            originalPrice: 249.90,
+            size: _selectedSize,
+            color: _selectedColor,
+          );
+
+          // Mostrar confirmação
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Produto adicionado ao carrinho!'),
+            SnackBar(
+              content: const Text('Produto adicionado ao carrinho!'),
               backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
+              duration: const Duration(seconds: 2),
+              action: SnackBarAction(
+                label: 'VER CARRINHO',
+                textColor: Colors.white,
+                onPressed: () {
+                  context.push('/cart');
+                },
+              ),
             ),
           );
         },
