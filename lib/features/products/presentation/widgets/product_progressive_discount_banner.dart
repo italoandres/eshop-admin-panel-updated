@@ -22,7 +22,7 @@ class ProductProgressiveDiscountBanner extends StatelessWidget {
           );
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
           decoration: BoxDecoration(
             color: const Color(0xFFFFE4E8),
             borderRadius: BorderRadius.circular(10),
