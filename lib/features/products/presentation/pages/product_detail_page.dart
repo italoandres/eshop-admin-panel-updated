@@ -929,8 +929,9 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                       }
                     : null,
                 child: Container(
-                  width: chipHeight, // FASE 1: 40px (chip size)
+                  constraints: const BoxConstraints(minWidth: 48), // AJUSTE FINO: min-width 48px
                   height: chipHeight, // FASE 1: 40px (chip height)
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0), // AJUSTE FINO: padding horizontal 16px
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: isSelected
