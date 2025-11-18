@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/product_customer_protection.dart';
 import '../widgets/product_progressive_discount_banner.dart';
 import '../widgets/product_description_modal.dart';
+import '../widgets/product_main_image.dart';
+import '../widgets/product_image_thumbnails.dart';
+import '../controllers/product_gallery_controller.dart';
+import '../../models/product_image_model.dart';
 import '../../../shipping/presentation/widgets/shipping_options_modal.dart';
 import '../../../reviews/presentation/widgets/reviews_modal.dart';
 import '../../../bundles/presentation/widgets/product_bundle_section.dart';
@@ -9,7 +14,7 @@ import '../../../bundles/models/bundle_model.dart';
 import '../../../related_products/presentation/widgets/related_products_section.dart';
 import '../../../related_products/models/related_product_model.dart';
 
-class ProductDetailPage extends StatefulWidget {
+class ProductDetailPage extends ConsumerStatefulWidget {
   final String productId;
 
   const ProductDetailPage({
@@ -18,10 +23,10 @@ class ProductDetailPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ProductDetailPage> createState() => _ProductDetailPageState();
+  ConsumerState<ProductDetailPage> createState() => _ProductDetailPageState();
 }
 
-class _ProductDetailPageState extends State<ProductDetailPage> {
+class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   // Estado do componente
   int _currentPhotoIndex = 0;
   String _selectedColor = 'Azul';
@@ -81,9 +86,168 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     ),
   ];
 
+  // Mock data para variações de cor com imagens
+  late final List<ProductVariation> mockVariations;
+
   @override
   void initState() {
     super.initState();
+
+    // Inicializar variações de cor com imagens
+    mockVariations = [
+      ProductVariation(
+        id: 'var_vermelho',
+        color: 'Vermelho',
+        colorHex: '#E53935',
+        images: [
+          const ProductImageModel(
+            id: 'img_vermelho_1',
+            url: '',
+            order: 0,
+            alt: 'Camisa Umbro Vermelha - Vista Frontal',
+          ),
+          const ProductImageModel(
+            id: 'img_vermelho_2',
+            url: '',
+            order: 1,
+            alt: 'Camisa Umbro Vermelha - Vista Traseira',
+          ),
+          const ProductImageModel(
+            id: 'img_vermelho_3',
+            url: '',
+            order: 2,
+            alt: 'Camisa Umbro Vermelha - Detalhe',
+          ),
+        ],
+      ),
+      ProductVariation(
+        id: 'var_azul',
+        color: 'Azul',
+        colorHex: '#1E88E5',
+        images: [
+          const ProductImageModel(
+            id: 'img_azul_1',
+            url: '',
+            order: 0,
+            alt: 'Camisa Umbro Azul - Vista Frontal',
+          ),
+          const ProductImageModel(
+            id: 'img_azul_2',
+            url: '',
+            order: 1,
+            alt: 'Camisa Umbro Azul - Vista Traseira',
+          ),
+          const ProductImageModel(
+            id: 'img_azul_3',
+            url: '',
+            order: 2,
+            alt: 'Camisa Umbro Azul - Detalhe',
+          ),
+          const ProductImageModel(
+            id: 'img_azul_4',
+            url: '',
+            order: 3,
+            alt: 'Camisa Umbro Azul - Vista Lateral',
+          ),
+        ],
+      ),
+      ProductVariation(
+        id: 'var_verde',
+        color: 'Verde',
+        colorHex: '#43A047',
+        images: [
+          const ProductImageModel(
+            id: 'img_verde_1',
+            url: '',
+            order: 0,
+            alt: 'Camisa Umbro Verde - Vista Frontal',
+          ),
+          const ProductImageModel(
+            id: 'img_verde_2',
+            url: '',
+            order: 1,
+            alt: 'Camisa Umbro Verde - Vista Traseira',
+          ),
+        ],
+      ),
+      ProductVariation(
+        id: 'var_preto',
+        color: 'Preto',
+        colorHex: '#212121',
+        images: [
+          const ProductImageModel(
+            id: 'img_preto_1',
+            url: '',
+            order: 0,
+            alt: 'Camisa Umbro Preta - Vista Frontal',
+          ),
+          const ProductImageModel(
+            id: 'img_preto_2',
+            url: '',
+            order: 1,
+            alt: 'Camisa Umbro Preta - Vista Traseira',
+          ),
+          const ProductImageModel(
+            id: 'img_preto_3',
+            url: '',
+            order: 2,
+            alt: 'Camisa Umbro Preta - Detalhe',
+          ),
+        ],
+      ),
+      ProductVariation(
+        id: 'var_branco',
+        color: 'Branco',
+        colorHex: '#FFFFFF',
+        images: [
+          const ProductImageModel(
+            id: 'img_branco_1',
+            url: '',
+            order: 0,
+            alt: 'Camisa Umbro Branca - Vista Frontal',
+          ),
+          const ProductImageModel(
+            id: 'img_branco_2',
+            url: '',
+            order: 1,
+            alt: 'Camisa Umbro Branca - Vista Traseira',
+          ),
+        ],
+      ),
+      ProductVariation(
+        id: 'var_cinza',
+        color: 'Cinza',
+        colorHex: '#757575',
+        images: [
+          const ProductImageModel(
+            id: 'img_cinza_1',
+            url: '',
+            order: 0,
+            alt: 'Camisa Umbro Cinza - Vista Frontal',
+          ),
+          const ProductImageModel(
+            id: 'img_cinza_2',
+            url: '',
+            order: 1,
+            alt: 'Camisa Umbro Cinza - Vista Traseira',
+          ),
+          const ProductImageModel(
+            id: 'img_cinza_3',
+            url: '',
+            order: 2,
+            alt: 'Camisa Umbro Cinza - Detalhe',
+          ),
+        ],
+      ),
+    ];
+
+    // Inicializar galeria com a cor Azul (índice 1)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(productGalleryControllerProvider.notifier).initializeGallery(
+            images: mockVariations[_selectedColorIndex].images,
+            variationId: mockVariations[_selectedColorIndex].id,
+          );
+    });
 
     // Inicializar bundle com desconto progressivo
     mockBundle = ProductBundle(
@@ -424,53 +588,43 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  // Carousel de fotos do produto
+  // Galeria de fotos do produto (imagem principal + thumbnails)
   Widget _buildPhotoCarousel() {
-    return SizedBox(
-      height: 400,
-      child: Stack(
+    final galleryState = ref.watch(productGalleryControllerProvider);
+
+    // Se não há imagens ainda, mostrar placeholder
+    if (galleryState.images.isEmpty) {
+      return Column(
         children: [
-          PageView.builder(
-            itemCount: 4,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPhotoIndex = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              return Container(
-                color: Colors.grey[200],
-                child: Center(
-                  child: Icon(Icons.image, size: 100, color: Colors.grey[400]),
-                ),
-              );
-            },
-          ),
-          // Indicadores (bolinhas)
-          Positioned(
-            bottom: 16,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                4,
-                (index) => Container(
-                  width: 8,
-                  height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentPhotoIndex == index
-                        ? Colors.white
-                        : Colors.white.withOpacity(0.5),
-                  ),
-                ),
-              ),
+          Container(
+            height: 400,
+            color: Colors.grey[200],
+            child: Center(
+              child: Icon(Icons.image, size: 100, color: Colors.grey[400]),
             ),
           ),
         ],
-      ),
+      );
+    }
+
+    return Column(
+      children: [
+        // Imagem principal com botão de expandir
+        ProductMainImage(
+          image: galleryState.currentImage,
+          allImages: galleryState.images,
+          currentIndex: galleryState.currentImageIndex,
+        ),
+
+        // Galeria de miniaturas
+        ProductImageThumbnails(
+          images: galleryState.images,
+          currentIndex: galleryState.currentImageIndex,
+          onThumbnailTap: (index) {
+            ref.read(productGalleryControllerProvider.notifier).selectImage(index);
+          },
+        ),
+      ],
     );
   }
 
@@ -706,6 +860,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       _selectedColorIndex = index;
                       _selectedColor = colors[index];
                     });
+
+                    // Atualizar imagens da galeria quando trocar de cor
+                    ref.read(productGalleryControllerProvider.notifier).updateVariation(
+                          images: mockVariations[index].images,
+                          variationId: mockVariations[index].id,
+                        );
                   },
                   child: Container(
                     width: 70,
