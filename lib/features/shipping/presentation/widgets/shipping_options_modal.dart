@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../models/shipping_option.dart';
 
 class ShippingOptionsModal extends StatefulWidget {
@@ -197,22 +198,50 @@ class _ShippingOptionsModalState extends State<ShippingOptionsModal> {
             ),
           ),
           const SizedBox(height: 12),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                isChangingCep = true;
-                cepController.text = currentCep;
-              });
-            },
-            child: const Text(
-              'Alterar meu CEP',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF6200EE),
-                decoration: TextDecoration.underline,
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isChangingCep = true;
+                    cepController.text = currentCep;
+                  });
+                },
+                child: const Text(
+                  'Alterar meu CEP',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6200EE),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 16),
+              GestureDetector(
+                onTap: () async {
+                  final url = Uri.parse('https://buscacepinter.correios.com.br/app/endereco/index.php');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Não foi possível abrir o link')),
+                      );
+                    }
+                  }
+                },
+                child: const Text(
+                  'NÃO SEI O MEU CEP',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6200EE),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
