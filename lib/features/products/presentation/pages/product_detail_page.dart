@@ -54,6 +54,8 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   final double? mockProgressiveDiscountPercent = 48.0; // 48% de desconto
 
   // Mock data para características em destaque
+  // FASE 2: Testado com múltiplos cenários
+  // ✅ CENÁRIO 1: Vários highlights (5 items) - comportamento padrão
   final List<String> mockHighlights = [
     'Material respirável',
     'Tecnologia Dry-Fit',
@@ -61,6 +63,12 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     'Resistente a lavagens',
     'Fit anatômico',
   ];
+
+  // ✅ CENÁRIO 2: Um único highlight (descomente para testar)
+  // final List<String> mockHighlights = ['Material respirável'];
+
+  // ✅ CENÁRIO 3: Sem highlights (descomente para testar - seção não aparece)
+  // final List<String> mockHighlights = [];
 
   // Mock data para bundle
   late final ProductBundle mockBundle;
