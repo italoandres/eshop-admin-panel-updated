@@ -26,11 +26,11 @@ class CartItemCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -50,18 +50,18 @@ class CartItemCard extends StatelessWidget {
                 height: 90,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
+                  baseColor: Colors.grey[700]!,
+                  highlightColor: Colors.grey[600]!,
                   child: Container(
                     width: 90,
                     height: 90,
-                    color: Colors.white,
+                    color: Colors.grey[800],
                   ),
                 ),
                 errorWidget: (context, url, error) => Container(
                   width: 90,
                   height: 90,
-                  color: Colors.grey[200],
+                  color: Colors.grey[800],
                   child: const Icon(Icons.image_not_supported, color: Colors.grey),
                 ),
               ),
@@ -80,6 +80,7 @@ class CartItemCard extends StatelessWidget {
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       height: 1.3,
+                      color: Colors.white,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -93,7 +94,7 @@ class CartItemCard extends StatelessWidget {
                         'Cor: ${item.color}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: Colors.grey[400],
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -101,7 +102,7 @@ class CartItemCard extends StatelessWidget {
                         'Tam: ${item.size}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: Colors.grey[400],
                         ),
                       ),
                     ],
@@ -125,7 +126,7 @@ class CartItemCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF2E7D32),
+                      color: Color(0xFF4CAF50),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -137,7 +138,7 @@ class CartItemCard extends StatelessWidget {
                       // Botões de quantidade
                       Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]!),
+                          border: Border.all(color: Colors.grey[700]!),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Row(
@@ -154,6 +155,7 @@ class CartItemCard extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -174,7 +176,7 @@ class CartItemCard extends StatelessWidget {
                           child: Icon(
                             Icons.delete_outline,
                             size: 22,
-                            color: Colors.grey[600],
+                            color: Colors.grey[400],
                           ),
                         ),
                       ),
@@ -200,7 +202,7 @@ class CartItemCard extends StatelessWidget {
         width: 32,
         height: 32,
         alignment: Alignment.center,
-        child: Icon(icon, size: 18, color: Colors.grey[700]),
+        child: Icon(icon, size: 18, color: Colors.grey[300]),
       ),
     );
   }

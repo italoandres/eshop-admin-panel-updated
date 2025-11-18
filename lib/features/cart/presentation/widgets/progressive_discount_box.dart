@@ -35,15 +35,15 @@ class ProgressiveDiscountBox extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF4CAF50).withOpacity(0.1),
-            const Color(0xFF2E7D32).withOpacity(0.05),
+            const Color(0xFF2E7D32).withOpacity(0.2),
+            const Color(0xFF1B5E20).withOpacity(0.1),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFF4CAF50).withOpacity(0.3),
+          color: const Color(0xFF4CAF50).withOpacity(0.4),
           width: 1,
         ),
       ),
@@ -56,7 +56,7 @@ class ProgressiveDiscountBox extends StatelessWidget {
               const Icon(
                 Icons.local_offer,
                 size: 20,
-                color: Color(0xFF2E7D32),
+                color: Color(0xFF4CAF50),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -64,7 +64,7 @@ class ProgressiveDiscountBox extends StatelessWidget {
                   text: TextSpan(
                     style: const TextStyle(
                       fontSize: 13,
-                      color: Color(0xFF424242),
+                      color: Color(0xFFE0E0E0),
                       height: 1.3,
                     ),
                     children: currentDiscountPercent == 0
@@ -136,7 +136,7 @@ class ProgressiveDiscountBox extends StatelessWidget {
               Container(
                 height: 6,
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.grey[800],
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
@@ -174,14 +174,14 @@ class ProgressiveDiscountBox extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: isCompleted
-                          ? const Color(0xFF2E7D32)
+                          ? const Color(0xFF4CAF50)
                           : isCurrent
-                              ? const Color(0xFF4CAF50)
-                              : Colors.grey[300],
+                              ? const Color(0xFF66BB6A)
+                              : Colors.grey[700],
                       border: Border.all(
                         color: isCompleted || isCurrent
-                            ? const Color(0xFF2E7D32)
-                            : Colors.grey[400]!,
+                            ? const Color(0xFF4CAF50)
+                            : Colors.grey[600]!,
                         width: 2,
                       ),
                     ),
@@ -197,7 +197,7 @@ class ProgressiveDiscountBox extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
-                                color: isCurrent ? Colors.white : Colors.grey[600],
+                                color: isCurrent ? Colors.white : Colors.grey[400],
                               ),
                             ),
                     ),
@@ -211,8 +211,8 @@ class ProgressiveDiscountBox extends StatelessWidget {
                           ? FontWeight.bold
                           : FontWeight.normal,
                       color: isCompleted || isCurrent
-                          ? const Color(0xFF2E7D32)
-                          : Colors.grey[600],
+                          ? const Color(0xFF4CAF50)
+                          : Colors.grey[500],
                     ),
                   ),
                 ],

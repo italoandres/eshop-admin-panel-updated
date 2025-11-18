@@ -24,11 +24,11 @@ class CartSummary extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF1E1E1E),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 16,
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 20,
             offset: const Offset(0, -4),
           ),
         ],
@@ -47,13 +47,19 @@ class CartSummary extends StatelessWidget {
                 isSubtitle: true,
               ),
 
-              // Desconto (se houver)
+              // Desconto (sempre mostrar quando houver)
               if (discount > 0) ...[
                 const SizedBox(height: 8),
                 _buildSummaryRow(
-                  label: 'Desconto progressivo ($discountPercent%)',
+                  label: 'Desconto ($discountPercent%)',
                   value: '- ${currencyFormat.format(discount)}',
                   isDiscount: true,
+                ),
+                const SizedBox(height: 4),
+                _buildSummaryRow(
+                  label: 'Você economizou',
+                  value: currencyFormat.format(discount),
+                  isSavings: true,
                 ),
               ],
 
@@ -119,6 +125,7 @@ class CartSummary extends StatelessWidget {
     bool isBold = false,
     bool isSubtitle = false,
     bool isDiscount = false,
+    bool isSavings = false,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,25 +133,29 @@ class CartSummary extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: isSubtitle ? 14 : isBold ? 16 : 14,
+            fontSize: isSubtitle ? 14 : isBold ? 16 : isSavings ? 12 : 14,
             fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
             color: isSubtitle
-                ? Colors.grey[700]
+                ? Colors.grey[400]
                 : isDiscount
-                    ? const Color(0xFF2E7D32)
-                    : const Color(0xFF212121),
+                    ? const Color(0xFFFF5252)
+                    : isSavings
+                        ? const Color(0xFF4CAF50)
+                        : Colors.white,
           ),
         ),
         Text(
           value,
           style: TextStyle(
-            fontSize: isBold ? 18 : 14,
+            fontSize: isBold ? 18 : isSavings ? 12 : 14,
             fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
             color: isDiscount
-                ? const Color(0xFF2E7D32)
-                : isBold
-                    ? const Color(0xFF212121)
-                    : Colors.grey[800],
+                ? const Color(0xFFFF5252)
+                : isSavings
+                    ? const Color(0xFF4CAF50)
+                    : isBold
+                        ? Colors.white
+                        : Colors.grey[300],
           ),
         ),
       ],

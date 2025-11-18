@@ -68,7 +68,7 @@ class _CartPageState extends ConsumerState<CartPage> with SingleTickerProviderSt
     final nextDiscountThreshold = _getNextDiscountThreshold(discountPercent);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
         title: Text(
           'Sacola (${cartItems.length})',
@@ -78,13 +78,13 @@ class _CartPageState extends ConsumerState<CartPage> with SingleTickerProviderSt
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: const Color(0xFF1E1E1E),
+        foregroundColor: Colors.white,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
-            color: Colors.grey[200],
+            color: Colors.grey[800],
             height: 1,
           ),
         ),
@@ -110,7 +110,7 @@ class _CartPageState extends ConsumerState<CartPage> with SingleTickerProviderSt
           Icon(
             Icons.shopping_bag_outlined,
             size: 80,
-            color: Colors.grey[400],
+            color: Colors.grey[600],
           ),
           const SizedBox(height: 16),
           Text(
@@ -118,7 +118,7 @@ class _CartPageState extends ConsumerState<CartPage> with SingleTickerProviderSt
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
+              color: Colors.grey[300],
             ),
           ),
           const SizedBox(height: 8),
@@ -126,7 +126,7 @@ class _CartPageState extends ConsumerState<CartPage> with SingleTickerProviderSt
             'Adicione produtos para começar',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: Colors.grey[500],
             ),
           ),
           const SizedBox(height: 24),

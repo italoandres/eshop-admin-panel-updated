@@ -16,15 +16,16 @@ class PriceChangeAlert extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: const Color(0xFF2E2E2E),
         borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.orange.withOpacity(0.5)),
       ),
       child: Row(
         children: [
           const Icon(
             Icons.info_outline,
             size: 18,
-            color: Color(0xFF757575),
+            color: Colors.orange,
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -32,7 +33,7 @@ class PriceChangeAlert extends StatelessWidget {
               'O preço de $productName mudou. Verifique o carrinho antes de continuar.',
               style: const TextStyle(
                 fontSize: 13,
-                color: Color(0xFF424242),
+                color: Color(0xFFE0E0E0),
                 height: 1.3,
               ),
             ),
