@@ -67,41 +67,61 @@ class ProgressiveDiscountBox extends StatelessWidget {
                       color: Color(0xFF424242),
                       height: 1.3,
                     ),
-                    children: [
-                      const TextSpan(text: 'Você desbloqueou '),
-                      TextSpan(
-                        text: '$currentDiscountPercent%',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2E7D32),
-                        ),
-                      ),
-                      if (amountToNext > 0) ...[
-                        const TextSpan(text: '. Adicione mais '),
-                        TextSpan(
-                          text: currencyFormat.format(amountToNext),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2E7D32),
-                          ),
-                        ),
-                        const TextSpan(text: ' para alcançar '),
-                        TextSpan(
-                          text: '$nextDiscountPercent%',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2E7D32),
-                          ),
-                        ),
-                      ] else ...[
-                        const TextSpan(
-                          text: ' de desconto!',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ],
+                    children: currentDiscountPercent == 0
+                        ? [
+                            const TextSpan(text: 'Adicione '),
+                            TextSpan(
+                              text: currencyFormat.format(nextDiscountThreshold - currentTotal),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF2E7D32),
+                              ),
+                            ),
+                            const TextSpan(text: ' para ganhar '),
+                            TextSpan(
+                              text: '25% OFF',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF2E7D32),
+                              ),
+                            ),
+                            const TextSpan(text: '!'),
+                          ]
+                        : [
+                            const TextSpan(text: 'Você desbloqueou '),
+                            TextSpan(
+                              text: '$currentDiscountPercent%',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF2E7D32),
+                              ),
+                            ),
+                            if (amountToNext > 0) ...[
+                              const TextSpan(text: '. Adicione mais '),
+                              TextSpan(
+                                text: currencyFormat.format(amountToNext),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF2E7D32),
+                                ),
+                              ),
+                              const TextSpan(text: ' para alcançar '),
+                              TextSpan(
+                                text: '$nextDiscountPercent%',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF2E7D32),
+                                ),
+                              ),
+                            ] else ...[
+                              const TextSpan(
+                                text: ' de desconto!',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ],
                   ),
                 ),
               ),

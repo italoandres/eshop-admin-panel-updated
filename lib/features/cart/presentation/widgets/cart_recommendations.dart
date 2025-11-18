@@ -34,7 +34,7 @@ class CartRecommendations extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 220,
+          height: 240,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -68,36 +68,42 @@ class _RecommendedProductCard extends StatelessWidget {
                         product.originalPrice! > product.price;
 
     return Container(
-      width: 140,
+      width: 150,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Imagem
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             child: CachedNetworkImage(
               imageUrl: product.imageUrl,
-              width: 140,
-              height: 140,
+              width: 150,
+              height: 150,
               fit: BoxFit.cover,
               placeholder: (context, url) => Shimmer.fromColors(
                 baseColor: Colors.grey[300]!,
                 highlightColor: Colors.grey[100]!,
                 child: Container(
-                  width: 140,
-                  height: 140,
+                  width: 150,
+                  height: 150,
                   color: Colors.white,
                 ),
               ),
               errorWidget: (context, url, error) => Container(
-                width: 140,
-                height: 140,
+                width: 150,
+                height: 150,
                 color: Colors.grey[200],
                 child: const Icon(Icons.image_not_supported, color: Colors.grey),
               ),
@@ -107,9 +113,10 @@ class _RecommendedProductCard extends StatelessWidget {
           // Informações
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   // Nome do produto
                   Text(
@@ -139,39 +146,41 @@ class _RecommendedProductCard extends StatelessWidget {
                   Text(
                     currencyFormat.format(product.price),
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF2E7D32),
                     ),
                   ),
-                  const SizedBox(height: 8),
-
-                  // Botão adicionar
-                  SizedBox(
-                    width: double.infinity,
-                    height: 32,
-                    child: ElevatedButton(
-                      onPressed: onAdd,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        'ADICIONAR',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
+              ),
+            ),
+          ),
+
+          // Botão adicionar
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+            child: SizedBox(
+              width: double.infinity,
+              height: 36,
+              child: ElevatedButton(
+                onPressed: onAdd,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'ADICIONAR',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.3,
+                  ),
+                ),
               ),
             ),
           ),

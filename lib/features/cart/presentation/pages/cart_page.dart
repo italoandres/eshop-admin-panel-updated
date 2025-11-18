@@ -209,16 +209,15 @@ class _CartPageState extends ConsumerState<CartPage> with SingleTickerProviderSt
               ),
             ),
 
-            // Caixa de desconto progressivo
-            if (discountPercent > 0)
-              SliverToBoxAdapter(
-                child: ProgressiveDiscountBox(
-                  currentTotal: subtotal,
-                  currentDiscountPercent: discountPercent,
-                  nextDiscountPercent: nextDiscountPercent,
-                  nextDiscountThreshold: nextDiscountThreshold,
-                ),
+            // Caixa de desconto progressivo (sempre mostrar para incentivar)
+            SliverToBoxAdapter(
+              child: ProgressiveDiscountBox(
+                currentTotal: subtotal,
+                currentDiscountPercent: discountPercent,
+                nextDiscountPercent: nextDiscountPercent,
+                nextDiscountThreshold: nextDiscountThreshold,
               ),
+            ),
 
             // Recomendações
             SliverToBoxAdapter(
