@@ -1275,32 +1275,32 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: spaceL), // FASE 2: 16px
           child: Text(
             'Comentários mais recentes',
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: fontSectionTitle, // FASE 2: 16px
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: spaceL), // FASE 2: 16px
         SizedBox(
           height: 180,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: spaceL), // FASE 2: 16px
             itemCount: mockReviews.length,
             itemBuilder: (context, index) {
               final review = mockReviews[index];
               return Container(
                 width: 280,
-                margin: const EdgeInsets.only(right: 12),
-                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.only(right: spaceS), // FASE 2: card margin-bottom 8px
+                padding: const EdgeInsets.all(spaceM), // FASE 2: card padding 12px
                 decoration: BoxDecoration(
                   color: Colors.grey[850],
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(cardRadius), // FASE 2: 12px
                   border: Border.all(color: Colors.grey[800]!),
                 ),
                 child: Column(
@@ -1314,11 +1314,11 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                               ? Icons.star
                               : Icons.star_border,
                           color: Colors.amber,
-                          size: 18,
+                          size: starSize, // FASE 2: star size 16px
                         );
                       }),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: spaceS), // FASE 2: 8px
                     // Nome do cliente
                     Text(
                       review['user'] as String,

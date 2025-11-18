@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../pages/customer_protection_page.dart';
+import '../../../../core/theme/design_tokens.dart';
 
 class ProductCustomerProtectionSection extends StatelessWidget {
   const ProductCustomerProtectionSection({Key? key}) : super(key: key);
@@ -11,7 +12,7 @@ class ProductCustomerProtectionSection extends StatelessWidget {
     const checkGreen = Color(0xFF4CAF50);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: spaceL, vertical: 0), // FASE 2: horizontal 16px
       child: GestureDetector(
         onTap: () {
           showModalBottomSheet(
@@ -22,10 +23,10 @@ class ProductCustomerProtectionSection extends StatelessWidget {
           );
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          padding: const EdgeInsets.all(spaceM), // FASE 2: padding interno 12px
           decoration: BoxDecoration(
             color: lightYellow,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(cardRadius), // FASE 2: corner radius 12px
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,12 +39,12 @@ class ProductCustomerProtectionSection extends StatelessWidget {
                     color: goldenBrown,
                     size: 24,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: spaceS), // FASE 2: 8px
                   const Expanded(
                     child: Text(
                       'Proteção do cliente',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: fontSectionTitle, // FASE 2: 16px
                         fontWeight: FontWeight.bold,
                         color: goldenBrown,
                       ),
@@ -56,7 +57,7 @@ class ProductCustomerProtectionSection extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: spaceS), // FASE 2: gap entre icon row e content 8px
               // Lista de benefícios em 2 colunas
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,12 +125,12 @@ class ProductCustomerProtectionSection extends StatelessWidget {
           color: icon,
           size: 18,
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: spaceS), // FASE 2: 8px
         Expanded(
           child: Text(
             text,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: fontBody, // FASE 2: 14px
               fontWeight: FontWeight.w500,
               color: Colors.black.withOpacity(0.9),
               height: 1.4,

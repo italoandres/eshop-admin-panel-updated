@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/related_product_model.dart';
+import '../../../../core/theme/design_tokens.dart';
 
 class RelatedProductsSection extends StatelessWidget {
   final List<RelatedProduct> products;
@@ -16,7 +17,7 @@ class RelatedProductsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: spaceL, vertical: spaceXL), // FASE 2: 16px/20px
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -24,21 +25,21 @@ class RelatedProductsSection extends StatelessWidget {
           const Text(
             'RELACIONADOS AO SEU INTERESSE',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: fontSectionTitle, // FASE 2: product name font-size 16px
               fontWeight: FontWeight.bold,
               color: Colors.white,
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: spaceM), // FASE 2: 12px
           // Grid de produtos
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+              crossAxisSpacing: spaceS, // FASE 2: gap horizontal 8px
+              mainAxisSpacing: spaceS, // FASE 2: gap vertical 8px
               childAspectRatio: 0.68,
             ),
             itemCount: products.length,
@@ -57,7 +58,7 @@ class RelatedProductsSection extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[850],
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(cardRadius), // FASE 2: 12px
           border: Border.all(color: Colors.grey[800]!, width: 1),
         ),
         child: Column(
@@ -70,9 +71,9 @@ class RelatedProductsSection extends StatelessWidget {
                   height: 150,
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(cardRadius), // FASE 2: 12px
+                      topRight: Radius.circular(cardRadius), // FASE 2: 12px
                     ),
                   ),
                   child: Center(
@@ -85,8 +86,8 @@ class RelatedProductsSection extends StatelessWidget {
                 ),
                 // Botão de favorito
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: spaceS, // FASE 2: 8px
+                  right: spaceS, // FASE 2: 8px
                   child: GestureDetector(
                     onTap: () => onToggleFavorite(product.id),
                     child: Container(
@@ -137,7 +138,7 @@ class RelatedProductsSection extends StatelessWidget {
             // Informações do produto
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(spaceS), // FASE 2: card padding 8px
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -145,7 +146,7 @@ class RelatedProductsSection extends StatelessWidget {
                     Text(
                       product.name,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: fontBody, // FASE 2: product name font-size 14px
                         fontWeight: FontWeight.w600,
                         color: Colors.grey[100],
                       ),
@@ -158,7 +159,7 @@ class RelatedProductsSection extends StatelessWidget {
                       Text(
                         'R\$ ${product.originalPrice!.toStringAsFixed(2)}',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: fontSmall, // FASE 2: 12px
                           color: Colors.grey[500],
                           decoration: TextDecoration.lineThrough,
                         ),
@@ -167,7 +168,7 @@ class RelatedProductsSection extends StatelessWidget {
                     Text(
                       'R\$ ${product.price.toStringAsFixed(2)}',
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: fontSectionTitle, // FASE 2: price font-size 16px
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF4CAF50),
                       ),

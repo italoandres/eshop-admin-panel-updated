@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/bundle_model.dart';
+import '../../../../core/theme/design_tokens.dart';
 
 class ProductBundleSection extends StatelessWidget {
   final ProductBundle bundle;
@@ -14,7 +15,7 @@ class ProductBundleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: spaceL, vertical: spaceXL), // FASE 2: 16px/20px
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -22,19 +23,19 @@ class ProductBundleSection extends StatelessWidget {
           const Text(
             'APROVEITE E LEVE TAMBÉM',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: fontSectionTitle, // FASE 2: 16px
               fontWeight: FontWeight.bold,
               color: Colors.white,
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: spaceM), // FASE 2: 12px
           // Container do bundle
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(spaceM), // FASE 2: caixa padding 12px
             decoration: BoxDecoration(
               color: Colors.grey[850],
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(cardRadius), // FASE 2: 12px
               border: Border.all(color: Colors.grey[700]!, width: 1),
             ),
             child: Column(
@@ -68,31 +69,31 @@ class ProductBundleSection extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: spaceM), // FASE 2: 12px
                 // Botão de compra
                 SizedBox(
                   width: double.infinity,
+                  height: bundleButtonHeight, // FASE 2: botão do combo height 44px
                   child: ElevatedButton(
                     onPressed: onAddToCart,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF6200EE),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(cardRadius), // FASE 2: 12px
                       ),
                       elevation: 0,
                     ),
                     child: Text(
                       'Ganhe ${bundle.bundleDiscountPercent.toStringAsFixed(0)}% de desconto no combo',
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: fontBody, // FASE 2: 14px
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: spaceM), // FASE 2: 12px
                 // Preços
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -128,10 +129,10 @@ class ProductBundleSection extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: 120,
+          height: bundleImageSize, // FASE 2: imagem size reduzida 110x110
           decoration: BoxDecoration(
             color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(spaceS), // FASE 2: 8px
           ),
           child: Center(
             child: Icon(
@@ -141,11 +142,11 @@ class ProductBundleSection extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: spaceS), // FASE 2: 8px
         Text(
           product.name,
           style: TextStyle(
-            fontSize: 13,
+            fontSize: fontSmall, // FASE 2: 12px
             color: Colors.grey[300],
           ),
           maxLines: 2,
