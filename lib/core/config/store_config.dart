@@ -24,15 +24,18 @@ class StoreConfig with _$StoreConfig {
   factory StoreConfig.fromJson(Map<String, dynamic> json) =>
       _$StoreConfigFromJson(json);
 
-  // Configuração padrão para desenvolvimento
+  // Configuração padrão - AGORA COM URL CORRETA DO BACKEND
   static StoreConfig get defaultConfig => const StoreConfig(
-        storeId: 'default-store',
-        apiBaseUrl: 'https://api.example.com',
-        storeName: 'Minha Loja',
+        storeId: 'eshop_001',
+        apiBaseUrl: 'https://eshop-backend-bfhw.onrender.com/api',
+        storeName: 'EShop',
         logoUrl: 'https://via.placeholder.com/150',
         primaryColor: Color(0xFF6200EE),
         secondaryColor: Color(0xFF03DAC6),
         currency: 'R\$',
+        showBanners: true,
+        showReviews: true,
+        showRecommendations: true,
       );
 }
 
