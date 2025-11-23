@@ -1,0 +1,18 @@
+CorrelationId: ec2f57ed-bf0b-4c61-a514-1a5b6d8fd8f8
+UTC DateTime: 11/22/2025 15:30:56
+
+The following files/folders have not been downloaded
+0. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/pathfilter/deep_ref/main.js
+1. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/baz/doom.js
+2. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/browser_field/a.js
+3. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/browser_field/b.js
+4. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/false_main/index.js
+5. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/multirepo/packages/package-b/index.js
+6. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/other_path/root.js
+7. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/other_path/lib/other-lib.js
+8. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/symlinked/_/node_modules/foo.js
+9. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/symlinked/_/symlink_target/.gitkeep
+10. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/mug.coffee
+11. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/resolver/mug.js
+12. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/resolve/test/shadowed_core/node_modules/util/index.js
+13. eshop-admin-panel-main/eshop-admin-panel-main/node_modules/tailwindcss/types/generated/.gitkeep

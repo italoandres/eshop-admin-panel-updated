@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'store_config.dart';
@@ -13,14 +14,24 @@ final storeConfigProvider = FutureProvider<StoreConfig>((ref) async {
       final Map<String, dynamic> json = jsonDecode(configJson);
       return StoreConfig.fromJson(json);
     } catch (e) {
-      // Se houver erro ao parsear, usa config padrão
-      return StoreConfig.defaultConfig;
+      // Se houver erro ao parsear, tenta carregar do arquivo
     }
   }
 
-  // TODO: Buscar configuração da API remota
-  // Por enquanto, retorna configuração padrão
-  return StoreConfig.defaultConfig;
+  // Carregar configuração do arquivo assets
+  try {
+    final String response = await rootBundle.loadString('assets/store_config.json');
+    final Map<String, dynamic> json = jsonDecode(response);
+    final config = StoreConfig.fromJson(json);
+    
+    // Salvar no SharedPreferences para próximas vezes
+    await StoreConfigService.saveConfig(config);
+    
+    return config;
+  } catch (e) {
+    // Se falhar, usa config padrão
+    return StoreConfig.defaultConfig;
+  }
 });
 
 /// Serviço para salvar configuração da loja

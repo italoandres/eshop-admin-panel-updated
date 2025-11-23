@@ -11,7 +11,8 @@ class BannerRepository {
 
   Future<List<BannerModel>> fetchBanners() async {
     try {
-      final response = await _dioClient.get<Map<String, dynamic>>('/banners');
+      // Rota correta: /stores/:storeId/banners
+      final response = await _dioClient.get<Map<String, dynamic>>('/stores/eshop_001/banners');
 
       if (response.data == null) {
         throw const AppError.server(message: 'Resposta vazia do servidor');
