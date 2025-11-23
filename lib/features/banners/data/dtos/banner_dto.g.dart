@@ -8,7 +8,7 @@ part of 'banner_dto.dart';
 
 _$BannerDtoImpl _$$BannerDtoImplFromJson(Map<String, dynamic> json) =>
     _$BannerDtoImpl(
-      id: json['id'] as String,
+      id: json['_id'] as String,
       title: json['title'] as String,
       imageUrl: json['imageUrl'] as String,
       order: (json['order'] as num).toInt(),
@@ -19,7 +19,7 @@ _$BannerDtoImpl _$$BannerDtoImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$BannerDtoImplToJson(_$BannerDtoImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      '_id': instance.id,
       'title': instance.title,
       'imageUrl': instance.imageUrl,
       'order': instance.order,

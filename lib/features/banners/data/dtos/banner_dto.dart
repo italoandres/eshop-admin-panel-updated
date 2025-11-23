@@ -9,7 +9,7 @@ class BannerDto with _$BannerDto {
   const BannerDto._();
 
   const factory BannerDto({
-    required String id,
+    @JsonKey(name: '_id') required String id,
     required String title,
     required String imageUrl,
     required int order,

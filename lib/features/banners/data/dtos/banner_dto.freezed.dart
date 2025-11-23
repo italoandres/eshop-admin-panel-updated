@@ -20,6 +20,7 @@ BannerDto _$BannerDtoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$BannerDto {
+  @JsonKey(name: '_id')
   String get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String get imageUrl => throw _privateConstructorUsedError;
@@ -44,7 +45,7 @@ abstract class $BannerDtoCopyWith<$Res> {
       _$BannerDtoCopyWithImpl<$Res, BannerDto>;
   @useResult
   $Res call(
-      {String id,
+      {@JsonKey(name: '_id') String id,
       String title,
       String imageUrl,
       int order,
@@ -118,7 +119,7 @@ abstract class _$$BannerDtoImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
+      {@JsonKey(name: '_id') String id,
       String title,
       String imageUrl,
       int order,
@@ -185,7 +186,7 @@ class __$$BannerDtoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$BannerDtoImpl extends _BannerDto {
   const _$BannerDtoImpl(
-      {required this.id,
+      {@JsonKey(name: '_id') required this.id,
       required this.title,
       required this.imageUrl,
       required this.order,
@@ -198,6 +199,7 @@ class _$BannerDtoImpl extends _BannerDto {
       _$$BannerDtoImplFromJson(json);
 
   @override
+  @JsonKey(name: '_id')
   final String id;
   @override
   final String title;
@@ -257,7 +259,7 @@ class _$BannerDtoImpl extends _BannerDto {
 
 abstract class _BannerDto extends BannerDto {
   const factory _BannerDto(
-      {required final String id,
+      {@JsonKey(name: '_id') required final String id,
       required final String title,
       required final String imageUrl,
       required final int order,
@@ -270,6 +272,7 @@ abstract class _BannerDto extends BannerDto {
       _$BannerDtoImpl.fromJson;
 
   @override
+  @JsonKey(name: '_id')
   String get id;
   @override
   String get title;

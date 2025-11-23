@@ -34,13 +34,15 @@ class DioClient {
             options.headers['Authorization'] = 'Bearer $token';
           }
 
-          _logger.d('REQUEST[${options.method}] => PATH: ${options.path}');
+          // Log desabilitado para reduzir ruído
+          // _logger.d('REQUEST[${options.method}] => PATH: ${options.path}');
           return handler.next(options);
         },
         onResponse: (response, handler) {
-          _logger.d(
-            'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}',
-          );
+          // Log desabilitado para reduzir ruído
+          // _logger.d(
+          //   'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}',
+          // );
           return handler.next(response);
         },
         onError: (error, handler) async {
@@ -71,13 +73,13 @@ class DioClient {
       ),
     );
 
-    // Log interceptor (apenas em debug)
-    _dio.interceptors.add(LogInterceptor(
-      request: true,
-      requestBody: true,
-      responseBody: true,
-      error: true,
-    ));
+    // Log interceptor DESABILITADO - causa problemas com imagens base64
+    // _dio.interceptors.add(LogInterceptor(
+    //   request: false,
+    //   requestBody: false,
+    //   responseBody: false,
+    //   error: true,
+    // ));
   }
 
   Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {

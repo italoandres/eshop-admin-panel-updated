@@ -12,14 +12,19 @@ class BannerRepository {
   Future<List<BannerModel>> fetchBanners() async {
     try {
       // Rota correta: /stores/:storeId/banners
-      final response = await _dioClient.get<Map<String, dynamic>>('/stores/eshop_001/banners');
+      final response = await _dioClient.get('/stores/eshop_001/banners');
+      
+      // Converte para Map se necessário
+      final Map<String, dynamic> responseData = response.data is Map<String, dynamic>
+          ? response.data as Map<String, dynamic>
+          : {'data': response.data};
 
-      if (response.data == null) {
+      if (responseData.isEmpty) {
         throw const AppError.server(message: 'Resposta vazia do servidor');
       }
 
       // Assumindo que a API retorna: { "data": [...] }
-      final List<dynamic> bannersJson = response.data!['data'] ?? [];
+      final List<dynamic> bannersJson = responseData['data'] ?? [];
 
       final banners = bannersJson
           .map((json) => BannerDto.fromJson(json as Map<String, dynamic>))

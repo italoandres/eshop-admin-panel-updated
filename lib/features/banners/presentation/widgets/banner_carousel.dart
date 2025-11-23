@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -57,19 +58,7 @@ class BannerCarousel extends ConsumerWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      CachedNetworkImage(
-                        imageUrl: banner.imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => _buildShimmer(),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.image_not_supported,
-                            size: 50,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
+                      _buildBannerImage(banner.imageUrl),
                       if (banner.title.isNotEmpty)
                         Positioned(
                           bottom: 0,
@@ -123,6 +112,51 @@ class BannerCarousel extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBannerImage(String imageUrl) {
+    // Detecta se é base64 ou URL HTTP
+    if (imageUrl.startsWith('data:image')) {
+      try {
+        // Extrai a parte base64 (remove o prefixo "data:image/png;base64,")
+        final base64String = imageUrl.split(',')[1];
+        final bytes = base64Decode(base64String);
+        
+        return Image.memory(
+          bytes,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            debugPrint('❌ Erro ao decodificar imagem base64: $error');
+            return _buildErrorWidget();
+          },
+        );
+      } catch (e) {
+        debugPrint('❌ Erro ao processar imagem base64: $e');
+        return _buildErrorWidget();
+      }
+    } else {
+      // É uma URL HTTP - usa CachedNetworkImage
+      return CachedNetworkImage(
+        imageUrl: imageUrl,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => _buildShimmer(),
+        errorWidget: (context, url, error) {
+          debugPrint('❌ Erro ao carregar imagem da URL: $error');
+          return _buildErrorWidget();
+        },
+      );
+    }
+  }
+
+  Widget _buildErrorWidget() {
+    return Container(
+      color: Colors.grey[300],
+      child: const Icon(
+        Icons.image_not_supported,
+        size: 50,
+        color: Colors.grey,
       ),
     );
   }
