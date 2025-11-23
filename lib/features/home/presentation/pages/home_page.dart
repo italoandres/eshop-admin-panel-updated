@@ -8,6 +8,7 @@ import '../../../auth/presentation/notifiers/auth_notifier.dart';
 import '../../../../core/config/store_config_provider.dart';
 import '../../../../core/widgets/product_card.dart';
 import '../widgets/quick_access_icons.dart';
+import '../widgets/main_drawer.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -67,6 +68,12 @@ class _HomePageState extends ConsumerState<HomePage>
           appBar: AppBar(
             toolbarHeight: 100,
             title: null,
+            leading: Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
             actions: [
               IconButton(
                 icon: const Icon(Icons.shopping_cart_outlined),
@@ -250,6 +257,7 @@ class _HomePageState extends ConsumerState<HomePage>
               ],
             ),
           ),
+          drawer: const MainDrawer(),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: 0,
             type: BottomNavigationBarType.fixed,
