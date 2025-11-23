@@ -32,11 +32,11 @@ class BannerRepository {
 
       return banners;
     } on DioException catch (e) {
-      // Se for erro de conexão, retorna banners mock para desenvolvimento
-      if (e.type == DioExceptionType.connectionError ||
-          e.type == DioExceptionType.unknown) {
-        return _getMockBanners();
-      }
+      // NÃO retornar banners mock - mostrar erro real
+      // if (e.type == DioExceptionType.connectionError ||
+      //     e.type == DioExceptionType.unknown) {
+      //   return _getMockBanners();
+      // }
 
       if (e.response?.statusCode == 404) {
         throw const AppError.notFound(message: 'Banners não encontrados');
