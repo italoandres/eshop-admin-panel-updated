@@ -54,24 +54,36 @@ exports.getAllBanners = async (req, res) => {
 exports.createBanner = async (req, res) => {
   try {
     const { storeId } = req.params;
-    const { title, imageUrl, targetUrl, order, active, startAt, endAt } = req.body;
+    let { title, imageUrl, targetUrl, order, active, startAt, endAt } = req.body;
 
     // LOG DETALHADO
     console.log('=== CREATE BANNER ===');
     console.log('StoreId:', storeId);
-    console.log('Body:', JSON.stringify(req.body).substring(0, 200));
     console.log('Title:', title);
-    console.log('ImageUrl exists:', !!imageUrl, 'Length:', imageUrl?.length || 0);
-    console.log('TargetUrl:', targetUrl);
+    console.log('ImageUrl type:', isBase64Image(imageUrl) ? 'BASE64' : 'URL');
 
     // Validar campos obrigatórios
     if (!title || !imageUrl || !targetUrl) {
       console.error('❌ MISSING FIELDS:', { title: !!title, imageUrl: !!imageUrl, targetUrl: !!targetUrl });
-      return res.status(400).json({ 
-        message: 'Campos obrigatórios faltando', 
+      return res.status(400).json({
+        message: 'Campos obrigatórios faltando',
         required: ['title', 'imageUrl', 'targetUrl'],
         received: { title: !!title, imageUrl: !!imageUrl, targetUrl: !!targetUrl }
       });
+    }
+
+    // 🔥 CLOUDINARY: Upload automático de base64
+    let cloudinaryPublicId = null;
+    if (isBase64Image(imageUrl)) {
+      console.log('📤 Base64 detectado! Upload para Cloudinary...');
+      try {
+        const uploaded = await uploadImage(imageUrl, `banners/${storeId}`);
+        imageUrl = uploaded.url;
+        cloudinaryPublicId = uploaded.publicId;
+        console.log('✅ Cloudinary upload OK:', imageUrl);
+      } catch (error) {
+        console.warn('⚠️ Cloudinary falhou, usando base64:', error.message);
+      }
     }
 
     const banner = await Banner.create({
@@ -83,6 +95,7 @@ exports.createBanner = async (req, res) => {
       active: active !== undefined ? active : true,
       startAt: startAt || null,
       endAt: endAt || null,
+      cloudinaryPublicId,
     });
 
     console.log('✅ Banner created:', banner._id);
@@ -99,12 +112,29 @@ exports.createBanner = async (req, res) => {
 exports.updateBanner = async (req, res) => {
   try {
     const { storeId, id } = req.params;
-    const { title, imageUrl, targetUrl, order, active, startAt, endAt } = req.body;
+    let { title, imageUrl, targetUrl, order, active, startAt, endAt } = req.body;
 
     const banner = await Banner.findOne({ _id: id, storeId });
 
     if (!banner) {
       return res.status(404).json({ message: 'Banner não encontrado' });
+    }
+
+    // 🔥 CLOUDINARY: Upload automático de base64 na atualização
+    if (imageUrl !== undefined && isBase64Image(imageUrl)) {
+      console.log('📤 Base64 detectado em UPDATE! Upload para Cloudinary...');
+      try {
+        // Deletar imagem antiga se existir
+        if (banner.cloudinaryPublicId) {
+          await deleteImage(banner.cloudinaryPublicId);
+        }
+        const uploaded = await uploadImage(imageUrl, `banners/${storeId}`);
+        imageUrl = uploaded.url;
+        banner.cloudinaryPublicId = uploaded.publicId;
+        console.log('✅ Cloudinary upload OK:', imageUrl);
+      } catch (error) {
+        console.warn('⚠️ Cloudinary falhou, usando base64:', error.message);
+      }
     }
 
     // Atualizar campos
