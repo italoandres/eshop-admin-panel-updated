@@ -1,480 +1,210 @@
-# 🚀 Guia Completo de Deploy - EShop Backend
+# 🚀 Guia de Deploy - Backend API
 
-Este guia te ensina a fazer deploy do backend em diferentes plataformas.
+Este guia mostra como fazer deploy do backend para cada cliente.
 
----
+## 📋 Pré-requisitos
 
-## 📋 Índice
-
-1. [Deploy no Render.com (Recomendado)](#1-deployno-rendercom)
-2. [Deploy no Railway.app](#2-deploy-no-railwayapp)
-3. [Deploy no Heroku](#3-deploy-no-heroku)
-4. [Deploy em VPS (AWS, Digital Ocean, etc)](#4-deploy-em-vps)
-5. [Configuração de Domínio Customizado](#5-domínio-customizado)
-6. [Troubleshooting](#6-troubleshooting)
+- Conta no MongoDB Atlas (gratuita)
+- Conta no Render.com (gratuita)
+- Conta no Netlify (gratuita) - para o painel admin
 
 ---
 
-## 1. Deploy no Render.com
+## 1️⃣ CONFIGURAR MONGODB ATLAS
 
-### Por que Render?
-- ✅ **Grátis** até 750h/mês
-- ✅ Deploy automático via Git
-- ✅ SSL grátis
-- ✅ Fácil de usar
-- ✅ Sem cartão de crédito
+### Passo 1: Criar Cluster
+1. Acesse: https://www.mongodb.com/cloud/atlas/register
+2. Crie uma conta gratuita
+3. Crie um novo cluster (M0 - Free)
+4. Aguarde 3-5 minutos para provisionar
 
-### Passo a passo
+### Passo 2: Configurar Acesso
+1. Database Access → Add New Database User
+   - Username: `admin_user`
+   - Password: Gere uma senha forte
+   - Role: `Atlas admin`
 
-#### 1.1 Criar conta no Render
+2. Network Access → Add IP Address
+   - Clique em "Allow Access from Anywhere"
+   - IP: `0.0.0.0/0`
 
-1. Acesse https://render.com
-2. Clique em "Get Started for Free"
-3. Crie conta com GitHub/GitLab/Email
+### Passo 3: Obter Connection String
+1. Clusters → Connect → Connect your application
+2. Copie a string de conexão:
+   ```
+   mongodb+srv://admin_user:<password>@cluster0.xxxxx.mongodb.net/eshop-banners?retryWrites=true&w=majority
+   ```
+3. Substitua `<password>` pela senha criada
 
-#### 1.2 Preparar repositório
+---
 
-O código precisa estar em um repositório Git (GitHub, GitLab, etc).
+## 2️⃣ FAZER DEPLOY NO RENDER
 
-\`\`\`bash
-# Se ainda não tem
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin <seu-repo-url>
-git push -u origin main
-\`\`\`
+### Passo 1: Criar Conta
+1. Acesse: https://render.com
+2. Faça login com GitHub
 
-#### 1.3 Criar Web Service
+### Passo 2: Criar Web Service
+1. Dashboard → New → Web Service
+2. Conecte seu repositório GitHub
+3. Configure:
+   - **Name**: `cliente-nome-api` (ex: `loja-joao-api`)
+   - **Region**: Oregon (US West)
+   - **Branch**: `main`
+   - **Root Directory**: `backend/backend`
+   - **Runtime**: Node
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+   - **Instance Type**: Free
 
-1. No dashboard do Render, clique em "New +"
-2. Selecione "Web Service"
-3. Conecte seu repositório
-4. Selecione o repositório do backend
-5. Configure:
+### Passo 3: Configurar Variáveis de Ambiente
+Adicione as seguintes variáveis:
 
-**Name:** `eshop-backend` (ou nome da sua loja)
-**Region:** Oregon (US West) - mais próximo do Brasil
-**Branch:** `main`
-**Root Directory:** `backend`
-**Runtime:** `Node`
-**Build Command:**
-\`\`\`bash
-npm install && npm run build
-\`\`\`
-
-**Start Command:**
-\`\`\`bash
-npm start
-\`\`\`
-
-**Plan:** Free
-
-#### 1.4 Configurar Variáveis de Ambiente
-
-Na seção "Environment Variables", adicione:
-
-\`\`\`bash
+```env
+MONGODB_URI=mongodb+srv://admin_user:SUA_SENHA@cluster0.xxxxx.mongodb.net/eshop-banners?retryWrites=true&w=majority
+PORT=4001
 NODE_ENV=production
-PORT=5000
+ADMIN_TOKEN=gere_um_token_secreto_aqui_123456
+ALLOWED_ORIGINS=https://seu-painel-admin.netlify.app,https://seu-app.com
+```
 
-# MongoDB Atlas (crie em mongodb.com/cloud/atlas)
-MONGODB_URI=mongodb+srv://usuario:senha@cluster.mongodb.net/eshop
+**⚠️ IMPORTANTE:**
+- Substitua `SUA_SENHA` pela senha do MongoDB
+- Gere um token único para `ADMIN_TOKEN`
+- Adicione os domínios corretos em `ALLOWED_ORIGINS`
 
-# JWT Secrets (gere com: openssl rand -base64 32)
-JWT_SECRET=sua_chave_secreta_forte_aqui
-JWT_REFRESH_SECRET=outra_chave_secreta_forte_aqui
-JWT_EXPIRES_IN=7d
-JWT_REFRESH_EXPIRES_IN=30d
-
-# Cloudinary (crie em cloudinary.com)
-CLOUDINARY_CLOUD_NAME=seu_cloud_name
-CLOUDINARY_API_KEY=sua_api_key
-CLOUDINARY_API_SECRET=sua_api_secret
-
-# CORS (URLs do seu frontend)
-CORS_ORIGIN=https://seu-app.netlify.app,https://seu-admin.vercel.app
-
-# Opcional
-DEFAULT_STORE_ID=eshop_001
-STORE_NAME=EShop
-ADMIN_TOKEN=eshop_admin_token_2024
-\`\`\`
-
-#### 1.5 Deploy!
-
+### Passo 4: Deploy
 1. Clique em "Create Web Service"
-2. Aguarde o build (3-5 minutos)
-3. Quando aparecer "Live", seu backend está no ar! 🎉
+2. Aguarde 5-10 minutos para o deploy
+3. Sua API estará disponível em: `https://cliente-nome-api.onrender.com`
 
-**URL gerada:** `https://eshop-backend.onrender.com`
+### Passo 5: Testar
+```bash
+curl https://cliente-nome-api.onrender.com/health
+```
 
-#### 1.6 Testar
+Deve retornar: `{"status":"OK","timestamp":"..."}`
 
-\`\`\`bash
-curl https://eshop-backend.onrender.com/health
-\`\`\`
+---
 
-Deve retornar:
-\`\`\`json
-{
-  "status": "ok",
-  "timestamp": "2024-01-15T12:00:00.000Z",
-  "environment": "production",
-  "uptime": 123.45
+## 3️⃣ CONFIGURAR PAINEL ADMIN
+
+### Passo 1: Atualizar URL da API
+No código do painel admin, atualize a URL base:
+
+```javascript
+// src/config/api.js (ou similar)
+const API_BASE_URL = 'https://cliente-nome-api.onrender.com';
+const ADMIN_TOKEN = 'seu_token_secreto_aqui';
+```
+
+### Passo 2: Deploy no Netlify
+1. Acesse: https://app.netlify.com
+2. Sites → Add new site → Import an existing project
+3. Conecte seu repositório
+4. Configure:
+   - **Build command**: `npm run build`
+   - **Publish directory**: `dist` ou `build`
+5. Deploy!
+
+### Passo 3: Configurar Domínio Customizado (Opcional)
+1. Site settings → Domain management
+2. Add custom domain: `admin.loja-cliente.com`
+
+---
+
+## 4️⃣ CONFIGURAR APP FLUTTER
+
+### Atualizar URL da API no App
+
+```dart
+// lib/core/config/api_config.dart
+class ApiConfig {
+  static const String baseUrl = 'https://cliente-nome-api.onrender.com';
+  static const String defaultStoreId = 'store_001';
 }
-\`\`\`
+```
+
+### Build do App
+```bash
+# Android
+flutter build apk --release
+
+# iOS
+flutter build ios --release
+
+# Web
+flutter build web --release
+```
 
 ---
 
-## 2. Deploy no Railway.app
+## 5️⃣ POPULAR DADOS INICIAIS
 
-### Por que Railway?
-- ✅ Interface moderna
-- ✅ $5 grátis por mês
-- ✅ Deploy rápido
-- ✅ PostgreSQL/MongoDB inclusos
+### Via Painel Admin
+1. Acesse o painel admin
+2. Faça login com o token configurado
+3. Crie banners, produtos, etc.
 
-### Passo a passo
-
-#### 2.1 Criar conta
-
-1. Acesse https://railway.app
-2. Clique em "Start a New Project"
-3. Faça login com GitHub
-
-#### 2.2 Deploy do código
-
-1. Clique em "Deploy from GitHub repo"
-2. Selecione seu repositório
-3. Railway detecta automaticamente Node.js
-
-#### 2.3 Configurar variáveis
-
-1. Vá em "Variables"
-2. Clique em "RAW Editor"
-3. Cole:
-
-\`\`\`bash
-NODE_ENV=production
-MONGODB_URI=mongodb+srv://...
-JWT_SECRET=...
-JWT_REFRESH_SECRET=...
-CLOUDINARY_CLOUD_NAME=...
-CLOUDINARY_API_KEY=...
-CLOUDINARY_API_SECRET=...
-CORS_ORIGIN=...
-\`\`\`
-
-#### 2.4 Deploy automático
-
-Railway faz deploy automaticamente! Aguarde 2-3 minutos.
-
-**URL gerada:** `https://eshop-backend-production.up.railway.app`
+### Via Script (Opcional)
+```bash
+# No diretório backend/backend
+node seed/seedBanners.js
+```
 
 ---
 
-## 3. Deploy no Heroku
+## 🔧 TROUBLESHOOTING
 
-### Pré-requisitos
-- Conta no Heroku
-- Heroku CLI instalado
+### Erro de CORS
+- Adicione o domínio do painel admin em `ALLOWED_ORIGINS`
+- Reinicie o serviço no Render
 
-### Passo a passo
+### MongoDB não conecta
+- Verifique se o IP `0.0.0.0/0` está liberado
+- Verifique a senha na connection string
 
-#### 3.1 Instalar Heroku CLI
-
-\`\`\`bash
-# macOS
-brew tap heroku/brew && brew install heroku
-
-# Linux
-curl https://cli-assets.heroku.com/install.sh | sh
-\`\`\`
-
-#### 3.2 Login
-
-\`\`\`bash
-heroku login
-\`\`\`
-
-#### 3.3 Criar app
-
-\`\`\`bash
-cd backend
-heroku create eshop-backend
-\`\`\`
-
-#### 3.4 Configurar variáveis
-
-\`\`\`bash
-heroku config:set NODE_ENV=production
-heroku config:set MONGODB_URI=mongodb+srv://...
-heroku config:set JWT_SECRET=...
-heroku config:set JWT_REFRESH_SECRET=...
-heroku config:set CLOUDINARY_CLOUD_NAME=...
-heroku config:set CLOUDINARY_API_KEY=...
-heroku config:set CLOUDINARY_API_SECRET=...
-heroku config:set CORS_ORIGIN=...
-\`\`\`
-
-#### 3.5 Deploy
-
-\`\`\`bash
-git push heroku main
-\`\`\`
-
-**URL gerada:** `https://eshop-backend.herokuapp.com`
+### API retorna 500
+- Verifique os logs no Render Dashboard
+- Verifique se todas as variáveis de ambiente estão configuradas
 
 ---
 
-## 4. Deploy em VPS
+## 📊 CUSTOS
 
-### Opções de VPS
-- Digital Ocean ($5/mês)
-- AWS Lightsail ($3.50/mês)
-- Linode ($5/mês)
-- Vultr ($2.50/mês)
+### Gratuito (Tier Free)
+- **MongoDB Atlas**: 512MB storage
+- **Render**: 750 horas/mês (suficiente para 1 instância 24/7)
+- **Netlify**: 100GB bandwidth/mês
 
-### Passo a passo (Ubuntu 22.04)
-
-#### 4.1 Conectar via SSH
-
-\`\`\`bash
-ssh root@seu-ip
-\`\`\`
-
-#### 4.2 Instalar Node.js
-
-\`\`\`bash
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt-get install -y nodejs
-\`\`\`
-
-#### 4.3 Instalar MongoDB (Opcional)
-
-\`\`\`bash
-wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-sudo apt-get update
-sudo apt-get install -y mongodb-org
-sudo systemctl start mongod
-sudo systemctl enable mongod
-\`\`\`
-
-#### 4.4 Clonar repositório
-
-\`\`\`bash
-cd /var/www
-git clone <seu-repo-url>
-cd backend
-npm install
-npm run build
-\`\`\`
-
-#### 4.5 Configurar .env
-
-\`\`\`bash
-nano .env
-\`\`\`
-
-Cole suas variáveis de ambiente.
-
-#### 4.6 Instalar PM2 (Process Manager)
-
-\`\`\`bash
-npm install -g pm2
-pm2 start dist/server.js --name eshop-backend
-pm2 startup
-pm2 save
-\`\`\`
-
-#### 4.7 Configurar Nginx (Reverse Proxy)
-
-\`\`\`bash
-sudo apt-get install -y nginx
-
-sudo nano /etc/nginx/sites-available/eshop
-\`\`\`
-
-Cole:
-
-\`\`\`nginx
-server {
-    listen 80;
-    server_name seu-dominio.com;
-
-    location / {
-        proxy_pass http://localhost:5000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-}
-\`\`\`
-
-Ativar:
-
-\`\`\`bash
-sudo ln -s /etc/nginx/sites-available/eshop /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-\`\`\`
-
-#### 4.8 Configurar SSL com Certbot
-
-\`\`\`bash
-sudo apt-get install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d seu-dominio.com
-\`\`\`
+### Quando Escalar
+- MongoDB Atlas: $9/mês (2GB)
+- Render: $7/mês (instância dedicada)
+- Netlify: Gratuito (até 100GB)
 
 ---
 
-## 5. Domínio Customizado
+## 🎯 CHECKLIST DE DEPLOY
 
-### Render/Railway/Heroku
-
-#### 5.1 Comprar domínio
-
-Opções:
-- Registro.br (Brasil) - R$ 40/ano
-- Namecheap - $8.88/ano
-- GoDaddy - $11.99/ano
-
-#### 5.2 Configurar DNS
-
-No painel do seu domínio, adicione um registro CNAME:
-
-\`\`\`
-Type: CNAME
-Name: api (ou backend)
-Value: seu-app.onrender.com
-TTL: 3600
-\`\`\`
-
-#### 5.3 Adicionar domínio customizado
-
-**Render:**
-1. Vá em Settings
-2. Custom Domains
-3. Adicione: `api.seu-dominio.com`
-4. Render configura SSL automaticamente
-
-**Railway:**
-1. Settings → Domains
-2. Generate Domain ou adicione customizado
-
-**Heroku:**
-\`\`\`bash
-heroku domains:add api.seu-dominio.com
-\`\`\`
+- [ ] MongoDB Atlas configurado
+- [ ] Backend deployado no Render
+- [ ] Variáveis de ambiente configuradas
+- [ ] Health check funcionando
+- [ ] Painel admin deployado no Netlify
+- [ ] Painel admin conectado à API
+- [ ] App Flutter apontando para API correta
+- [ ] Dados iniciais populados
+- [ ] Testes de criação/edição funcionando
 
 ---
 
-## 6. Troubleshooting
+## 📞 SUPORTE
 
-### ❌ Erro: "Application failed to start"
-
-**Causa:** Variáveis de ambiente faltando
-
-**Solução:** Verifique se todas as variáveis estão configuradas:
-\`\`\`bash
-MONGODB_URI
-JWT_SECRET
-JWT_REFRESH_SECRET
-CLOUDINARY_CLOUD_NAME
-CLOUDINARY_API_KEY
-CLOUDINARY_API_SECRET
-\`\`\`
+Se tiver problemas:
+1. Verifique os logs no Render Dashboard
+2. Teste os endpoints com curl
+3. Verifique as variáveis de ambiente
 
 ---
 
-### ❌ Erro: "Cannot connect to MongoDB"
-
-**Causa:** Connection string inválida ou IP não autorizado
-
-**Solução:**
-1. MongoDB Atlas → Network Access
-2. Adicione IP: `0.0.0.0/0` (permite todos)
-3. Ou adicione IP do Render/Railway
-
----
-
-### ❌ Erro: "CORS blocked"
-
-**Causa:** Frontend não está na whitelist do CORS
-
-**Solução:** Adicione URL do frontend no `.env`:
-\`\`\`bash
-CORS_ORIGIN=https://seu-frontend.com,https://admin.vercel.app
-\`\`\`
-
----
-
-### ❌ Erro: "Rate limit exceeded"
-
-**Causa:** Muitas requisições do mesmo IP
-
-**Solução:** Aumente o limite no `.env`:
-\`\`\`bash
-RATE_LIMIT_MAX_REQUESTS=200
-\`\`\`
-
----
-
-### ❌ App "dorme" depois de inatividade (Render Free)
-
-**Causa:** Plano gratuito do Render hiberna após 15 min
-
-**Solução:**
-1. Upgrade para plano pago ($7/mês)
-2. Ou use serviço de "keep-alive": https://cron-job.org
-
----
-
-### ❌ Logs não aparecem
-
-**Solução:**
-
-**Render:** Vá em "Logs" no dashboard
-
-**Railway:** Terminal integrado
-
-**Heroku:**
-\`\`\`bash
-heroku logs --tail
-\`\`\`
-
-**VPS:**
-\`\`\`bash
-pm2 logs eshop-backend
-\`\`\`
-
----
-
-## 🎉 Deploy Concluído!
-
-Seu backend está no ar! Agora:
-
-1. ✅ Teste todos os endpoints
-2. ✅ Configure o Flutter app com a nova URL
-3. ✅ Configure o Admin React com a nova URL
-4. ✅ Faça um pedido de teste
-5. 🚀 **Loja no ar!**
-
----
-
-## 📞 Precisa de Ajuda?
-
-- Render Docs: https://render.com/docs
-- Railway Docs: https://docs.railway.app
-- MongoDB Atlas: https://docs.atlas.mongodb.com
-- Cloudinary Docs: https://cloudinary.com/documentation
-
----
-
-**Tempo médio de deploy: 20-30 minutos** ⏱️
+**Pronto! Cada cliente terá sua própria instância independente! 🚀**

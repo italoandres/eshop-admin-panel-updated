@@ -1,376 +1,197 @@
-# 🛍️ EShop Backend - API REST
+# 🎯 EShop Banner API
 
-Backend white-label para e-commerce desenvolvido em **Node.js + Express + TypeScript + MongoDB**.
+API REST para gerenciamento de banners do aplicativo EShop.
 
----
+## 📋 Pré-requisitos
 
-## 📋 Índice
+- Node.js 16+ 
+- MongoDB 4.4+
+- npm ou yarn
 
-- [Sobre](#sobre)
-- [Stack Tecnológica](#stack-tecnológica)
-- [Funcionalidades](#funcionalidades)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Pré-requisitos](#pré-requisitos)
-- [Instalação](#instalação)
-- [Configuração](#configuração)
-- [Executando](#executando)
-- [Endpoints da API](#endpoints-da-api)
-- [Deploy](#deploy)
-- [Customização](#customização)
+## 🚀 Instalação
 
----
+1. **Instalar dependências:**
+```bash
+cd backend
+npm install
+```
 
-## 🎯 Sobre
+2. **Configurar variáveis de ambiente:**
+```bash
+cp .env.example .env
+# Editar .env com suas configurações
+```
 
-Este é o backend de um sistema de e-commerce white-label. Cada cliente que comprar este código pode fazer deploy próprio e ter sua loja independente.
+3. **Iniciar MongoDB:**
+```bash
+# Windows (se instalado como serviço)
+net start MongoDB
 
-**Características principais:**
-- ✅ Código-fonte completo e documentado
-- ✅ Arquitetura escalável e limpa
-- ✅ Upload de imagens no Cloudinary (sem base64!)
-- ✅ Autenticação JWT segura
-- ✅ Validação robusta com Zod
-- ✅ Tratamento de erros profissional
-- ✅ TypeScript para type-safety
-- ✅ Pronto para produção
+# macOS/Linux
+mongod
 
----
+# Ou usar Docker
+docker run -d -p 27017:27017 --name mongodb mongo:latest
+```
 
-## 🚀 Stack Tecnológica
+4. **Popular banco de dados com dados de teste:**
+```bash
+npm run seed
+```
 
-### Core
-- **Node.js** v18+
-- **TypeScript** 5.3
-- **Express** 4.18
+5. **Iniciar servidor:**
+```bash
+# Desenvolvimento (com auto-reload)
+npm run dev
 
-### Banco de Dados
-- **MongoDB** com Mongoose
+# Produção
+npm start
+```
 
-### Upload de Imagens
-- **Cloudinary** (grátis até 25GB)
-- **Multer** para multipart/form-data
+## 📡 Endpoints
 
-### Segurança
-- **Helmet** - Headers de segurança
-- **CORS** - Proteção cross-origin
-- **JWT** - Tokens de autenticação
-- **bcrypt** - Hash de senhas
-- **express-rate-limit** - Proteção contra abuso
+### Públicos (App Flutter)
 
-### Validação
-- **Zod** - Validação de schemas
+#### GET /api/stores/:storeId/banners
+Retorna banners ativos para uma loja específica.
 
----
+**Exemplo:**
+```bash
+curl http://localhost:4000/api/stores/store_001/banners
+```
 
-## ⚡ Funcionalidades
+**Resposta:**
+```json
+[
+  {
+    "_id": "...",
+    "storeId": "store_001",
+    "title": "Black Friday",
+    "imageUrl": "https://...",
+    "targetUrl": "https://...",
+    "order": 1,
+    "active": true,
+    "startAt": null,
+    "endAt": null,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+]
+```
 
-### Autenticação
-- ✅ Registro de usuários
-- ✅ Login com JWT
-- ✅ Refresh token automático
-- ✅ Logout
-- ✅ Proteção de rotas
+### Protegidos (Admin) - Requer Token
 
-### Banners
-- ✅ CRUD completo
-- ✅ Upload para Cloudinary (sem base64!)
-- ✅ Ativar/desativar banners
-- ✅ Ordenação customizada
-- ✅ Rotas públicas (app) e admin
+**Header necessário:**
+```
+Authorization: Bearer eshop_admin_token_2024
+```
 
-### Produtos
-- ✅ CRUD completo
-- ✅ Upload de múltiplas imagens
-- ✅ Categorias e highlights
-- ✅ Guia de tamanhos
-- ✅ Paginação
-- ✅ Busca textual
-- ✅ Filtros por categoria
+#### GET /api/admin/stores/:storeId/banners
+Lista todos os banners (incluindo inativos).
 
-### Pedidos
-- ✅ Criar pedido
-- ✅ Listar pedidos do usuário
-- ✅ Histórico de status
-- ✅ Código de rastreamento
-- ✅ Estatísticas (admin)
-- ✅ Atualizar status (admin)
+#### POST /api/stores/:storeId/banners
+Cria um novo banner.
 
----
+**Body:**
+```json
+{
+  "title": "Novo Banner",
+  "imageUrl": "https://exemplo.com/imagem.jpg",
+  "targetUrl": "https://exemplo.com/destino",
+  "order": 1,
+  "active": true,
+  "startAt": "2024-01-01T00:00:00.000Z",
+  "endAt": "2024-12-31T23:59:59.000Z"
+}
+```
+
+#### PUT /api/stores/:storeId/banners/:id
+Atualiza um banner existente.
+
+#### DELETE /api/stores/:storeId/banners/:id
+Deleta um banner.
+
+## 🧪 Testando a API
+
+### Com cURL:
+
+```bash
+# Listar banners ativos
+curl http://localhost:4000/api/stores/store_001/banners
+
+# Criar banner (com autenticação)
+curl -X POST http://localhost:4000/api/stores/store_001/banners \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eshop_admin_token_2024" \
+  -d '{
+    "title": "Teste",
+    "imageUrl": "https://exemplo.com/img.jpg",
+    "targetUrl": "https://exemplo.com",
+    "order": 1,
+    "active": true
+  }'
+```
+
+### Com Postman:
+
+1. Importar collection (criar arquivo `postman_collection.json`)
+2. Configurar variável `baseUrl` = `http://localhost:4000`
+3. Configurar header `Authorization` = `Bearer eshop_admin_token_2024`
+
+## 🔧 Configuração no Flutter
+
+Atualizar `lib/core/constant/strings.dart`:
+
+```dart
+const String baseUrl = 'http://SEU_IP:4000';
+// Exemplo: const String baseUrl = 'http://192.168.1.100:4000';
+```
+
+**Importante:** Use o IP da sua máquina, não `localhost`, para testar no dispositivo físico.
 
 ## 📁 Estrutura do Projeto
 
-\`\`\`
+```
 backend/
-├── src/
-│   ├── config/              # Configurações (DB, Cloudinary, ENV)
-│   ├── models/              # Mongoose schemas
-│   ├── controllers/         # Business logic
-│   ├── routes/              # Express routes
-│   ├── middleware/          # Auth, error handling, upload
-│   ├── services/            # Cloudinary, tokens
-│   ├── types/               # TypeScript definitions
-│   ├── utils/               # Helpers e errors
-│   └── server.ts            # Entry point
-├── .env.example             # Template de variáveis
-├── package.json
-├── tsconfig.json
-└── README.md
-\`\`\`
-
----
-
-## 📦 Pré-requisitos
-
-- **Node.js** v18 ou superior
-- **MongoDB** (local ou MongoDB Atlas)
-- **Conta Cloudinary** (grátis): https://cloudinary.com
-
----
-
-## 🔧 Instalação
-
-### 1. Clone o repositório
-
-\`\`\`bash
-git clone <seu-repositorio>
-cd backend
-\`\`\`
-
-### 2. Instale as dependências
-
-\`\`\`bash
-npm install
-\`\`\`
-
-### 3. Configure as variáveis de ambiente
-
-\`\`\`bash
-cp .env.example .env
-\`\`\`
-
-Edite o arquivo `.env` com suas configurações.
-
----
-
-## ⚙️ Configuração
-
-### MongoDB
-
-**Opção 1: MongoDB Atlas (Recomendado)**
-
-1. Acesse https://www.mongodb.com/cloud/atlas
-2. Crie uma conta gratuita
-3. Crie um cluster
-4. Crie um usuário de banco
-5. Copie a connection string
-6. Cole no `.env`:
-
-\`\`\`bash
-MONGODB_URI=mongodb+srv://usuario:senha@cluster.mongodb.net/eshop?retryWrites=true&w=majority
-\`\`\`
-
-**Opção 2: MongoDB Local**
-
-\`\`\`bash
-MONGODB_URI=mongodb://localhost:27017/eshop
-\`\`\`
-
-### Cloudinary
-
-1. Acesse https://cloudinary.com
-2. Crie uma conta gratuita (25GB grátis!)
-3. Vá em Dashboard
-4. Copie: Cloud Name, API Key, API Secret
-5. Cole no `.env`:
-
-\`\`\`bash
-CLOUDINARY_CLOUD_NAME=seu_cloud_name
-CLOUDINARY_API_KEY=sua_api_key
-CLOUDINARY_API_SECRET=sua_api_secret
-\`\`\`
-
-### JWT Secret
-
-Gere uma chave secreta forte:
-
-\`\`\`bash
-openssl rand -base64 32
-\`\`\`
-
-Cole no `.env`:
-
-\`\`\`bash
-JWT_SECRET=sua_chave_secreta_gerada
-JWT_REFRESH_SECRET=outra_chave_secreta_gerada
-\`\`\`
-
----
-
-## 🚀 Executando
-
-### Desenvolvimento
-
-\`\`\`bash
-npm run dev
-\`\`\`
-
-Servidor rodando em: http://localhost:5000
-
-### Build para produção
-
-\`\`\`bash
-npm run build
-npm start
-\`\`\`
-
----
-
-## 📡 Endpoints da API
-
-### Base URL
-\`\`\`
-http://localhost:5000/api
-\`\`\`
-
-### Health Check
-\`\`\`
-GET /health
-\`\`\`
-
-### Autenticação
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| POST | `/auth/register` | Registrar usuário | ❌ |
-| POST | `/auth/login` | Fazer login | ❌ |
-| POST | `/auth/refresh` | Renovar token | ❌ |
-| GET | `/auth/me` | Dados do usuário | ✅ |
-| POST | `/auth/logout` | Fazer logout | ✅ |
-
-### Banners (App)
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| GET | `/stores/:storeId/banners` | Lista banners ativos | ❌ |
-
-### Banners (Admin)
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| GET | `/admin/stores/:storeId/banners/all` | Lista todos banners | ✅ Admin |
-| GET | `/admin/stores/:storeId/banners/:id` | Busca banner | ✅ Admin |
-| POST | `/admin/stores/:storeId/banners` | Cria banner | ✅ Admin |
-| PUT | `/admin/stores/:storeId/banners/:id` | Atualiza banner | ✅ Admin |
-| DELETE | `/admin/stores/:storeId/banners/:id` | Deleta banner | ✅ Admin |
-| PATCH | `/admin/stores/:storeId/banners/:id/toggle` | Ativa/desativa | ✅ Admin |
-
-### Produtos
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| GET | `/products` | Lista produtos | ❌ |
-| GET | `/products/:id` | Busca produto | ❌ |
-| POST | `/products` | Cria produto | ✅ Admin |
-| PUT | `/products/:id` | Atualiza produto | ✅ Admin |
-| DELETE | `/products/:id` | Deleta produto | ✅ Admin |
-| PATCH | `/products/:id/toggle` | Ativa/desativa | ✅ Admin |
-
-### Pedidos
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| GET | `/orders` | Meus pedidos | ✅ |
-| GET | `/orders/:id` | Detalhes do pedido | ✅ |
-| POST | `/orders` | Criar pedido | ✅ |
-| GET | `/orders/admin/all` | Todos pedidos | ✅ Admin |
-| GET | `/orders/admin/stats` | Estatísticas | ✅ Admin |
-| PATCH | `/orders/admin/:id/status` | Atualizar status | ✅ Admin |
-
----
-
-## 🌐 Deploy
-
-Consulte o arquivo **[DEPLOY_GUIDE.md](./DEPLOY_GUIDE.md)** para instruções completas de deploy em:
-
-- ✅ Render.com
-- ✅ Railway.app
-- ✅ Heroku
-- ✅ VPS (Digital Ocean, AWS, etc)
-
----
-
-## 🎨 Customização
-
-### Mudar nome da loja
-
-No `.env`:
-
-\`\`\`bash
-DEFAULT_STORE_ID=minha_loja
-STORE_NAME=Minha Loja Incrível
-\`\`\`
-
-### Mudar porta
-
-\`\`\`bash
-PORT=3000
-\`\`\`
-
-### Mudar CORS (permitir outros domínios)
-
-\`\`\`bash
-CORS_ORIGIN=https://meusite.com,https://admin.meusite.com
-\`\`\`
-
-### Adicionar novos campos em models
-
-Edite os arquivos em `src/models/` e rode:
-
-\`\`\`bash
-npm run build
-\`\`\`
-
----
-
-## 🔒 Segurança
-
-- ✅ Senhas hasheadas com bcrypt
-- ✅ JWT com expiração
-- ✅ Helmet para headers seguros
-- ✅ Rate limiting contra abuso
-- ✅ CORS configurado
-- ✅ Validação de inputs com Zod
-- ✅ MongoDB injection prevention
-
----
-
-## 📝 Licença
-
-Este código é vendido como produto white-label. Você tem direito de:
-- ✅ Usar comercialmente
-- ✅ Modificar livremente
-- ✅ Fazer deploy ilimitado
-- ❌ Revender o código-fonte
-
----
-
-## 🆘 Suporte
-
-Para dúvidas sobre o código, consulte:
-1. Este README
-2. DEPLOY_GUIDE.md
-3. Comentários no código
-4. Documentação do TypeScript/Express
-
----
-
-## 🎉 Pronto para Vender!
-
-Este backend está **100% pronto** para ser vendido a clientes. Basta:
-
-1. Cliente configura `.env`
-2. Cliente faz deploy (Render/Railway/Heroku)
-3. Cliente integra com Flutter app e Admin React
-4. 🚀 Loja no ar!
-
-**Tempo estimado de setup: 30 minutos**
+├── models/
+│   └── Banner.js          # Schema Mongoose
+├── controllers/
+│   └── bannerController.js # Lógica de negócio
+├── routes/
+│   └── bannerRoutes.js    # Definição de rotas
+├── middleware/
+│   └── auth.js            # Autenticação
+├── seed/
+│   └── seedBanners.js     # Dados de teste
+├── .env                   # Variáveis de ambiente
+├── .env.example           # Exemplo de configuração
+├── server.js              # Servidor principal
+├── package.json           # Dependências
+└── README.md              # Este arquivo
+```
+
+## 🐛 Troubleshooting
+
+### MongoDB não conecta
+- Verificar se o MongoDB está rodando: `mongosh`
+- Verificar a URI no `.env`
+
+### CORS error no Flutter
+- Adicionar o IP/porta do seu servidor no `ALLOWED_ORIGINS` do `.env`
+- Reiniciar o servidor
+
+### Banners não aparecem no app
+- Verificar se o seed foi executado: `npm run seed`
+- Testar endpoint manualmente: `curl http://localhost:4000/api/stores/store_001/banners`
+- Verificar logs do servidor
+
+## 📝 Próximos Passos
+
+1. ✅ Backend funcionando
+2. ⏳ Conectar Flutter à API real
+3. ⏳ Criar painel admin web
+4. ⏳ Implementar upload de imagens
+
+## 📄 Licença
+
+MIT
