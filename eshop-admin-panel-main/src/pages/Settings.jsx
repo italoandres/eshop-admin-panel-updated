@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
-const API_URL = 'http://localhost:4000/api';
+const API_URL = API_BASE_URL;
 const STORE_ID = 'eshop_001';
 
 export default function Settings() {
