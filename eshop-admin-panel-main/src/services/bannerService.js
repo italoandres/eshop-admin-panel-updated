@@ -19,7 +19,7 @@ export const bannerService = {
   },
 
   delete: async (id) => {
-    const response = await api.delete(`/admin/stores/${STORE_ID}/banners/${id}`, banner);
+    const response = await api.delete(`/admin/stores/${STORE_ID}/banners/${id}`);
     return response.data;
   },
 };
