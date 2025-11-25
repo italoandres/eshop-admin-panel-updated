@@ -33,13 +33,22 @@ export default function LogoEditorModal({ isOpen, onClose, onSave, imageFile }) 
 
   // Load image when file changes
   useEffect(() => {
-    if (!imageFile || !isOpen) return;
+    if (!imageFile || !isOpen) {
+      console.log('LogoEditor: No file or modal closed');
+      return;
+    }
 
+    console.log('LogoEditor: Loading image file:', imageFile.name, 'Size:', imageFile.size, 'Type:', imageFile.type);
+    
+    // Limpar estado anterior antes de carregar nova imagem
+    setImageData(null);
+    setOriginalImage(null);
     setIsLoading(true);
     setError(null);
 
     loadImage(imageFile)
       .then((img) => {
+        console.log('LogoEditor: Image loaded successfully', img.width, 'x', img.height);
         setOriginalImage(img);
         
         // Create base64 for preview
@@ -49,17 +58,22 @@ export default function LogoEditorModal({ isOpen, onClose, onSave, imageFile }) 
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
         const base64 = canvas.toDataURL('image/png');
+        console.log('LogoEditor: Base64 created, length:', base64.length, 'starts with:', base64.substring(0, 50));
         setImageData(base64);
 
         // Calculate initial fit
         const initialFit = calculateInitialFit(img.width, img.height, PREVIEW_SIZE);
+        console.log('LogoEditor: Initial fit calculated:', initialFit);
+        console.log('LogoEditor: SETTING ZOOM TO:', initialFit.zoom);
+        console.log('LogoEditor: Current zoom before set:', zoom);
         setZoom(initialFit.zoom);
         setPosition(initialFit.position);
+        console.log('LogoEditor: setZoom and setPosition called');
         
         setIsLoading(false);
       })
       .catch((err) => {
-        console.error('Failed to load image:', err);
+        console.error('LogoEditor: Failed to load image:', err);
         setError('Erro ao carregar imagem. Tente outro arquivo.');
         setIsLoading(false);
       });
@@ -77,6 +91,7 @@ export default function LogoEditorModal({ isOpen, onClose, onSave, imageFile }) 
   }, [isOpen]);
 
   const handleZoomChange = (newZoom) => {
+    console.log('LogoEditor: handleZoomChange called, newZoom:', newZoom, 'current zoom:', zoom);
     setZoom(newZoom);
     
     // Recalculate constrained position with new zoom
@@ -95,6 +110,8 @@ export default function LogoEditorModal({ isOpen, onClose, onSave, imageFile }) 
   const handleDragMove = ({ deltaX, deltaY }) => {
     if (!originalImage) return;
 
+    console.log('LogoEditor: handleDragMove called', { deltaX, deltaY, currentPosition: position });
+
     const newPosition = {
       x: position.x + deltaX,
       y: position.y + deltaY,
@@ -109,6 +126,7 @@ export default function LogoEditorModal({ isOpen, onClose, onSave, imageFile }) 
       PREVIEW_SIZE
     );
 
+    console.log('LogoEditor: New position', { newPosition, constrained });
     setPosition(constrained);
   };
 
@@ -124,7 +142,8 @@ export default function LogoEditorModal({ isOpen, onClose, onSave, imageFile }) 
         originalImage,
         zoom,
         position,
-        OUTPUT_SIZE
+        OUTPUT_SIZE,
+        PREVIEW_SIZE  // Pass preview size for proper scaling
       );
 
       // Call parent callback with cropped image
@@ -236,9 +255,9 @@ export default function LogoEditorModal({ isOpen, onClose, onSave, imageFile }) 
             <div className="px-4">
               <ZoomSlider
                 value={zoom}
-                min={1.0}
+                min={0.05}
                 max={3.0}
-                step={0.1}
+                step={0.01}
                 onChange={handleZoomChange}
               />
             </div>

@@ -32,51 +32,96 @@ export default function CircularPreview({
 
   // Load image when imageData changes
   useEffect(() => {
-    if (!imageData) return;
+    if (!imageData) {
+      console.log('CircularPreview: No imageData, clearing canvas');
+      // Clear canvas when no image
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      imageRef.current = null;
+      return;
+    }
 
+    console.log('CircularPreview: Loading image from base64');
+    console.log('  - Length:', imageData.length);
+    console.log('  - Starts with:', imageData.substring(0, 50));
+    console.log('  - Canvas ref exists:', !!canvasRef.current);
+    
     const img = new Image();
     img.onload = () => {
+      console.log('CircularPreview: Image loaded successfully');
+      console.log('  - Dimensions:', img.width, 'x', img.height);
+      console.log('  - Natural dimensions:', img.naturalWidth, 'x', img.naturalHeight);
       imageRef.current = img;
       drawCanvas();
     };
-    img.onerror = () => {
-      console.error('Failed to load image');
+    img.onerror = (e) => {
+      console.error('CircularPreview: Failed to load image', e);
+      console.error('  - Image src length:', imageData.length);
+      console.error('  - Image src preview:', imageData.substring(0, 100));
+      imageRef.current = null;
     };
     img.src = imageData;
   }, [imageData]);
 
   // Redraw canvas when zoom or position changes
   useEffect(() => {
-    if (imageRef.current) {
-      drawCanvas();
-    }
-  }, [zoom, position, size]);
+    console.log('CircularPreview: useEffect triggered - zoom:', zoom, 'position:', position);
+    drawCanvas();
+  }, [zoom, position, size, imageData]);
 
   const drawCanvas = () => {
+    console.log('CircularPreview: drawCanvas called');
     const canvas = canvasRef.current;
-    if (!canvas || !imageRef.current) return;
+    if (!canvas) {
+      console.log('  - No canvas ref');
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      console.error('  - Failed to get canvas context');
+      return;
+    }
+
+    console.log('  - Canvas context obtained');
+    console.log('  - Size:', size);
+    console.log('  - Zoom:', zoom);
+    console.log('  - Position:', position);
+    console.log('  - Has image:', !!imageRef.current);
+
+    // Set canvas size (2x for retina displays)
+    const scale = 2;
+    canvas.width = size * scale;
+    canvas.height = size * scale;
+    canvas.style.width = `${size}px`;
+    canvas.style.height = `${size}px`;
+
+    // Scale context for retina
+    ctx.scale(scale, scale);
+
+    // Clear canvas with white background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
+
+    // If no image, just draw empty circle
+    if (!imageRef.current) {
+      console.log('  - Drawing empty circle (no image)');
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+      ctx.strokeStyle = '#d1d5db';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      return;
+    }
 
     try {
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        console.error('Failed to get canvas context');
-        return;
-      }
-
       const img = imageRef.current;
-
-      // Set canvas size (2x for retina displays)
-      const scale = 2;
-      canvas.width = size * scale;
-      canvas.height = size * scale;
-      canvas.style.width = `${size}px`;
-      canvas.style.height = `${size}px`;
-
-      // Scale context for retina
-      ctx.scale(scale, scale);
-
-      // Clear canvas
-      ctx.clearRect(0, 0, size, size);
+      console.log('  - Drawing image:', img.width, 'x', img.height);
 
       // Calculate scaled dimensions
       const scaledWidth = img.width * zoom;
@@ -85,6 +130,9 @@ export default function CircularPreview({
       // Calculate draw position (center the image, then apply offset)
       const drawX = (size - scaledWidth) / 2 + position.x;
       const drawY = (size - scaledHeight) / 2 + position.y;
+
+      console.log('  - Scaled dimensions:', scaledWidth, 'x', scaledHeight);
+      console.log('  - Draw position:', drawX, ',', drawY);
 
       // Create circular clipping path
       ctx.save();
@@ -95,6 +143,7 @@ export default function CircularPreview({
 
       // Draw the image
       ctx.drawImage(img, drawX, drawY, scaledWidth, scaledHeight);
+      console.log('  - Image drawn successfully');
 
       ctx.restore();
 
@@ -105,7 +154,7 @@ export default function CircularPreview({
       ctx.lineWidth = 2;
       ctx.stroke();
     } catch (error) {
-      console.error('Error rendering canvas:', error);
+      console.error('  - Error rendering canvas:', error);
     }
   };
 

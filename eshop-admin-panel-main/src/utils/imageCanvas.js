@@ -70,21 +70,24 @@ export const loadImageFromBase64 = (base64) => {
  * @returns {{ zoom: number, position: { x: number, y: number } }}
  */
 export const calculateInitialFit = (imageWidth, imageHeight, containerSize) => {
-  // Calculate zoom to fit the image in the circular container
-  // We want the smaller dimension to fit the container
-  const imageAspect = imageWidth / imageHeight;
+  // Calculate zoom to fit the ENTIRE image in the circular container
+  // We want to use the LARGER dimension so the whole image is visible
+  const maxDimension = Math.max(imageWidth, imageHeight);
   
-  let zoom;
-  if (imageAspect >= 1) {
-    // Landscape or square - fit by height
-    zoom = containerSize / imageHeight;
-  } else {
-    // Portrait - fit by width
-    zoom = containerSize / imageWidth;
-  }
+  // Calculate zoom so the entire image fits inside the circle
+  // This ensures users can see the complete image initially
+  let zoom = containerSize / maxDimension;
   
-  // Ensure minimum zoom of 1.0
-  zoom = Math.max(1.0, zoom);
+  // Add 20% padding so image doesn't touch edges
+  zoom = zoom * 0.8;
+  
+  console.log('calculateInitialFit:', {
+    imageWidth,
+    imageHeight,
+    containerSize,
+    maxDimension,
+    calculatedZoom: zoom
+  });
   
   // Center the image
   const position = { x: 0, y: 0 };
@@ -108,14 +111,39 @@ export const constrainPosition = (position, imageWidth, imageHeight, zoom, conta
   // Calculate the radius of the circular container
   const radius = containerSize / 2;
   
-  // Maximum allowed offset from center
-  // This ensures the circle is always covered by the image
-  const maxOffsetX = Math.max(0, (scaledWidth - containerSize) / 2);
-  const maxOffsetY = Math.max(0, (scaledHeight - containerSize) / 2);
+  // When image is LARGER than container: limit drag to keep circle covered
+  // When image is SMALLER than container: allow free drag within reasonable bounds
+  
+  let maxOffsetX, maxOffsetY;
+  
+  if (scaledWidth >= containerSize) {
+    // Image is wider than circle - constrain to keep circle covered
+    maxOffsetX = (scaledWidth - containerSize) / 2;
+  } else {
+    // Image is narrower than circle - allow dragging up to half the circle radius
+    maxOffsetX = radius / 2;
+  }
+  
+  if (scaledHeight >= containerSize) {
+    // Image is taller than circle - constrain to keep circle covered
+    maxOffsetY = (scaledHeight - containerSize) / 2;
+  } else {
+    // Image is shorter than circle - allow dragging up to half the circle radius
+    maxOffsetY = radius / 2;
+  }
+  
+  console.log('constrainPosition:', {
+    scaledSize: `${scaledWidth}x${scaledHeight}`,
+    containerSize,
+    maxOffset: `${maxOffsetX}, ${maxOffsetY}`,
+    inputPosition: position,
+  });
   
   // Constrain position
   const constrainedX = Math.max(-maxOffsetX, Math.min(maxOffsetX, position.x));
   const constrainedY = Math.max(-maxOffsetY, Math.min(maxOffsetY, position.y));
+  
+  console.log('  - Constrained to:', { x: constrainedX, y: constrainedY });
   
   return { x: constrainedX, y: constrainedY };
 };
@@ -163,31 +191,51 @@ export const calculateCoverage = (position, imageWidth, imageHeight, zoom, conta
 /**
  * Crop image to circular shape with zoom and position
  * @param {HTMLImageElement} image - Source image
- * @param {number} zoom - Zoom level (1.0 - 3.0)
- * @param {{ x: number, y: number }} position - Image position offset
+ * @param {number} zoom - Zoom level
+ * @param {{ x: number, y: number }} position - Image position offset (from preview)
  * @param {number} outputSize - Output diameter in pixels
+ * @param {number} previewSize - Preview diameter in pixels (default: 300)
  * @returns {string} - Base64 encoded circular image
  */
-export const cropToCircle = (image, zoom, position, outputSize) => {
+export const cropToCircle = (image, zoom, position, outputSize, previewSize = 300) => {
   try {
-    // Create canvas at 2x resolution for retina displays
+    // Create canvas at output size
     const canvas = document.createElement('canvas');
-    const scale = 2;
-    canvas.width = outputSize * scale;
-    canvas.height = outputSize * scale;
+    canvas.width = outputSize;
+    canvas.height = outputSize;
     
     const ctx = canvas.getContext('2d');
     
-    // Scale context for retina
-    ctx.scale(scale, scale);
+    // Calculate scale factor between output and preview
+    const scaleFactor = outputSize / previewSize;
     
-    // Calculate scaled dimensions
-    const scaledWidth = image.width * zoom;
-    const scaledHeight = image.height * zoom;
+    // Calculate scaled dimensions for output
+    const scaledWidth = image.width * zoom * scaleFactor;
+    const scaledHeight = image.height * zoom * scaleFactor;
     
-    // Calculate draw position (center the image, then apply offset)
-    const drawX = (outputSize - scaledWidth) / 2 + position.x;
-    const drawY = (outputSize - scaledHeight) / 2 + position.y;
+    // Scale position proportionally
+    const scaledPositionX = position.x * scaleFactor;
+    const scaledPositionY = position.y * scaleFactor;
+    
+    // Calculate draw position (center the image, then apply scaled offset)
+    const drawX = (outputSize - scaledWidth) / 2 + scaledPositionX;
+    const drawY = (outputSize - scaledHeight) / 2 + scaledPositionY;
+    
+    console.log('cropToCircle:', {
+      imageSize: `${image.width}x${image.height}`,
+      zoom,
+      position,
+      outputSize,
+      previewSize,
+      scaleFactor,
+      scaledSize: `${scaledWidth}x${scaledHeight}`,
+      scaledPosition: `${scaledPositionX}, ${scaledPositionY}`,
+      drawPosition: `${drawX}, ${drawY}`
+    });
+    
+    // Fill background with white first
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, outputSize, outputSize);
     
     // Create circular clipping path
     ctx.beginPath();
@@ -198,8 +246,8 @@ export const cropToCircle = (image, zoom, position, outputSize) => {
     // Draw the image
     ctx.drawImage(image, drawX, drawY, scaledWidth, scaledHeight);
     
-    // Convert to base64
-    return canvas.toDataURL('image/png', 0.95);
+    // Convert to base64 with high quality
+    return canvas.toDataURL('image/png', 1.0);
   } catch (error) {
     console.error('Error cropping image:', error);
     throw new Error('Failed to crop image');

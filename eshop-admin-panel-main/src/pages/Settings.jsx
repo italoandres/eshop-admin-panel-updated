@@ -2,10 +2,29 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
 import LogoEditorModal from '../components/LogoEditorModal';
-import { validateFile } from '../utils/__tests__/fileValidation.test';
 
 const API_URL = API_BASE_URL;
 const STORE_ID = 'eshop_001';
+
+// Função de validação de arquivo
+const validateFile = (file) => {
+  const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+  const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
+
+  if (!file) {
+    return { valid: false, error: 'Nenhum arquivo selecionado' };
+  }
+
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    return { valid: false, error: 'Formato inválido. Use PNG ou JPG' };
+  }
+
+  if (file.size > MAX_SIZE) {
+    return { valid: false, error: 'Arquivo muito grande. Máximo 5MB' };
+  }
+
+  return { valid: true };
+};
 
 export default function Settings() {
   const [settings, setSettings] = useState({
@@ -47,23 +66,35 @@ export default function Settings() {
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
     if (!file) {
+      console.log('Settings: No file selected');
       return;
     }
+
+    console.log('Settings: File selected:', file.name, 'Size:', file.size, 'Type:', file.type);
 
     // Validar arquivo usando função de validação
     const validation = validateFile(file);
     if (!validation.valid) {
+      console.log('Settings: File validation failed:', validation.error);
       setMessage({ type: 'error', text: validation.error });
       // Limpar o input para permitir selecionar o mesmo arquivo novamente
       e.target.value = '';
       return;
     }
 
+    console.log('Settings: File validated, opening editor');
+    
+    // Limpar estados anteriores
+    setCroppedLogoBase64('');
+    
     // Abrir editor com a imagem selecionada
     setSelectedImageFile(file);
     setLogoFile(file);
     setIsEditorOpen(true);
     setMessage({ type: '', text: '' });
+    
+    // Limpar o input para permitir selecionar o mesmo arquivo novamente
+    e.target.value = '';
   };
 
   const handleEditorSave = (croppedBase64) => {
