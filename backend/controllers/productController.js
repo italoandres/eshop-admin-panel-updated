@@ -174,24 +174,7 @@ exports.createProduct = async (req, res) => {
       }
     }
     
-    // 🔧 Garantir que scarcityMarketing seja definido corretamente
-    const productData = { ...req.body };
-    if (req.body.scarcityMarketing) {
-      console.log('📊 scarcityMarketing recebido:', req.body.scarcityMarketing);
-      productData.scarcityMarketing = {
-        enabled: req.body.scarcityMarketing.enabled === true,
-        unitsLeft: parseInt(req.body.scarcityMarketing.unitsLeft) || 10
-      };
-      console.log('📊 scarcityMarketing processado:', productData.scarcityMarketing);
-    }
-    
-    const product = new Product(productData);
-    
-    // Marcar explicitamente o campo como modificado
-    if (productData.scarcityMarketing) {
-      product.markModified('scarcityMarketing');
-      console.log('📊 scarcityMarketing no produto antes de salvar:', product.scarcityMarketing);
-    }
+    const product = new Product(req.body);
     
     // ✅ Converter variants → priceTags/images/categories ANTES de salvar
     if (product.variants && product.variants.length > 0) {
@@ -235,7 +218,6 @@ exports.createProduct = async (req, res) => {
     }
     
     const newProduct = await product.save();
-    console.log('✅ Produto salvo! scarcityMarketing:', newProduct.scarcityMarketing);
     res.status(201).json(newProduct);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -281,15 +263,6 @@ exports.updateProduct = async (req, res) => {
     // Atualizar campos
     Object.assign(existingProduct, req.body);
     
-    // 🔧 Garantir que scarcityMarketing seja definido corretamente
-    if (req.body.scarcityMarketing) {
-      existingProduct.scarcityMarketing = {
-        enabled: req.body.scarcityMarketing.enabled === true,
-        unitsLeft: parseInt(req.body.scarcityMarketing.unitsLeft) || 10
-      };
-      existingProduct.markModified('scarcityMarketing');
-    }
-    
     // ✅ Converter variants → priceTags/images/categories ANTES de salvar
     if (existingProduct.variants && existingProduct.variants.length > 0) {
       // Extrair imagens das variantes
@@ -332,7 +305,6 @@ exports.updateProduct = async (req, res) => {
     }
     
     const updatedProduct = await existingProduct.save();
-    console.log('✅ Produto salvo com scarcityMarketing:', updatedProduct.scarcityMarketing);
     res.json(updatedProduct);
   } catch (error) {
     res.status(400).json({ message: error.message });

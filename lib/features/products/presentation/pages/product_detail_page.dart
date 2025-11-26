@@ -316,14 +316,8 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   int? get productDiscountPercent => null;
   
   // Estratégia de escassez (marketing, não é estoque real!)
-  bool get scarcityEnabled {
-    final scarcity = _productData?['scarcityMarketing'] as Map?;
-    return scarcity?['enabled'] ?? false;
-  }
-  
   int get scarcityUnitsLeft {
-    final scarcity = _productData?['scarcityMarketing'] as Map?;
-    return scarcity?['unitsLeft'] ?? 10;
+    return _productData?['scarcityUnitsLeft'] ?? 5;
   }
   
   // Extrair variações de cor do produto
@@ -1258,11 +1252,6 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
 
   // Alerta de escassez (estratégia de marketing, não é estoque real!)
   Widget _buildStockAlert() {
-    // Verificar se escassez está ativada para este produto
-    if (!scarcityEnabled) {
-      return const SizedBox.shrink();
-    }
-    
     final unitsLeft = scarcityUnitsLeft;
     
     return Container(

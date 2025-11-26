@@ -20,10 +20,7 @@ const ProductForm = () => {
       width: '',
       height: ''
     },
-    scarcityMarketing: {
-      enabled: false,
-      unitsLeft: 10
-    }
+    scarcityUnitsLeft: 5
   });
 
   // Sistema de variações
@@ -67,10 +64,7 @@ const ProductForm = () => {
               width: '',
               height: ''
             },
-            scarcityMarketing: data.scarcityMarketing || {
-              enabled: false,
-              unitsLeft: 10
-            }
+            scarcityUnitsLeft: data.scarcityUnitsLeft || 5
           });
           setAvailableSizes(data.availableSizes || []);
           setVariants(data.variants || []);
@@ -126,7 +120,7 @@ const ProductForm = () => {
       };
 
       console.log('📤 Enviando produto:', {
-        scarcityMarketing: productData.scarcityMarketing,
+        scarcityUnitsLeft: productData.scarcityUnitsLeft,
         name: productData.name
       });
 
@@ -146,7 +140,7 @@ const ProductForm = () => {
       if (response.ok) {
         const savedProduct = await response.json();
         console.log('✅ Produto salvo:', {
-          scarcityMarketing: savedProduct.scarcityMarketing,
+          scarcityUnitsLeft: savedProduct.scarcityUnitsLeft,
           name: savedProduct.name
         });
         alert(isEdit ? 'Produto atualizado!' : 'Produto criado!');
@@ -628,64 +622,36 @@ const ProductForm = () => {
               o número é fake e não tem relação com o estoque real.
             </p>
             
-            <div className="space-y-4">
-              {/* Checkbox para ativar */}
-              <label className="flex items-center gap-3 cursor-pointer p-4 border-2 border-gray-200 rounded-lg hover:border-orange-500 transition">
-                <input
-                  type="checkbox"
-                  checked={formData.scarcityMarketing.enabled}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    scarcityMarketing: { 
-                      ...formData.scarcityMarketing, 
-                      enabled: e.target.checked 
-                    }
-                  })}
-                  className="w-5 h-5 text-orange-600 rounded focus:ring-2 focus:ring-orange-500"
-                />
-                <div>
-                  <p className="font-medium text-gray-900">Ativar escassez neste produto</p>
-                  <p className="text-xs text-gray-500">Mostra alerta de urgência para o cliente</p>
-                </div>
+            <div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Últimas quantas unidades? (número fake para marketing)
               </label>
-
-              {/* Campo de número (só aparece se ativado) */}
-              {formData.scarcityMarketing.enabled && (
-                <div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Últimas quantas unidades? (número fake para marketing)
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="99"
-                    value={formData.scarcityMarketing.unitsLeft}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      scarcityMarketing: { 
-                        ...formData.scarcityMarketing, 
-                        unitsLeft: parseInt(e.target.value) || 1
-                      }
-                    })}
-                    className="w-full px-4 py-3 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="Ex: 7, 10, 15..."
-                  />
-                  <p className="text-xs text-gray-600 mt-2">
-                    💡 Dica: Números baixos (5-10) criam mais urgência
-                  </p>
-                  
-                  {/* Preview */}
-                  <div className="mt-4 p-3 bg-white border-2 border-orange-300 rounded-lg">
-                    <p className="text-xs text-gray-500 mb-1">Preview no app:</p>
-                    <div className="flex items-center gap-2 text-orange-600">
-                      <span className="text-lg">⚠️</span>
-                      <span className="font-semibold">
-                        Últimas {formData.scarcityMarketing.unitsLeft} unidades!
-                      </span>
-                    </div>
-                  </div>
+              <input
+                type="number"
+                min="1"
+                max="99"
+                value={formData.scarcityUnitsLeft}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  scarcityUnitsLeft: parseInt(e.target.value) || 5
+                })}
+                className="w-full px-4 py-3 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                placeholder="Ex: 5, 7, 10..."
+              />
+              <p className="text-xs text-gray-600 mt-2">
+                💡 Dica: Números baixos (5-10) criam mais urgência
+              </p>
+              
+              {/* Preview */}
+              <div className="mt-4 p-3 bg-white border-2 border-orange-300 rounded-lg">
+                <p className="text-xs text-gray-500 mb-1">Preview no app:</p>
+                <div className="flex items-center gap-2 text-orange-600">
+                  <span className="text-lg">⚠️</span>
+                  <span className="font-semibold">
+                    Últimas {formData.scarcityUnitsLeft} unidades!
+                  </span>
                 </div>
-              )}
+              </div>
             </div>
           </div>
 
