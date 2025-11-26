@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:go_router/go_router.dart';
 import '../../../banners/presentation/widgets/banner_carousel.dart';
 import '../../../banners/presentation/providers/banner_provider.dart';
 import '../../../auth/presentation/notifiers/auth_notifier.dart';
+import '../../../products/presentation/providers/products_provider.dart';
 import '../../../../core/config/store_config_provider.dart';
-import '../../../../core/widgets/product_card.dart';
 import '../widgets/quick_access_icons.dart';
 import '../widgets/main_drawer.dart';
+import '../widgets/product_section.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -92,6 +92,8 @@ class _HomePageState extends ConsumerState<HomePage>
           body: RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(fetchBannersProvider);
+              ref.invalidate(highlightsProductsProvider);
+              ref.invalidate(mainProductsProvider);
             },
             child: ListView(
               padding: const EdgeInsets.only(top: 10, bottom: 16),
@@ -105,154 +107,20 @@ class _HomePageState extends ConsumerState<HomePage>
                 const SizedBox(height: 32),
 
                 // SEÇÃO 1: Produtos Recomendados
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Produtos Recomendados',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          context.push('/products/Produtos Recomendados');
-                        },
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Ver mais'),
-                            Icon(Icons.chevron_right, size: 20),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // LINHA 1 - Produtos Recomendados
-                SizedBox(
-                  height: 220,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        width: 160,
-                        margin: const EdgeInsets.only(right: 12),
-                        child: ProductCard(
-                          productId: 'prod-${index + 1}',
-                          title: 'Produto ${index + 1}',
-                          price: 'R\$ ${(index + 1) * 10},00',
-                          useFixedHeight: true,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                // LINHA 2 - Produtos Recomendados
-                SizedBox(
-                  height: 220,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        width: 160,
-                        margin: const EdgeInsets.only(right: 12),
-                        child: ProductCard(
-                          productId: 'prod-${index + 11}',
-                          title: 'Produto ${index + 11}',
-                          price: 'R\$ ${(index + 11) * 10},00',
-                          useFixedHeight: true,
-                        ),
-                      );
-                    },
-                  ),
+                // TODO: Trocar para highlightsProductsProvider quando produtos forem marcados
+                ProductSection(
+                  title: 'Produtos Recomendados',
+                  productsProvider: allProductsProvider,
+                  sectionRoute: '/products/all',
                 ),
                 const SizedBox(height: 32),
 
                 // SEÇÃO 2: Mais Vendidos
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Mais Vendidos',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          context.push('/products/Mais Vendidos');
-                        },
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Ver mais'),
-                            Icon(Icons.chevron_right, size: 20),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // LINHA 1 - Mais Vendidos
-                SizedBox(
-                  height: 220,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        width: 160,
-                        margin: const EdgeInsets.only(right: 12),
-                        child: ProductCard(
-                          productId: 'best-${index + 1}',
-                          title: 'Best ${index + 1}',
-                          price: 'R\$ ${(index + 1) * 15},00',
-                          useFixedHeight: true,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                // LINHA 2 - Mais Vendidos
-                SizedBox(
-                  height: 220,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        width: 160,
-                        margin: const EdgeInsets.only(right: 12),
-                        child: ProductCard(
-                          productId: 'best-${index + 11}',
-                          title: 'Best ${index + 11}',
-                          price: 'R\$ ${(index + 11) * 15},00',
-                          useFixedHeight: true,
-                        ),
-                      );
-                    },
-                  ),
+                // TODO: Trocar para mainProductsProvider quando produtos forem marcados
+                ProductSection(
+                  title: 'Mais Vendidos',
+                  productsProvider: allProductsProvider,
+                  sectionRoute: '/products/all',
                 ),
               ],
             ),

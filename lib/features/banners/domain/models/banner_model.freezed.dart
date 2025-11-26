@@ -14,6 +14,10 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+BannerModel _$BannerModelFromJson(Map<String, dynamic> json) {
+  return _BannerModel.fromJson(json);
+}
+
 /// @nodoc
 mixin _$BannerModel {
   String get id => throw _privateConstructorUsedError;
@@ -23,6 +27,9 @@ mixin _$BannerModel {
   bool get active => throw _privateConstructorUsedError;
   String? get targetUrl => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+
+  /// Serializes this BannerModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of BannerModel
   /// with the given fields replaced by the non-null parameter values.
@@ -176,7 +183,7 @@ class __$$BannerModelImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$BannerModelImpl implements _BannerModel {
   const _$BannerModelImpl(
       {required this.id,
@@ -186,6 +193,9 @@ class _$BannerModelImpl implements _BannerModel {
       required this.active,
       this.targetUrl,
       this.description});
+
+  factory _$BannerModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BannerModelImplFromJson(json);
 
   @override
   final String id;
@@ -224,6 +234,7 @@ class _$BannerModelImpl implements _BannerModel {
                 other.description == description));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, title, imageUrl, order, active, targetUrl, description);
@@ -235,6 +246,13 @@ class _$BannerModelImpl implements _BannerModel {
   @pragma('vm:prefer-inline')
   _$$BannerModelImplCopyWith<_$BannerModelImpl> get copyWith =>
       __$$BannerModelImplCopyWithImpl<_$BannerModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BannerModelImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _BannerModel implements BannerModel {
@@ -246,6 +264,9 @@ abstract class _BannerModel implements BannerModel {
       required final bool active,
       final String? targetUrl,
       final String? description}) = _$BannerModelImpl;
+
+  factory _BannerModel.fromJson(Map<String, dynamic> json) =
+      _$BannerModelImpl.fromJson;
 
   @override
   String get id;

@@ -1,29 +1,102 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/product_image_model.dart';
 import 'product_image_fullscreen_modal.dart';
+import '../controllers/product_gallery_controller.dart';
 
-/// Widget da imagem principal do produto com botão de expandir
-class ProductMainImage extends StatelessWidget {
-  final ProductImageModel image;
-  final List<ProductImageModel> allImages;
-  final int currentIndex;
+/// Widget da imagem principal do produto com botão de expandir e scroll horizontal
+class ProductMainImage extends ConsumerStatefulWidget {
+  const ProductMainImage({Key? key}) : super(key: key);
 
-  const ProductMainImage({
-    Key? key,
-    required this.image,
-    required this.allImages,
-    required this.currentIndex,
-  }) : super(key: key);
+  @override
+  ConsumerState<ProductMainImage> createState() => _ProductMainImageState();
+}
+
+class _ProductMainImageState extends ConsumerState<ProductMainImage> {
+  late PageController _pageController;
+  
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+  
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final galleryState = ref.watch(productGalleryControllerProvider);
+    
+    // Se não tem imagens, mostrar placeholder
+    if (galleryState.images.isEmpty) {
+      return SizedBox(
+        height: 400,
+        child: _buildPlaceholder(),
+      );
+    }
+    
+    final allImages = galleryState.images;
+    final currentIndex = galleryState.currentImageIndex;
+    
+    // Debug: verificar se o índice está mudando
+    print('🖼️ ProductMainImage rebuild - Index: $currentIndex');
+    
+    // Sincronizar PageController com o estado quando mudar via thumbnail
+    if (_pageController.hasClients && _pageController.page?.round() != currentIndex) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _pageController.hasClients) {
+          _pageController.animateToPage(
+            currentIndex,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
+    
     return SizedBox(
       height: 400,
       child: Stack(
         children: [
-          // Imagem principal
-          Positioned.fill(
-            child: _buildMainImage(),
+          // PageView com scroll horizontal
+          PageView.builder(
+            controller: _pageController,
+            itemCount: allImages.length,
+            onPageChanged: (index) {
+              // Atualizar o estado quando o usuário arrastar
+              ref.read(productGalleryControllerProvider.notifier).selectImage(index);
+            },
+            itemBuilder: (context, index) {
+              return _buildImagePage(allImages[index], index);
+            },
+          ),
+
+          // Indicador de página (bolinhas)
+          Positioned(
+            bottom: 60,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                allImages.length,
+                (index) => Container(
+                  width: 8,
+                  height: 8,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: currentIndex == index
+                        ? Colors.white
+                        : Colors.white.withOpacity(0.4),
+                  ),
+                ),
+              ),
+            ),
           ),
 
           // Botão de expandir (canto inferior direito)
@@ -31,7 +104,7 @@ class ProductMainImage extends StatelessWidget {
             bottom: 16,
             right: 16,
             child: GestureDetector(
-              onTap: () => _openFullscreen(context),
+              onTap: () => _openFullscreen(context, allImages, currentIndex),
               child: Container(
                 width: 40,
                 height: 40,
@@ -59,27 +132,33 @@ class ProductMainImage extends StatelessWidget {
     );
   }
 
-  Widget _buildMainImage() {
+  Widget _buildImagePage(ProductImageModel image, int index) {
+    final imageUrl = image.url;
+    
     // Se tiver URL válida, tentar carregar a imagem
-    if (image.url.isNotEmpty &&
-        (image.url.startsWith('http://') || image.url.startsWith('https://'))) {
-      return Image.network(
-        image.url,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildPlaceholder();
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes!
-                  : null,
-            ),
-          );
-        },
+    if (imageUrl.isNotEmpty &&
+        (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
+      return Container(
+        color: Colors.grey[200], // Fundo cinza para preencher espaços vazios
+        child: Image.network(
+          imageUrl,
+          key: ValueKey('image_$index'),
+          fit: BoxFit.contain, // Mantém a imagem completa sem cortar
+          errorBuilder: (context, error, stackTrace) {
+            return _buildPlaceholder();
+          },
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            );
+          },
+        ),
       );
     }
 
@@ -100,7 +179,7 @@ class ProductMainImage extends StatelessWidget {
     );
   }
 
-  void _openFullscreen(BuildContext context) {
+  void _openFullscreen(BuildContext context, List<ProductImageModel> allImages, int currentIndex) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ProductImageFullscreenModal(

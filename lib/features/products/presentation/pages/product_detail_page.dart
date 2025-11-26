@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/product_detail_provider.dart';
 import '../widgets/product_customer_protection.dart';
 import '../widgets/product_progressive_discount_banner.dart';
 import '../widgets/product_description_modal.dart';
@@ -40,6 +41,11 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   int _selectedColorIndex = 1;
   String _selectedSize = 'M';
   bool hasCouponBanner = true;
+  bool _galleryInitialized = false; // Flag para controlar inicialização da galeria
+
+  // Dados do produto (da API)
+  Map<String, dynamic>? _productData;
+  List<ProductVariation>? _cachedVariations; // Cache para evitar rebuild infinito
 
   // Dados mock
   final mockRating = 4.66;
@@ -265,13 +271,8 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
       ),
     ];
 
-    // Inicializar galeria com a cor Azul (índice 1)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(productGalleryControllerProvider.notifier).initializeGallery(
-            images: mockVariations[_selectedColorIndex].images,
-            variationId: mockVariations[_selectedColorIndex].id,
-          );
-    });
+    // A galeria será inicializada quando os dados do produto forem carregados
+    // (ver callback 'data' no build method)
 
     // Inicializar bundle com desconto progressivo
     mockBundle = ProductBundle(
@@ -293,8 +294,152 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     );
   }
 
+  // Getters para dados do produto
+  String get productName => _productData?['name'] ?? 'Camisa Umbro TWR Striker Masculina';
+  String get productDescription => _productData?['description'] ?? 'Descrição não disponível';
+  
+  // Extrair preço do priceTags (primeiro item do array)
+  double get productPrice {
+    final priceTags = _productData?['priceTags'] as List?;
+    if (priceTags != null && priceTags.isNotEmpty) {
+      final price = (priceTags[0]['price'] ?? 199.90).toDouble();
+      return price;
+    }
+    return 199.90;
+  }
+  
+  // Por enquanto não temos originalPrice no backend, então retorna null
+  double? get productOriginalPrice => null;
+  
+  // Por enquanto não temos discountPercent no backend, então retorna null
+  int? get productDiscountPercent => null;
+  
+  // Extrair variações de cor do produto
+  List<ProductVariation> get productVariations {
+    // Retornar cache se já foi processado
+    if (_cachedVariations != null) {
+      return _cachedVariations!;
+    }
+    
+    final variants = _productData?['variants'] as List?;
+    
+    if (variants == null || variants.isEmpty) {
+      _cachedVariations = mockVariations;
+      return _cachedVariations!;
+    }
+    
+    _cachedVariations = variants.map((variant) {
+      final color = variant['color'] ?? 'Sem cor';
+      final variantImages = variant['images'] as List? ?? [];
+      
+      final images = variantImages.map((img) {
+        return ProductImageModel(
+          id: img['_id'] ?? '',
+          url: img['url'] ?? '',
+          order: variantImages.indexOf(img),
+          alt: '$productName - $color',
+        );
+      }).toList();
+      
+      return ProductVariation(
+        id: variant['_id'] ?? '',
+        color: color,
+        colorHex: _getColorHex(color),
+        images: images,
+      );
+    }).toList();
+    
+    return _cachedVariations!;
+  }
+  
+  // Mapear nome da cor para código hexadecimal
+  String _getColorHex(String colorName) {
+    final colorMap = {
+      'branco': '#FFFFFF',
+      'preto': '#212121',
+      'vermelho': '#E53935',
+      'azul': '#1E88E5',
+      'verde': '#43A047',
+      'amarelo': '#FDD835',
+      'rosa': '#EC407A',
+      'roxo': '#AB47BC',
+      'laranja': '#FF7043',
+      'marrom': '#8D6E63',
+      'cinza': '#757575',
+    };
+    
+    return colorMap[colorName.toLowerCase()] ?? '#757575';
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Buscar dados do produto da API
+    final productAsync = ref.watch(productDetailProvider(widget.productId));
+
+    return productAsync.when(
+      loading: () => Scaffold(
+        backgroundColor: const Color(0xFF121212),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => Scaffold(
+        backgroundColor: const Color(0xFF121212),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              const Text(
+                'Erro ao carregar produto',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                error.toString(),
+                style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => ref.invalidate(productDetailProvider(widget.productId)),
+                child: const Text('Tentar Novamente'),
+              ),
+            ],
+          ),
+        ),
+      ),
+      data: (productData) {
+        // Armazenar dados no estado
+        _productData = productData;
+        
+        // Inicializar galeria com as imagens do produto (APENAS UMA VEZ)
+        if (!_galleryInitialized) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final variations = productVariations;
+            if (variations.isNotEmpty && variations[0].images.isNotEmpty) {
+              ref.read(productGalleryControllerProvider.notifier).initializeGallery(
+                images: variations[0].images,
+                variationId: variations[0].id,
+              );
+              
+              // Atualizar cor selecionada
+              setState(() {
+                _selectedColor = variations[0].color;
+                _selectedColorIndex = 0;
+                _galleryInitialized = true; // Marcar como inicializado
+              });
+            }
+          });
+        }
+        
+        return _buildProductDetail(context);
+      },
+    );
+  }
+
+  Widget _buildProductDetail(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       body: Stack(
@@ -320,12 +465,12 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                 _buildTitleSection(),
 
                 // Preço
-                _buildPriceSection(),
+                _buildPriceSection(productPrice, productOriginalPrice, productDiscountPercent),
 
                 // Tarja de desconto progressivo (se houver)
-                if (mockProgressiveDiscountPercent != null && mockProgressiveDiscountPercent! > 0)
+                if (productDiscountPercent != null && productDiscountPercent! > 0)
                   ProductProgressiveDiscountBanner(
-                    discountPercent: mockProgressiveDiscountPercent!,
+                    discountPercent: productDiscountPercent!.toDouble(),
                   ),
 
                 Divider(height: spaceL, thickness: 1, color: Colors.grey[800]), // FASE 1: 16px section spacing
@@ -672,11 +817,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     return Column(
       children: [
         // Imagem principal com botão de expandir
-        ProductMainImage(
-          image: galleryState.currentImage,
-          allImages: galleryState.images,
-          currentIndex: galleryState.currentImageIndex,
-        ),
+        const ProductMainImage(),
 
         // Galeria de miniaturas
         ProductImageThumbnails(
@@ -737,10 +878,10 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
-              'Camisa Umbro TWR Striker Masculina',
-              style: TextStyle(
+              productName,
+              style: const TextStyle(
                 fontSize: fontTitleXL, // FASE 1: 24px
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -800,11 +941,14 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   }
 
   // Preço
-  Widget _buildPriceSection() {
-    // Cálculo do preço com desconto
-    final discountPercent = mockProgressiveDiscountPercent ?? 0;
-    final discountedPrice = mockOriginalPrice * (1 - (discountPercent / 100));
-    final installmentPrice = discountedPrice / 3;
+  Widget _buildPriceSection(double price, double? originalPrice, int? discountPercent) {
+    // Usar preço real do produto
+    final finalPrice = price;
+    final hasDiscount = originalPrice != null && originalPrice > price;
+    final calculatedDiscount = hasDiscount 
+        ? ((originalPrice - price) / originalPrice * 100).round()
+        : (discountPercent ?? 0);
+    final installmentPrice = finalPrice / 3;
 
     return Padding(
       padding: const EdgeInsets.all(spaceL), // FASE 1: 16px
@@ -816,7 +960,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Badge de desconto (se houver)
-              if (mockProgressiveDiscountPercent != null && mockProgressiveDiscountPercent! > 0)
+              if (calculatedDiscount > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // FASE 1: badges 12px/8px
                   decoration: BoxDecoration(
@@ -824,7 +968,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                     borderRadius: BorderRadius.circular(8), // FASE 1: badge radius 8px
                   ),
                   child: Text(
-                    '-${mockProgressiveDiscountPercent!.toStringAsFixed(0)}%',
+                    '-${calculatedDiscount.toStringAsFixed(0)}%',
                     style: const TextStyle(
                       fontSize: fontBody, // FASE 1: 14px
                       fontWeight: FontWeight.bold,
@@ -834,9 +978,9 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                 ),
               const SizedBox(width: spaceS), // FASE 1: 8px
               // Preço original riscado
-              if (mockProgressiveDiscountPercent != null && mockProgressiveDiscountPercent! > 0)
+              if (hasDiscount && originalPrice != null)
                 Text(
-                  'R\$ ${mockOriginalPrice.toStringAsFixed(2)}',
+                  'R\$ ${originalPrice.toStringAsFixed(2)}',
                   style: TextStyle(
                     fontSize: fontPriceSmall, // FASE 1: 14px
                     color: Colors.grey[500],
@@ -860,7 +1004,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                'R\$ ${discountedPrice.toStringAsFixed(2)}',
+                'R\$ ${finalPrice.toStringAsFixed(2)}',
                 style: const TextStyle(
                   fontSize: fontPriceLarge, // FASE 1: 30px
                   fontWeight: FontWeight.bold,
@@ -893,6 +1037,12 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
 
   // Seletor de cor
   Widget _buildColorSelector() {
+    final variations = productVariations;
+    
+    if (variations.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    
     return Padding(
       padding: const EdgeInsets.all(spaceL), // FASE 1: 16px
       child: Column(
@@ -911,23 +1061,25 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
             height: thumbnailSize, // FASE 1: 56px (mini thumbnail size)
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 6, // 6 cores disponíveis
+              itemCount: variations.length,
               itemBuilder: (context, index) {
+                final variation = variations[index];
                 final isSelected = index == _selectedColorIndex;
-                final colors = ['Vermelho', 'Azul', 'Verde', 'Preto', 'Branco', 'Cinza'];
 
                 return GestureDetector(
                   onTap: () {
                     setState(() {
                       _selectedColorIndex = index;
-                      _selectedColor = colors[index];
+                      _selectedColor = variation.color;
                     });
 
                     // Atualizar imagens da galeria quando trocar de cor
-                    ref.read(productGalleryControllerProvider.notifier).updateVariation(
-                          images: mockVariations[index].images,
-                          variationId: mockVariations[index].id,
-                        );
+                    if (variation.images.isNotEmpty) {
+                      ref.read(productGalleryControllerProvider.notifier).updateVariation(
+                            images: variation.images,
+                            variationId: variation.id,
+                          );
+                    }
                   },
                   child: Container(
                     width: thumbnailSize, // FASE 1: 56px
@@ -943,10 +1095,9 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                     ),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey[850],
+                        color: Color(int.parse(variation.colorHex.replaceFirst('#', '0xFF'))),
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Icon(Icons.image, color: Colors.grey[600]),
                     ),
                   ),
                 );

@@ -67,8 +67,12 @@ class ProductGalleryController extends StateNotifier<ProductGalleryState> {
 
   /// Selecionar uma imagem específica (ao clicar na thumbnail)
   void selectImage(int index) {
+    print('🎯 selectImage called - Index: $index, Current: ${state.currentImageIndex}');
     if (index >= 0 && index < state.images.length) {
       state = state.copyWith(currentImageIndex: index);
+      print('✅ State updated - New index: ${state.currentImageIndex}');
+    } else {
+      print('❌ Invalid index: $index (total images: ${state.images.length})');
     }
   }
 

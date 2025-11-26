@@ -132,20 +132,31 @@ class ApiService {
       }
 
       // Retorna configuração padrão se não encontrar
-      return StoreConfig.defaultConfig();
+      return StoreConfig.defaultConfig;
     } catch (e) {
       // Em caso de erro, retorna configuração padrão
-      return StoreConfig.defaultConfig();
+      return StoreConfig.defaultConfig;
     }
   }
 
   // ==================== PRODUCTS ====================
 
-  /// Busca todos os produtos
-  Future<List<dynamic>> getProducts() async {
+  /// Busca todos os produtos com filtro opcional de seção destacada
+  /// 
+  /// [featuredSection] - Opcional. Filtra produtos por seção destacada:
+  ///   - 'highlights': Produtos em destaque
+  ///   - 'newArrivals': Lançamentos
+  ///   - 'offers': Ofertas
+  ///   - 'main': Principal
+  Future<List<dynamic>> getProducts({String? featuredSection}) async {
     try {
+      // Construir query string se featuredSection for fornecido
+      final queryParams = featuredSection != null 
+          ? '?featuredSection=$featuredSection' 
+          : '';
+      
       final response = await _httpService.get(
-        ApiConfig.productsEndpoint,
+        '${ApiConfig.productsEndpoint}$queryParams',
       );
 
       if (response != null && response['data'] is List) {
@@ -165,8 +176,14 @@ class ApiService {
         '${ApiConfig.productsEndpoint}/$productId',
       );
 
-      if (response != null && response['data'] != null) {
-        return response['data'] as Map<String, dynamic>;
+      // O backend retorna os dados diretamente, não dentro de um campo 'data'
+      if (response != null) {
+        // Se tem um campo 'data', usa ele
+        if (response['data'] != null) {
+          return response['data'] as Map<String, dynamic>;
+        }
+        // Senão, retorna a resposta diretamente
+        return response as Map<String, dynamic>;
       }
 
       return null;

@@ -86,10 +86,17 @@ class ProductsListPage extends StatelessWidget {
               ),
               itemCount: 20,
               itemBuilder: (context, index) {
+                // TODO: Substituir por dados reais da API
+                final fakeProduct = {
+                  '_id': 'prod-${index + 1}',
+                  'name': 'Produto ${index + 1}',
+                  'priceTags': [
+                    {'name': 'Preço', 'price': (index + 1) * 10.0}
+                  ],
+                  'images': [],
+                };
                 return ProductCard(
-                  productId: 'prod-${index + 1}',
-                  title: 'Produto ${index + 1}',
-                  price: 'R\$ ${(index + 1) * 10},00',
+                  product: fakeProduct,
                 );
               },
             ),
