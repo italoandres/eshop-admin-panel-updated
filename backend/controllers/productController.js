@@ -231,6 +231,7 @@ exports.updateProduct = async (req, res) => {
       productId: req.params.id,
       hasVariants: !!req.body.variants,
       variantsCount: req.body.variants?.length || 0,
+      scarcityMarketing: req.body.scarcityMarketing,
       firstVariant: req.body.variants?.[0] ? {
         color: req.body.variants[0].color,
         imagesCount: req.body.variants[0].images?.length || 0,
@@ -304,6 +305,7 @@ exports.updateProduct = async (req, res) => {
     }
     
     const updatedProduct = await existingProduct.save();
+    console.log('✅ Produto salvo com scarcityMarketing:', updatedProduct.scarcityMarketing);
     res.json(updatedProduct);
   } catch (error) {
     res.status(400).json({ message: error.message });
