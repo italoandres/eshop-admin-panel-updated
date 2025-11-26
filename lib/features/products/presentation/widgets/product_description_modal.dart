@@ -34,13 +34,6 @@ class ProductDescriptionModal extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Nome do produto
-                  _buildPropertyRow('Nome', productName),
-                  
-                  const SizedBox(height: 24),
-                  const Divider(thickness: 1),
-                  const SizedBox(height: 20),
-
                   // Descrição do produto (vinda do backend)
                   Text(
                     description,

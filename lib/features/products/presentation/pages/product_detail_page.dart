@@ -21,6 +21,7 @@ import '../../../related_products/models/related_product_model.dart';
 import '../../../../core/theme/design_tokens.dart';
 import 'package:go_router/go_router.dart';
 import '../../../cart/presentation/notifiers/cart_notifier.dart';
+import '../../../../core/providers/store_config_provider.dart';
 
 class ProductDetailPage extends ConsumerStatefulWidget{
   final String productId;
@@ -1244,12 +1245,14 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     );
   }
 
-  // Alerta de estoque baixo (só mostra se estoque <= 10)
+  // Alerta de estoque baixo (usa threshold configurável do admin)
   Widget _buildStockAlert() {
     final stock = selectedSizeStock;
+    final storeConfig = ref.watch(storeConfigProvider);
+    final threshold = storeConfig.lowStockThreshold;
     
-    // Só mostrar se tiver estoque baixo (10 ou menos)
-    if (stock <= 0 || stock > 10) {
+    // Só mostrar se tiver estoque baixo (menor ou igual ao threshold)
+    if (stock <= 0 || stock > threshold) {
       return const SizedBox.shrink();
     }
     
@@ -1269,7 +1272,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
           ),
           const SizedBox(width: 8),
           Text(
-            'Só $stock ${stock == 1 ? 'unidade' : 'unidades'} em estoque!',
+            'Últimas $stock ${stock == 1 ? 'unidade' : 'unidades'} em estoque!',
             style: const TextStyle(
               color: Color(0xFFF57C00),
               fontWeight: FontWeight.w600,

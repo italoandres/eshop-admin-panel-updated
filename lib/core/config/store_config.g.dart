@@ -18,6 +18,7 @@ _$StoreConfigImpl _$$StoreConfigImplFromJson(Map<String, dynamic> json) =>
       showBanners: json['showBanners'] as bool? ?? true,
       showReviews: json['showReviews'] as bool? ?? true,
       showRecommendations: json['showRecommendations'] as bool? ?? true,
+      lowStockThreshold: (json['lowStockThreshold'] as num?)?.toInt() ?? 10,
     );
 
 Map<String, dynamic> _$$StoreConfigImplToJson(_$StoreConfigImpl instance) =>
@@ -32,4 +33,5 @@ Map<String, dynamic> _$$StoreConfigImplToJson(_$StoreConfigImpl instance) =>
       'showBanners': instance.showBanners,
       'showReviews': instance.showReviews,
       'showRecommendations': instance.showRecommendations,
+      'lowStockThreshold': instance.lowStockThreshold,
     };

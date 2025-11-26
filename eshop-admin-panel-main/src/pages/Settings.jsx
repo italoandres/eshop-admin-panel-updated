@@ -33,6 +33,7 @@ export default function Settings() {
     logoPosition: 'center', // 'left' ou 'center'
     email: 'contato@eshop.com',
     phone: '(11) 99999-9999',
+    lowStockThreshold: 10, // Threshold para alerta de estoque baixo
   });
   const [logoFile, setLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState('');
@@ -327,6 +328,26 @@ export default function Settings() {
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Alerta de Estoque Baixo
+              </label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={settings.lowStockThreshold}
+                  onChange={(e) =>
+                    setSettings({ ...settings, lowStockThreshold: parseInt(e.target.value) || 10 })
+                  }
+                  className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-600">
+                  unidades (Mostra alerta "Últimas X unidades" quando estoque ≤ este valor)
+                </span>
+              </div>
             </div>
             <button
               onClick={handleSaveSettings}

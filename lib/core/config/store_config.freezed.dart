@@ -32,6 +32,7 @@ mixin _$StoreConfig {
   bool get showBanners => throw _privateConstructorUsedError;
   bool get showReviews => throw _privateConstructorUsedError;
   bool get showRecommendations => throw _privateConstructorUsedError;
+  int get lowStockThreshold => throw _privateConstructorUsedError;
 
   /// Serializes this StoreConfig to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -61,7 +62,8 @@ abstract class $StoreConfigCopyWith<$Res> {
       String currency,
       bool showBanners,
       bool showReviews,
-      bool showRecommendations});
+      bool showRecommendations,
+      int lowStockThreshold});
 }
 
 /// @nodoc
@@ -89,6 +91,7 @@ class _$StoreConfigCopyWithImpl<$Res, $Val extends StoreConfig>
     Object? showBanners = null,
     Object? showReviews = null,
     Object? showRecommendations = null,
+    Object? lowStockThreshold = null,
   }) {
     return _then(_value.copyWith(
       storeId: null == storeId
@@ -131,6 +134,10 @@ class _$StoreConfigCopyWithImpl<$Res, $Val extends StoreConfig>
           ? _value.showRecommendations
           : showRecommendations // ignore: cast_nullable_to_non_nullable
               as bool,
+      lowStockThreshold: null == lowStockThreshold
+          ? _value.lowStockThreshold
+          : lowStockThreshold // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -155,7 +162,8 @@ abstract class _$$StoreConfigImplCopyWith<$Res>
       String currency,
       bool showBanners,
       bool showReviews,
-      bool showRecommendations});
+      bool showRecommendations,
+      int lowStockThreshold});
 }
 
 /// @nodoc
@@ -181,6 +189,7 @@ class __$$StoreConfigImplCopyWithImpl<$Res>
     Object? showBanners = null,
     Object? showReviews = null,
     Object? showRecommendations = null,
+    Object? lowStockThreshold = null,
   }) {
     return _then(_$StoreConfigImpl(
       storeId: null == storeId
@@ -223,6 +232,10 @@ class __$$StoreConfigImplCopyWithImpl<$Res>
           ? _value.showRecommendations
           : showRecommendations // ignore: cast_nullable_to_non_nullable
               as bool,
+      lowStockThreshold: null == lowStockThreshold
+          ? _value.lowStockThreshold
+          : lowStockThreshold // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -242,7 +255,8 @@ class _$StoreConfigImpl implements _StoreConfig {
       required this.currency,
       this.showBanners = true,
       this.showReviews = true,
-      this.showRecommendations = true});
+      this.showRecommendations = true,
+      this.lowStockThreshold = 10});
 
   factory _$StoreConfigImpl.fromJson(Map<String, dynamic> json) =>
       _$$StoreConfigImplFromJson(json);
@@ -272,10 +286,13 @@ class _$StoreConfigImpl implements _StoreConfig {
   @override
   @JsonKey()
   final bool showRecommendations;
+  @override
+  @JsonKey()
+  final int lowStockThreshold;
 
   @override
   String toString() {
-    return 'StoreConfig(storeId: $storeId, apiBaseUrl: $apiBaseUrl, storeName: $storeName, logoUrl: $logoUrl, primaryColor: $primaryColor, secondaryColor: $secondaryColor, currency: $currency, showBanners: $showBanners, showReviews: $showReviews, showRecommendations: $showRecommendations)';
+    return 'StoreConfig(storeId: $storeId, apiBaseUrl: $apiBaseUrl, storeName: $storeName, logoUrl: $logoUrl, primaryColor: $primaryColor, secondaryColor: $secondaryColor, currency: $currency, showBanners: $showBanners, showReviews: $showReviews, showRecommendations: $showRecommendations, lowStockThreshold: $lowStockThreshold)';
   }
 
   @override
@@ -300,7 +317,9 @@ class _$StoreConfigImpl implements _StoreConfig {
             (identical(other.showReviews, showReviews) ||
                 other.showReviews == showReviews) &&
             (identical(other.showRecommendations, showRecommendations) ||
-                other.showRecommendations == showRecommendations));
+                other.showRecommendations == showRecommendations) &&
+            (identical(other.lowStockThreshold, lowStockThreshold) ||
+                other.lowStockThreshold == lowStockThreshold));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -316,7 +335,8 @@ class _$StoreConfigImpl implements _StoreConfig {
       currency,
       showBanners,
       showReviews,
-      showRecommendations);
+      showRecommendations,
+      lowStockThreshold);
 
   /// Create a copy of StoreConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -347,7 +367,8 @@ abstract class _StoreConfig implements StoreConfig {
       required final String currency,
       final bool showBanners,
       final bool showReviews,
-      final bool showRecommendations}) = _$StoreConfigImpl;
+      final bool showRecommendations,
+      final int lowStockThreshold}) = _$StoreConfigImpl;
 
   factory _StoreConfig.fromJson(Map<String, dynamic> json) =
       _$StoreConfigImpl.fromJson;
@@ -374,6 +395,8 @@ abstract class _StoreConfig implements StoreConfig {
   bool get showReviews;
   @override
   bool get showRecommendations;
+  @override
+  int get lowStockThreshold;
 
   /// Create a copy of StoreConfig
   /// with the given fields replaced by the non-null parameter values.

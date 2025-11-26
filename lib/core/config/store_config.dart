@@ -19,6 +19,7 @@ class StoreConfig with _$StoreConfig {
     @Default(true) bool showBanners,
     @Default(true) bool showReviews,
     @Default(true) bool showRecommendations,
+    @Default(10) int lowStockThreshold,
   }) = _StoreConfig;
 
   factory StoreConfig.fromJson(Map<String, dynamic> json) =>
@@ -36,6 +37,7 @@ class StoreConfig with _$StoreConfig {
         showBanners: true,
         showReviews: true,
         showRecommendations: true,
+        lowStockThreshold: 10,
       );
 }
 
