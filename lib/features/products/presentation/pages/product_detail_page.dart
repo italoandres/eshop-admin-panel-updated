@@ -1248,8 +1248,14 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   // Alerta de estoque baixo (usa threshold configurável do admin)
   Widget _buildStockAlert() {
     final stock = selectedSizeStock;
-    final storeConfig = ref.watch(storeConfigProvider);
-    final threshold = storeConfig.lowStockThreshold;
+    final storeConfigAsync = ref.watch(storeConfigProvider);
+    
+    // Pegar threshold da configuração ou usar padrão (10)
+    final threshold = storeConfigAsync.when(
+      data: (config) => config.lowStockThreshold,
+      loading: () => 10,
+      error: (_, __) => 10,
+    );
     
     // Só mostrar se tiver estoque baixo (menor ou igual ao threshold)
     if (stock <= 0 || stock > threshold) {
