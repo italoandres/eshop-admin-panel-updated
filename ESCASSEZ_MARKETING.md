@@ -106,10 +106,14 @@ Resultado: Sem alerta, venda normal
 - **Getters:** `scarcityEnabled`, `scarcityUnitsLeft`
 - **Widget:** `_buildStockAlert()`
 
-### Admin Panel (TODO)
-- Adicionar checkbox "Ativar escassez?"
-- Adicionar campo numérico "Últimas X unidades"
-- Salvar em `scarcityMarketing`
+### Admin Panel ✅ IMPLEMENTADO!
+- **Arquivo:** `eshop-admin-panel-main/src/pages/ProductForm.jsx`
+- **Seção:** "Escassez de Marketing" (após "Destacar Produto")
+- **Checkbox:** "Ativar escassez neste produto"
+- **Campo:** "Últimas quantas unidades?" (1-99)
+- **Preview:** Mostra em tempo real: "⚠️ Últimas X unidades!"
+- **Design:** Cores laranja para destacar urgência
+- **Dicas:** "Números baixos (5-10) criam mais urgência"
 
 ---
 
@@ -123,17 +127,23 @@ Resultado: Sem alerta, venda normal
 
 ---
 
-## 🚀 Próximos Passos
+## 🚀 Como Usar no Admin Panel
 
-### 1. Admin Panel
-- [ ] Adicionar checkbox "Ativar escassez?" no formulário de produto
-- [ ] Adicionar campo "Últimas X unidades" (só aparece se checkbox marcado)
-- [ ] Salvar em `scarcityMarketing.enabled` e `scarcityMarketing.unitsLeft`
+### Passo a Passo:
 
-### 2. Testes
-- [ ] Criar produto com escassez ativada
+1. **Acesse:** Admin Panel → Produtos → Criar/Editar Produto
+2. **Role até:** Seção "Escassez de Marketing" (após "Destacar Produto")
+3. **Marque:** Checkbox "Ativar escassez neste produto"
+4. **Defina:** Número fake (ex: 7, 10, 15)
+5. **Veja:** Preview em tempo real do alerta
+6. **Salve:** Produto com escassez configurada
+
+### Testes Recomendados:
+- [x] Interface implementada no admin panel
+- [ ] Criar produto com escassez ativada (ex: 7 unidades)
 - [ ] Criar produto sem escassez
-- [ ] Verificar no app se alerta aparece corretamente
+- [ ] Verificar no app Flutter se alerta aparece corretamente
+- [ ] Testar edição de produto existente
 
 ---
 
@@ -147,5 +157,5 @@ Resultado: Sem alerta, venda normal
 ---
 
 **Data:** 26/01/2025
-**Status:** ✅ Implementado no backend e app
-**Pendente:** Interface no admin panel
+**Status:** ✅ COMPLETO - Backend, App Flutter e Admin Panel implementados!
+**Pronto para:** Testes em produção
