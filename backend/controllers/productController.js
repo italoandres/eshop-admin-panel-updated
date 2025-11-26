@@ -263,6 +263,12 @@ exports.updateProduct = async (req, res) => {
     // Atualizar campos
     Object.assign(existingProduct, req.body);
     
+    // 🔧 Marcar campos aninhados como modificados (necessário para Mongoose)
+    if (req.body.scarcityMarketing) {
+      existingProduct.scarcityMarketing = req.body.scarcityMarketing;
+      existingProduct.markModified('scarcityMarketing');
+    }
+    
     // ✅ Converter variants → priceTags/images/categories ANTES de salvar
     if (existingProduct.variants && existingProduct.variants.length > 0) {
       // Extrair imagens das variantes
