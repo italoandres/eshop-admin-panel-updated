@@ -125,6 +125,11 @@ const ProductForm = () => {
         featuredSections
       };
 
+      console.log('📤 Enviando produto:', {
+        scarcityMarketing: productData.scarcityMarketing,
+        name: productData.name
+      });
+
       const API_URL = import.meta.env.VITE_API_URL || 'https://eshop-backend-bfhw.onrender.com/api';
       const url = isEdit 
         ? `${API_URL}/products/${id}`
@@ -139,6 +144,11 @@ const ProductForm = () => {
       });
 
       if (response.ok) {
+        const savedProduct = await response.json();
+        console.log('✅ Produto salvo:', {
+          scarcityMarketing: savedProduct.scarcityMarketing,
+          name: savedProduct.name
+        });
         alert(isEdit ? 'Produto atualizado!' : 'Produto criado!');
         navigate('/products');
       } else {
