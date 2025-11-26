@@ -174,12 +174,23 @@ exports.createProduct = async (req, res) => {
       }
     }
     
-    const product = new Product(req.body);
-    
-    // 🔧 Marcar campos aninhados como modificados (necessário para Mongoose)
+    // 🔧 Garantir que scarcityMarketing seja definido corretamente
+    const productData = { ...req.body };
     if (req.body.scarcityMarketing) {
-      product.scarcityMarketing = req.body.scarcityMarketing;
+      console.log('📊 scarcityMarketing recebido:', req.body.scarcityMarketing);
+      productData.scarcityMarketing = {
+        enabled: req.body.scarcityMarketing.enabled === true,
+        unitsLeft: parseInt(req.body.scarcityMarketing.unitsLeft) || 10
+      };
+      console.log('📊 scarcityMarketing processado:', productData.scarcityMarketing);
+    }
+    
+    const product = new Product(productData);
+    
+    // Marcar explicitamente o campo como modificado
+    if (productData.scarcityMarketing) {
       product.markModified('scarcityMarketing');
+      console.log('📊 scarcityMarketing no produto antes de salvar:', product.scarcityMarketing);
     }
     
     // ✅ Converter variants → priceTags/images/categories ANTES de salvar
@@ -224,6 +235,7 @@ exports.createProduct = async (req, res) => {
     }
     
     const newProduct = await product.save();
+    console.log('✅ Produto salvo! scarcityMarketing:', newProduct.scarcityMarketing);
     res.status(201).json(newProduct);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -269,9 +281,12 @@ exports.updateProduct = async (req, res) => {
     // Atualizar campos
     Object.assign(existingProduct, req.body);
     
-    // 🔧 Marcar campos aninhados como modificados (necessário para Mongoose)
+    // 🔧 Garantir que scarcityMarketing seja definido corretamente
     if (req.body.scarcityMarketing) {
-      existingProduct.scarcityMarketing = req.body.scarcityMarketing;
+      existingProduct.scarcityMarketing = {
+        enabled: req.body.scarcityMarketing.enabled === true,
+        unitsLeft: parseInt(req.body.scarcityMarketing.unitsLeft) || 10
+      };
       existingProduct.markModified('scarcityMarketing');
     }
     
