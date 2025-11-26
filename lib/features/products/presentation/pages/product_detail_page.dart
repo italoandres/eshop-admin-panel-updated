@@ -315,6 +315,17 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   // Por enquanto não temos discountPercent no backend, então retorna null
   int? get productDiscountPercent => null;
   
+  // Estratégia de escassez (marketing, não é estoque real!)
+  bool get scarcityEnabled {
+    final scarcity = _productData?['scarcityMarketing'] as Map?;
+    return scarcity?['enabled'] ?? false;
+  }
+  
+  int get scarcityUnitsLeft {
+    final scarcity = _productData?['scarcityMarketing'] as Map?;
+    return scarcity?['unitsLeft'] ?? 10;
+  }
+  
   // Extrair variações de cor do produto
   List<ProductVariation> get productVariations {
     // Retornar cache se já foi processado
@@ -1245,22 +1256,14 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     );
   }
 
-  // Alerta de estoque baixo (usa threshold configurável do admin)
+  // Alerta de escassez (estratégia de marketing, não é estoque real!)
   Widget _buildStockAlert() {
-    final stock = selectedSizeStock;
-    final storeConfigAsync = ref.watch(storeConfigProvider);
-    
-    // Pegar threshold da configuração ou usar padrão (10)
-    final threshold = storeConfigAsync.when(
-      data: (config) => config.lowStockThreshold,
-      loading: () => 10,
-      error: (_, __) => 10,
-    );
-    
-    // Só mostrar se tiver estoque baixo (menor ou igual ao threshold)
-    if (stock <= 0 || stock > threshold) {
+    // Verificar se escassez está ativada para este produto
+    if (!scarcityEnabled) {
       return const SizedBox.shrink();
     }
+    
+    final unitsLeft = scarcityUnitsLeft;
     
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1278,7 +1281,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
           ),
           const SizedBox(width: 8),
           Text(
-            'Últimas $stock ${stock == 1 ? 'unidade' : 'unidades'} em estoque!',
+            'Últimas $unitsLeft ${unitsLeft == 1 ? 'unidade' : 'unidades'} em estoque!',
             style: const TextStyle(
               color: Color(0xFFF57C00),
               fontWeight: FontWeight.w600,
