@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ProductDescriptionModal extends StatelessWidget {
-  const ProductDescriptionModal({Key? key}) : super(key: key);
+  final String description;
+  final String productName;
+  
+  const ProductDescriptionModal({
+    Key? key,
+    required this.description,
+    required this.productName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,47 +34,16 @@ class ProductDescriptionModal extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Propriedades do produto
-                  _buildPropertyRow('Nome', 'Camisa Umbro TWR Striker Masculina'),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow('Referência', 'D21-1055-008-03'),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow('Clube', 'Sem Clube'),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow('Composição', '100% Poliéster'),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow('Indicado para', 'Jogo'),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow('Gola', 'Gola Careca'),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow('Manga', 'Manga Curta'),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow(
-                    'Dimensões Aproximadas',
-                    'Ombro: 42 cm; Tórax: 102 cm; Comprimento: 71 cm',
-                  ),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow('Número', 'Sem número'),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow('Garantia do Fabricante', 'Contra defeito de fabricação'),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow('Origem', 'Nacional'),
-                  const SizedBox(height: 12),
-                  _buildPropertyRow('Referência', 'D21-1055-008-02'),
-
+                  // Nome do produto
+                  _buildPropertyRow('Nome', productName),
+                  
                   const SizedBox(height: 24),
                   const Divider(thickness: 1),
                   const SizedBox(height: 20),
 
-                  // Texto descritivo livre
+                  // Descrição do produto (vinda do backend)
                   Text(
-                    'Camisa Umbro TWR Striker masculina confeccionada em material de alta qualidade e tecnologia. '
-                    'Perfeita para a prática esportiva, oferece conforto e estilo. '
-                    'Detalhes modernos e acabamento impecável. '
-                    'Ideal para quem busca performance e design.\n\n'
-                    'A tecnologia aplicada no tecido garante maior respirabilidade e conforto durante o uso. '
-                    'O modelo possui corte anatômico que se adapta perfeitamente ao corpo, proporcionando '
-                    'liberdade de movimento. Produto oficial com todas as características de qualidade da marca Umbro.',
+                    description,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[800],

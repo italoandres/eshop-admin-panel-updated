@@ -352,6 +352,92 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     return _cachedVariations!;
   }
   
+  // Extrair tamanhos disponíveis da variação selecionada
+  List<Map<String, dynamic>> get availableSizes {
+    final variants = _productData?['variants'] as List?;
+    
+    if (variants == null || variants.isEmpty) {
+      // Retornar tamanhos mock se não houver dados
+      return [
+        {'size': 'P', 'quantity': 5, 'available': true},
+        {'size': 'M', 'quantity': 10, 'available': true},
+        {'size': 'G', 'quantity': 7, 'available': true},
+        {'size': 'GG', 'quantity': 3, 'available': true},
+        {'size': 'EGG', 'quantity': 0, 'available': false},
+      ];
+    }
+    
+    // Pegar a variação selecionada (baseado no índice de cor)
+    if (_selectedColorIndex >= 0 && _selectedColorIndex < variants.length) {
+      final selectedVariant = variants[_selectedColorIndex];
+      final sizes = selectedVariant['sizes'] as List? ?? [];
+      
+      return sizes.map((sizeData) {
+        final quantity = sizeData['quantity'] ?? 0;
+        return {
+          'size': sizeData['size'] ?? '',
+          'quantity': quantity,
+          'available': quantity > 0,
+          'price': sizeData['price'] ?? productPrice,
+        };
+      }).toList();
+    }
+    
+    // Fallback para primeira variação
+    if (variants.isNotEmpty) {
+      final firstVariant = variants[0];
+      final sizes = firstVariant['sizes'] as List? ?? [];
+      
+      return sizes.map((sizeData) {
+        final quantity = sizeData['quantity'] ?? 0;
+        return {
+          'size': sizeData['size'] ?? '',
+          'quantity': quantity,
+          'available': quantity > 0,
+          'price': sizeData['price'] ?? productPrice,
+        };
+      }).toList();
+    }
+    
+    return [];
+  }
+  
+  // Obter quantidade em estoque do tamanho selecionado
+  int get selectedSizeStock {
+    final sizes = availableSizes;
+    final selectedSizeData = sizes.firstWhere(
+      (s) => s['size'] == _selectedSize,
+      orElse: () => {'quantity': 0},
+    );
+    return selectedSizeData['quantity'] ?? 0;
+  }
+  
+  // Extrair peso do produto (em kg)
+  String get productWeight {
+    final weight = _productData?['weight'];
+    if (weight != null) {
+      return weight.toString();
+    }
+    return '0.5'; // Fallback
+  }
+  
+  // Extrair dimensões do produto
+  Map<String, String> get productDimensions {
+    final dimensions = _productData?['dimensions'] as Map?;
+    if (dimensions != null) {
+      return {
+        'length': dimensions['length']?.toString() ?? '30',
+        'width': dimensions['width']?.toString() ?? '20',
+        'height': dimensions['height']?.toString() ?? '5',
+      };
+    }
+    return {
+      'length': '30',
+      'width': '20',
+      'height': '5',
+    };
+  }
+  
   // Mapear nome da cor para código hexadecimal
   String _getColorHex(String colorName) {
     final colorMap = {
@@ -1125,27 +1211,25 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
             ),
           ),
           const SizedBox(height: spaceM), // FASE 1: 12px
-          // FASE 2: Chips dinâmicos com largura automática
+          // Chips dinâmicos com dados reais do backend
           Wrap(
             spacing: spaceS, // 8px gap horizontal
             runSpacing: spaceS, // 8px gap vertical
-            children: ['P', 'M', 'G', 'GG', 'EGG'].map((size) {
+            children: availableSizes.map((sizeData) {
+              final size = sizeData['size'] as String;
               final isSelected = size == _selectedSize;
-              final isAvailable = size != 'EGG'; // EGG indisponível
+              final isAvailable = sizeData['available'] as bool;
 
-              // FASE 2: Substituído Container por ProductSizeChip
-              // ✅ Largura automática (sem minWidth)
-              // ✅ Padding: 14px horizontal, 10px vertical
-              // ✅ Border radius: 8px
-              // ✅ Lógica mantida idêntica
               return ProductSizeChip(
                 size: size,
                 isSelected: isSelected,
                 isAvailable: isAvailable,
                 onTap: () {
-                  setState(() {
-                    _selectedSize = size;
-                  });
+                  if (isAvailable) {
+                    setState(() {
+                      _selectedSize = size;
+                    });
+                  }
                 },
               );
             }).toList(),
@@ -1160,8 +1244,15 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     );
   }
 
-  // Alerta de estoque baixo
+  // Alerta de estoque baixo (só mostra se estoque <= 10)
   Widget _buildStockAlert() {
+    final stock = selectedSizeStock;
+    
+    // Só mostrar se tiver estoque baixo (10 ou menos)
+    if (stock <= 0 || stock > 10) {
+      return const SizedBox.shrink();
+    }
+    
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
@@ -1169,17 +1260,17 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
         color: const Color(0xFFFFF3E0), // Laranja claro
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.warning_amber_rounded,
             color: Color(0xFFF57C00),
             size: 20,
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(
-            'Só 7 unidades em estoque!',
-            style: TextStyle(
+            'Só $stock ${stock == 1 ? 'unidade' : 'unidades'} em estoque!',
+            style: const TextStyle(
               color: Color(0xFFF57C00),
               fontWeight: FontWeight.w600,
             ),
@@ -1590,7 +1681,10 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => const ProductDescriptionModal(),
+      builder: (_) => ProductDescriptionModal(
+        description: productDescription,
+        productName: productName,
+      ),
     );
   }
 
