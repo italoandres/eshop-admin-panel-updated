@@ -21,7 +21,7 @@ import '../../../related_products/models/related_product_model.dart';
 import '../../../../core/theme/design_tokens.dart';
 import 'package:go_router/go_router.dart';
 import '../../../cart/presentation/notifiers/cart_notifier.dart';
-import '../../../../core/providers/store_config_provider.dart';
+import '../../../../core/config/store_config_provider.dart';
 
 class ProductDetailPage extends ConsumerStatefulWidget{
   final String productId;
