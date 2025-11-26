@@ -176,6 +176,12 @@ exports.createProduct = async (req, res) => {
     
     const product = new Product(req.body);
     
+    // 🔧 Marcar campos aninhados como modificados (necessário para Mongoose)
+    if (req.body.scarcityMarketing) {
+      product.scarcityMarketing = req.body.scarcityMarketing;
+      product.markModified('scarcityMarketing');
+    }
+    
     // ✅ Converter variants → priceTags/images/categories ANTES de salvar
     if (product.variants && product.variants.length > 0) {
       // Extrair imagens das variantes
