@@ -236,8 +236,16 @@ exports.createProduct = async (req, res) => {
     }
     
     const newProduct = await product.save();
+    
+    console.log('✅ CREATE PRODUCT - Salvo:', {
+      name: newProduct.name,
+      scarcityUnitsLeft: newProduct.scarcityUnitsLeft,
+      hasScarcityField: 'scarcityUnitsLeft' in newProduct
+    });
+    
     res.status(201).json(newProduct);
   } catch (error) {
+    console.error('❌ CREATE PRODUCT - Erro:', error.message);
     res.status(400).json({ message: error.message });
   }
 };
@@ -324,8 +332,16 @@ exports.updateProduct = async (req, res) => {
     }
     
     const updatedProduct = await existingProduct.save();
+    
+    console.log('✅ UPDATE PRODUCT - Salvo:', {
+      name: updatedProduct.name,
+      scarcityUnitsLeft: updatedProduct.scarcityUnitsLeft,
+      hasScarcityField: 'scarcityUnitsLeft' in updatedProduct
+    });
+    
     res.json(updatedProduct);
   } catch (error) {
+    console.error('❌ UPDATE PRODUCT - Erro:', error.message);
     res.status(400).json({ message: error.message });
   }
 };
