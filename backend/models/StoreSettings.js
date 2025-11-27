@@ -64,12 +64,6 @@ const StoreSettingsSchema = new mongoose.Schema(
       saturday: { open: String, close: String, closed: Boolean },
       sunday: { open: String, close: String, closed: Boolean },
     },
-    lowStockThreshold: {
-      type: Number,
-      default: 10,
-      min: [1, 'Threshold deve ser no mínimo 1'],
-      max: [100, 'Threshold deve ser no máximo 100'],
-    },
   },
   {
     timestamps: true,

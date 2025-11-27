@@ -6,13 +6,14 @@ const bannerRoutes = require('./routes/bannerRoutes');
 const discountRuleRoutes = require('./routes/discountRules');
 const productRoutes = require('./routes/productRoutes');
 const storeSettingsRoutes = require('./routes/storeSettings');
-const orderRoutes = require('./routes/orderRoutes');
 
 const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+  origin: process.env.ALLOWED_ORIGINS === '*' 
+    ? '*' 
+    : (process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || '*'),
   credentials: true,
 }));
 // Aumentar limite para aceitar imagens em base64 (50MB)
@@ -30,7 +31,6 @@ app.use('/api', bannerRoutes);
 app.use('/api/discount-rules', discountRuleRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/store-settings', storeSettingsRoutes);
-app.use('/api/orders', orderRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

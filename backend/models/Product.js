@@ -83,9 +83,6 @@ const productSchema = new mongoose.Schema({
     main: { type: Boolean, default: false } // Principal
   },
   
-  // Estratégia de escassez (marketing, não é estoque real!)
-  scarcityUnitsLeft: { type: Number, default: 5 }, // "Últimas X unidades" (fake)
-  
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
