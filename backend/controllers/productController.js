@@ -167,6 +167,8 @@ exports.getProductById = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     console.log('🎯 CREATE PRODUCT - Recebido:', {
+      name: req.body.name,
+      scarcityUnitsLeft: req.body.scarcityUnitsLeft,
       hasVariants: !!req.body.variants,
       variantsCount: req.body.variants?.length || 0,
       firstVariant: req.body.variants?.[0] ? {
@@ -245,6 +247,8 @@ exports.updateProduct = async (req, res) => {
   try {
     console.log('🎯 UPDATE PRODUCT - Recebido:', {
       productId: req.params.id,
+      name: req.body.name,
+      scarcityUnitsLeft: req.body.scarcityUnitsLeft,
       hasVariants: !!req.body.variants,
       variantsCount: req.body.variants?.length || 0,
       firstVariant: req.body.variants?.[0] ? {
