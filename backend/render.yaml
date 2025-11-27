@@ -1,23 +1,18 @@
-# Render Blueprint para deploy automático
-# Documentação: https://render.com/docs/blueprint-spec
-
 services:
   - type: web
-    name: eshop-api
+    name: eshop-backend
     env: node
-    region: oregon
     plan: free
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 4001
       - key: MONGODB_URI
-        sync: false # Configurar manualmente no dashboard
-      - key: ADMIN_TOKEN
-        generateValue: true # Gera automaticamente
-      - key: ALLOWED_ORIGINS
-        value: "*" # Atualizar com domínios reais
-    healthCheckPath: /health
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

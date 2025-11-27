@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 91607258c0845bb30ea041cc2403a43021fbc665 Italolior <italolior@gmail.com> 1764246424 -0300	commit (initial): feat: admin panel with latest updates
+91607258c0845bb30ea041cc2403a43021fbc665 2a88d0007e2d7b37572486afa5a98d26a090e76c Italolior <italolior@gmail.com> 1764246466 -0300	commit: fix: remove duplicate folder structure
+2a88d0007e2d7b37572486afa5a98d26a090e76c 2a88d0007e2d7b37572486afa5a98d26a090e76c Italolior <italolior@gmail.com> 1764246478 -0300	Branch: renamed refs/heads/master to refs/heads/main
+2a88d0007e2d7b37572486afa5a98d26a090e76c 5d7c69f462088699b26d4fb60d4d54627b16e9f6 Italolior <italolior@gmail.com> 1764249041 -0300	commit: fix: explicitly set base directory to root
